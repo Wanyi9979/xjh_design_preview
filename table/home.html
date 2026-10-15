@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Button Demo</title>
+    <style>
+      body {
+        display: grid;
+        min-height: 100vh;
+        margin: 0;
+        place-items: center;
+        background: #f5f7fb;
+        font-family: system-ui, sans-serif;
+      }
+
+      .button {
+        padding: 12px 24px;
+        border: 0;
+        border-radius: 10px;
+        background: #2563eb;
+        color: #fff;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s ease, transform 0.2s ease;
+      }
+
+      .button:hover {
+        background: #1d4ed8;
+        transform: translateY(-2px);
+      }
+
+      .button:active {
+        transform: translateY(0);
+      }
+    </style>
+  </head>
+  <body>
+    <button
+      class="button"
+      type="button"
+      onclick="window.location.href='table.html'"
+    >
+      查看表格
+    </button>
+  </body>
+</html>
