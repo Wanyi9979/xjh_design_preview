@@ -1,0 +1,22 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="439.1" height="285.1" viewBox="0 0 439.1 285.1" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Ellipse 179" filter="url(#filter0_f_0_112)">
+<ellipse cx="219.55" cy="142.55" rx="186.5" ry="109.5" fill="url(#paint0_linear_0_112)" style="mix-blend-mode:color-burn"/>
+<ellipse cx="219.55" cy="142.55" rx="186.5" ry="109.5" stroke-width="0.5" stroke="url(#paint1_linear_0_112)"/>
+</g>
+<defs>
+<filter id="filter0_f_0_112" x="0" y="0" width="439.1" height="285.1" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+<feGaussianBlur stdDeviation="16.4" result="effect1_foregroundBlur_0_112"/>
+</filter>
+<linearGradient id="paint0_linear_0_112" x1="136.05" y1="38.05" x2="237.201" y2="205.835" gradientUnits="userSpaceOnUse">
+<stop stop-color="#E3EEFF"/>
+<stop offset="0.481238" stop-color="#CCE0FF" stop-opacity="0"/>
+<stop offset="1" stop-color="#CCE0FF" stop-opacity="0"/>
+</linearGradient>
+<linearGradient id="paint1_linear_0_112" x1="317.773" y1="33.05" x2="16.8014" y2="173.475" gradientUnits="userSpaceOnUse">
+<stop stop-color="white"/>
+<stop offset="1" stop-color="white" stop-opacity="0"/>
+</linearGradient>
+</defs>
+</svg>
