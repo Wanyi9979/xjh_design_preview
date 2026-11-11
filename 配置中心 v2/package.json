@@ -1,0 +1,10 @@
+{
+  "name": "ai-edc",
+  "version": "1.0.0",
+  "private": true,
+  "description": "AI-EDC 临研配置中心交互原型",
+  "scripts": {
+    "start": "python3 -m http.server 4174 --bind 127.0.0.1",
+    "dev": "python3 -m http.server 4174 --bind 127.0.0.1"
+  }
+}
