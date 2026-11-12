@@ -1,0 +1,41 @@
+#visit-version-detail .ai-annotation-trigger {
+  display: inline-flex;
+  width: 18px;
+  height: 18px;
+  margin-left: 5px;
+  align-items: center;
+  justify-content: center;
+  vertical-align: -3px;
+  color: #aeb7c5;
+  opacity: 0;
+  cursor: pointer;
+  transition: opacity .15s, color .15s;
+}
+#visit-version-detail .ai-annotation-trigger img { display: block; width: 16px; height: 15px; }
+#visit-version-detail .visit-copy:hover .ai-annotation-trigger,
+#visit-version-detail .crf-browser-item:hover .ai-annotation-trigger,
+#visit-version-detail .config-field-title:hover .ai-annotation-trigger,
+#visit-version-detail .ai-annotation-trigger:focus-visible,
+#visit-version-detail .ai-annotation-trigger.has-annotation { opacity: 1; }
+#visit-version-detail .ai-annotation-trigger.has-annotation { color: #2C73F6; }
+#visit-version-detail .ai-annotation-trigger:focus-visible { outline: 2px solid #2C73F6; outline-offset: 2px; border-radius: 3px; }
+#visit-version-detail .visit-copy strong,
+#visit-version-detail .crf-browser-item strong { white-space: normal; }
+.ai-annotation-dialog { width: min(623px, calc(100vw - 32px)); max-height: calc(100vh - 32px); padding: 0; color: #26364B; background: #fff; border: 0; border-radius: 8px; box-shadow: 0 16px 48px #1c31543d; }
+.ai-annotation-dialog::backdrop { background: #0006; }
+.ai-annotation-dialog header { min-height: 64px; padding: 20px 24px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e8e8ec; }
+.ai-annotation-dialog h2 { margin: 0; font-size: 18px; font-weight: 600; }
+.ai-annotation-dialog .ai-close { padding: 2px 6px; color: #8c91a0; background: none; border: 0; cursor: pointer; font-size: 22px; }
+.ai-annotation-dialog .ai-body { padding: 24px; }
+.ai-annotation-dialog label { display: block; margin-bottom: 8px; font-size: 14px; }
+.ai-annotation-dialog .ai-object { margin-bottom: 24px; padding: 10px 12px; color: #5F6F85; background: #f7f9fc; border: 1px solid #e8e8ec; border-radius: 5px; font-size: 14px; }
+.ai-annotation-dialog .ai-required { color: #ff4d4f; }
+.ai-annotation-dialog textarea { width: 100%; min-height: 96px; padding: 10px 12px; resize: vertical; color: #26364B; border: 1px solid #d9e2ef; border-radius: 5px; font-family: inherit; font-size: 14px; line-height: 1.5; box-sizing: border-box; }
+.ai-annotation-dialog textarea:focus { outline: 2px solid #91caff; border-color: #2C73F6; }
+.ai-annotation-dialog .ai-error { margin: 8px 0 0; color: #ff4d4f; font-size: 12px; }
+.ai-annotation-dialog footer { min-height: 70px; padding: 16px 24px; display: flex; align-items: center; justify-content: flex-end; gap: 8px; border-top: 1px solid #e8e8ec; }
+.ai-annotation-dialog footer .ai-delete { margin-right: auto; color: #ff4d4f; }
+.ai-annotation-dialog footer button { min-height: 32px; padding: 4px 15px; color: #26364B; background: #fff; border: 1px solid #d9e2ef; border-radius: 5px; cursor: pointer; font-size: 14px; }
+.ai-annotation-dialog footer .ai-save,
+.ai-annotation-dialog footer .ai-confirm-delete { color: #fff; background: #2C73F6; border-color: #2C73F6; }
+.ai-annotation-dialog .ai-confirm-copy { margin: 0; font-size: 14px; line-height: 1.6; }

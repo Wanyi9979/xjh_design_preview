@@ -1,0 +1,8 @@
+[data-list-page-hidden="true"] { display: none !important; }
+.list-pagination { min-height: 54px; padding: 0; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; color: #8996A8; border-top: 0; font-size: 12px; }
+.list-pagination-controls { margin-left: auto; display: flex; align-items: center; gap: 5px; }
+.list-pagination-controls select { height: 28px; padding: 0 8px; color: #5F6F85; background: #fff; border: 1px solid #dbe5f1; border-radius: 5px; font-size: 12px; }
+.list-pagination-controls .page { width: 28px; height: 28px; color: #5F6F85; background: #fff; border: 1px solid #dbe5f1; border-radius: 5px; font-size: 12px; }
+.list-pagination-controls .page.active { color: #fff; background: #2C73F6; border-color: #2C73F6; }
+.list-pagination-controls .page:disabled { color: #b8c3d1; background: #f8fbff; cursor: default; }
+#vt-map-panel .ds-panel-bottom.list-pagination { display: flex; min-height: 54px; padding: 0 12px; }
