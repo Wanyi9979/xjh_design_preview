@@ -1,0 +1,731 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>参与者管理 · 临床研究</title>
+  <style>
+    :root{font-family:"PingFang SC","Noto Sans SC","Microsoft YaHei",sans-serif;color:#262626;background:#f7f7f7;font-synthesis:none}
+    *{box-sizing:border-box}body{margin:0;min-width:850px}button,input,select{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{outline:2px solid #168aef;outline-offset:2px}
+    .sidebar{width:60px;height:100vh;min-height:825px;background:#fff;box-shadow:1px 0 3px #0000000f;position:fixed;left:0;top:0;display:flex;flex-direction:column;align-items:center;z-index:2}
+    .logo{width:36px;height:36px;object-fit:contain;margin:12px 0 4px}.bolt-wrap{height:34px;position:relative;width:60px;display:flex;align-items:center;justify-content:center}.bolt-wrap img{width:24px;height:24px}.badge{position:absolute;top:0;left:32px;min-width:14px;height:14px;padding:0 3px;border-radius:12px;background:#ff6363;color:white;text-align:center;font-size:10px;line-height:14px}
+    .nav{display:flex;flex-direction:column;width:100%}.nav-item{width:60px;height:52px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:3px;color:#8d9092;font-size:8px;line-height:10px;white-space:nowrap;position:relative}.nav-item img{width:20px;height:20px;object-fit:contain}.nav-item.active{color:#168aef;background:#f7f7f7;border-radius:8px 0 0 8px}.nav-item.active::before{content:"";position:absolute;left:0;top:17px;width:2px;height:20px;border-radius:0 2px 2px 0;background:#168aef}.nav-item.active img{filter:brightness(0) saturate(100%) invert(46%) sepia(96%) saturate(1165%) hue-rotate(174deg) brightness(97%) contrast(95%)}.nav-item.active img[src$="nav_clinical.svg"]{filter:none}.settings{margin-top:auto;margin-bottom:12px;width:20px;height:20px}
+    .page{margin-left:60px;min-height:100vh;padding:15px 20px 32px;background:#f7f7f7}
+    .filters{min-height:36px;display:flex;align-items:center;gap:8px;margin-bottom:10px}.control{height:36px;background:#fff;border:1px solid #e5e5e5;border-radius:2px;box-shadow:0 .5px 1px #0000000a;color:#606060;font-size:12px}.control.select{appearance:none;background-image:url('figma-clinical-assets/caret-down.svg');background-size:12px 12px;background-repeat:no-repeat;background-position:right 10px center;padding:0 26px 0 10px}.project-filter{width:190px}.hospital-filter{width:120px}.status-filter{width:108px}.visit-filter{width:112px}.visit-window-filter{width:178px}.search{width:190px;padding:0 11px}.search::placeholder{color:#bfbfbf}.reset{width:75px;letter-spacing:3px;color:#333}.reset:hover{border-color:#168aef;color:#168aef}.view-switch{height:36px;display:flex;margin-left:auto;padding:2px;border:1px solid #d9e2ec;border-radius:5px;background:#fff;box-shadow:0 .5px 1px #0000000a}.view-switch button{min-width:88px;height:30px;padding:0 14px;border:0;border-radius:3px;background:transparent;color:#606060;font-size:12px}.view-switch button[aria-pressed="true"]{background:#e8f3ff;color:#168aef;font-weight:600}.view-panel[hidden]{display:none}.projects{border-collapse:collapse;width:100%;min-width:1080px;table-layout:fixed;font-size:12px;text-align:left}.projects col:nth-child(1){width:150px}.projects col:nth-child(2){width:280px}.projects col:nth-child(3){width:180px}.projects col:nth-child(4),.projects col:nth-child(5),.projects col:nth-child(6){width:110px}.projects col:nth-child(7){width:180px}.projects col:nth-child(8){width:120px}.projects th{height:36px;padding:0 12px;border-bottom:1px solid #f0f0f0;background:#fafafa;color:#888;font-weight:500}.projects td{height:52px;padding:0 12px;border-bottom:1px solid #f0f0f0;color:#333}.projects tr:last-child td{border-bottom:0}.project-name{color:#168aef;font-weight:500}.project-status-count{color:#606060}.project-action{border:0;background:transparent;color:#168aef;font-size:12px}.project-action:hover{text-decoration:underline}
+    .table-wrap{width:100%;overflow-x:auto;background:#fff}.participants{border-collapse:collapse;width:100%;min-width:1280px;table-layout:fixed;font-size:12px;text-align:left}.participants col:nth-child(1){width:127px}.participants col:nth-child(2){width:127px}.participants col:nth-child(3){width:262px}.participants col:nth-child(4){width:160px}.participants col:nth-child(5){width:127px}.participants col:nth-child(6){width:206px}.participants col:nth-child(7){width:271px}.participants th{height:36px;background:#fafafa;color:#888;font-weight:500;border-bottom:1px solid #f0f0f0;padding:0 8px;white-space:nowrap}.participants th:first-child,.participants td:first-child{padding-left:16px}.participants th:last-child,.participants td:last-child{padding-left:56px}.participants td{height:48px;border-bottom:1px solid #f0f0f0;padding:0 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.participants tr:last-child td{border-bottom:0}.name{color:#168aef;font-weight:500}.participant-link{text-decoration:none;cursor:pointer}.participant-link:hover{text-decoration:underline}.status{display:inline-flex;align-items:center;height:20px;padding:0 7px;border-radius:3px;font-size:12px}.status.enrolled{color:#00a65c;background:#e6f7ec}.status.screening{color:#168aef;background:#e6f2ff}.status.ended{color:#606060;background:#f5f5f5}.status.failed{color:#db2626;background:#ffebeb}.status.following{color:#00becb;background:#f1fbfc}.progress-cell{display:flex;align-items:center;gap:16px}.track{width:170px;max-width:75%;height:6px;border-radius:4px;background:#edf1f6;overflow:hidden;flex:none}.fill{height:100%;border-radius:4px;background:#168aef}.rate{color:#606060;min-width:32px;text-align:right}.actions{display:flex;align-items:center;gap:4px;white-space:nowrap}.action{background:none;border:0;padding:0;color:#168aef;font-size:12px;line-height:18px;white-space:nowrap}.action:hover{text-decoration:underline}.empty{text-align:center;color:#999;height:100px!important}
+    .pagination{height:64px;display:flex;align-items:center;justify-content:flex-end;gap:8px;font-size:12px;padding-right:16px}.page-btn{width:32px;height:32px;background:#fff;border:1px solid #d9d9d9;border-radius:2px;color:#666;display:flex;align-items:center;justify-content:center;padding:0}.page-btn img{width:12px;height:12px}.page-btn.current{border-color:#1890ff;color:#1890ff}.page-btn:disabled{opacity:.55;cursor:default}
+    .drawer-mask{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:20;opacity:0;visibility:hidden;transition:opacity .18s ease,visibility .18s ease}.drawer-mask.open{opacity:1;visibility:visible}.plan-drawer{position:absolute;right:0;top:0;width:min(912px,calc(100vw - 92px));height:100vh;background:#fff;box-shadow:-12px 0 28px #00000014;display:flex;flex-direction:column;transform:translateX(24px);transition:transform .18s ease}.drawer-mask.open .plan-drawer{transform:translateX(0)}.drawer-head{min-height:60px;padding:16px 16px 12px 24px;border-bottom:.5px solid #e5e5e5;display:flex;align-items:flex-start;justify-content:space-between;gap:18px}.participant-summary{display:flex;flex-direction:column;gap:4px;min-width:0}.summary-line{display:flex;align-items:center;gap:8px;min-width:0}.summary-name{font-size:14px;font-weight:500;color:#2b2c2d}.summary-meta{display:flex;align-items:center;gap:8px;color:rgba(43,44,45,.45);font-size:12px;line-height:20px;white-space:nowrap}.summary-meta b{color:#2b2c2d;font-weight:400}.drawer-close{width:24px;height:24px;border:0;background:#fff;color:#888;font-size:22px;line-height:20px;padding:0}.drawer-close:hover{color:#168aef}.drawer-body{position:relative;flex:1;min-height:0;overflow:auto;padding:0 24px 88px;background:#fff}.plan-toolbar{height:48px;display:flex;align-items:flex-start;justify-content:space-between;padding-top:12px;background:#fff;position:sticky;top:0;z-index:1}.plan-tabs{width:200px;height:36px;border:.5px solid rgba(43,44,45,.18);border-radius:2px;display:flex;padding:2px;background:#fff}.plan-tab{flex:1;border:0;border-radius:1px;background:#fff;color:rgba(43,44,45,.75);font-size:12px}.plan-tab.active{background:#e8f3ff;color:#168aef;font-weight:600}.plan-tools{display:flex;align-items:center;gap:8px;font-size:12px;white-space:nowrap}.agent-switch{display:flex;align-items:center;gap:6px;color:#111}.switch{width:36px;height:22px;border:0;border-radius:11px;background:#bfbfbf;position:relative;padding:0}.switch::after{content:"";position:absolute;left:2px;top:2px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 2px #0002}.sort-link{display:flex;align-items:center;gap:3px;color:rgba(43,44,45,.75)}.sort-link.primary{color:#168aef}.sort-icon{width:14px;height:14px;border:1px solid currentColor;border-radius:2px;display:inline-flex;align-items:center;justify-content:center;font-size:9px;line-height:1}.plan-list{width:100%;min-width:864px;padding-top:0;position:relative}.plan-list::before{content:"";position:absolute;left:27px;top:18px;bottom:18px;width:1px;background:#e5e5e5;z-index:0}.plan-row{position:relative;display:grid;grid-template-columns:56px 36px 36px 108px 92px 92px minmax(96px,1fr) 134px 110px 36px;align-items:center;gap:4px;padding:6px 8px 6px 0;border-radius:2px}.date-axis{width:56px;height:36px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding-right:8px;position:relative;z-index:1}.axis-date{min-width:48px;height:20px;border-radius:22px;background:#f7f7f7;color:rgba(43,44,45,.45);font-size:12px;line-height:20px;text-align:center;position:relative;z-index:1}.offset{width:36px;height:36px;display:flex;align-items:center;font-size:12px;color:#2b2c2d;font-weight:600}.mini-btn,.cell{height:36px;border:.5px solid #e5e5e5;border-radius:2px;background:#fff;box-shadow:0 .5px 1.5px #0000000a;color:#2b2c2d;font-size:12px;display:flex;align-items:center;min-width:0}.mini-btn{width:36px;justify-content:center;padding:0}.mini-btn img,.btn-icon{width:12px;height:12px;display:block;object-fit:contain}.cell{padding:0 10px;justify-content:space-between;gap:8px;position:relative}.cell.task.span-follow{grid-column:7 / span 2}.cell.date .calendar-icon{width:16px;height:16px;display:block;object-fit:contain;flex:none}.cell.disabled{background:#f7f7f7;color:rgba(43,44,45,.45)}.cell.disabled select{color:rgba(43,44,45,.45);cursor:not-allowed}.cell select{position:absolute;inset:0;width:100%;height:100%;border:0;background:transparent;color:inherit;font-size:12px;padding:0 26px 0 10px;appearance:none;cursor:pointer}.cell.date{cursor:pointer}.date-picker{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}.cell .text{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}.cell .arrow{width:12px;height:12px;object-fit:contain;opacity:.75;flex:none}.asset-tag{height:16px;min-width:22px;border-radius:2px;background:#f2f2f2;display:inline-flex;align-items:center;justify-content:center;padding:0 4px;flex:none}.asset-tag img{width:12px;height:12px;object-fit:contain}.cell .input-mark{display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px;border:1px solid #d9d9d9;border-radius:2px;flex:none}.add-plan{width:36px;justify-content:center}.add-plan img{opacity:.42;filter:grayscale(1)}.drawer-foot{position:absolute;left:0;right:0;bottom:0;height:60px;padding:12px 16px 12px 24px;border-top:.5px solid #e5e5e5;background:#fff;display:flex;align-items:center;justify-content:space-between;gap:16px}.foot-left,.foot-right{display:flex;align-items:center;gap:8px}.drawer-btn{height:36px;border:.5px solid #e5e5e5;border-radius:2px;background:#fff;color:#2b2c2d;padding:0 12px;font-size:12px;box-shadow:0 .5px .75px #0000000a;white-space:nowrap;display:inline-flex;align-items:center;gap:4px}.drawer-btn.primary{width:84px;justify-content:center;background:#168aef;color:#fff;border-color:#168aef;font-weight:500}.drawer-btn.ai{border:1px solid transparent;background:linear-gradient(#fff,#fff) padding-box,linear-gradient(158deg,#6394ff 3%,#a16eff 61%,#fd6dff 97%) border-box;color:transparent;background-clip:padding-box,border-box}.drawer-btn.ai span{background:linear-gradient(158deg,#6394ff 3%,#a16eff 61%,#fd6dff 97%);-webkit-background-clip:text;background-clip:text;color:transparent}.notify{display:flex;align-items:center;gap:8px;height:36px;padding:0 12px;border:.5px solid #e5e5e5;border-radius:2px;font-size:12px;background:#fff}.checkbox-img{width:16px;height:16px;display:block}
+.cell.remind{cursor:pointer}.cell.placeholder .text{color:#bfbfbf}.remind-popover{position:absolute;right:44px;top:42px;width:326px;background:#fff;border-radius:4px;box-shadow:0 8px 24px #0000001f;border:.5px solid #e8e8e8;z-index:8;padding:14px}.remind-popover::before{content:"";position:absolute;right:52px;top:-7px;width:14px;height:14px;background:#fff;border-left:.5px solid #e8e8e8;border-top:.5px solid #e8e8e8;transform:rotate(45deg)}.remind-title{font-size:14px;font-weight:600;color:#2b2c2d;margin-bottom:10px}.remind-picker{display:grid;grid-template-columns:1fr 92px;border:.5px solid #d9d9d9;height:164px;overflow:hidden;background:#fff}.remind-col{position:relative;overflow:auto}.remind-col+.remind-col{border-left:.5px solid #e5e5e5}.remind-option{width:100%;height:34px;padding:0 12px;border:0;background:#fff;display:flex;align-items:center;text-align:left;font-size:13px;color:#2b2c2d}.remind-option:hover{background:#f5f9ff}.remind-option.active{background:#e8f3ff;color:#168aef;font-weight:600}.remind-summary{margin-top:10px;color:#777;font-size:12px}.remind-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:12px}.remind-actions button,.confirm-actions button{height:30px;min-width:60px;border-radius:2px;border:.5px solid #d9d9d9;background:#fff;color:#2b2c2d;font-size:13px}.remind-actions .primary,.confirm-actions .primary{border-color:#168aef;background:#168aef;color:#fff}.delete-confirm{position:absolute;left:140px;top:50%;width:250px;background:#fff;border:.5px solid #e8e8e8;border-radius:4px;box-shadow:0 8px 22px #00000020;z-index:7;padding:14px;transform:translateY(-50%)}.delete-confirm::after{content:"";position:absolute;left:-7px;top:50%;width:14px;height:14px;background:#fff;border-left:.5px solid #e8e8e8;border-bottom:.5px solid #e8e8e8;transform:translateY(-50%) rotate(45deg)}.confirm-line{display:flex;align-items:center;gap:8px;font-size:14px;color:#2b2c2d;line-height:20px}.warn-dot{width:18px;height:18px;border-radius:50%;background:#ffae1a;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex:none}.confirm-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:12px}.saved-toast{position:absolute;right:24px;bottom:72px;background:#effaf5;color:#00a65c;border:.5px solid #cbeedd;border-radius:3px;padding:8px 12px;font-size:12px;box-shadow:0 6px 18px #00000012;opacity:0;transform:translateY(6px);transition:.18s ease}.saved-toast.show{opacity:1;transform:translateY(0)}
+.template-drawer{position:absolute;right:0;top:0;width:min(924px,calc(100vw - 92px));height:100vh;background:#fff;box-shadow:-6px 0 16px #00000014,-12px 0 48px #00000008;display:flex;flex-direction:column;z-index:32;transform:translateX(102%);transition:transform .18s ease;visibility:hidden}.template-drawer.open{transform:translateX(0);visibility:visible}.template-head{height:54px;padding:15px 16px 14px 24px;border-bottom:.5px solid #e8e8ec;display:flex;align-items:center;justify-content:space-between}.template-head strong{font-size:14px;color:#2b2c2d;font-weight:600}.template-body{flex:1;min-height:0;display:flex;background:#fff}.template-side{width:260px;border-right:.5px solid #e5e5e5;padding:20px 16px;overflow:auto}.template-section{margin-bottom:8px}.template-cycle-open,.template-cycle{height:36px;width:100%;border:0;background:#fff;padding:0;display:flex;align-items:center;justify-content:space-between;color:#2b2c2d;font-size:12px;font-weight:600;text-align:left;cursor:pointer}.template-cycle-open span,.template-cycle span{color:#2b2c2d}.template-list{padding:4px 0 8px}.template-section.collapsed .template-list{display:none}.template-item{width:100%;min-height:36px;border:.5px solid transparent;border-radius:6px;background:#fff;padding:8px 10px;text-align:left;font-size:12px;color:rgba(43,44,45,.75);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}.template-item.active{background:#f5f9ff;border-color:#c7e3ff}.template-main{flex:1;min-width:0;padding:20px 24px;overflow:auto}.template-main h3{margin:0 0 18px;font-size:14px;color:#2b2c2d;font-weight:600}.template-date-label{display:flex;align-items:center;gap:8px;margin-bottom:24px;font-size:12px;color:#2b2c2d}.template-date-label span{color:#ff4d4f}.template-date-label input{width:118px;height:32px;border:.5px solid #d9d9d9;border-radius:2px;padding:0 8px 0 10px;color:#2b2c2d;background:#fff;cursor:pointer}.template-table-wrap{border:.5px solid #f0f0f0;border-radius:2px;overflow:hidden}.template-table{width:100%;border-collapse:collapse;font-size:12px}.template-table th{height:36px;background:#fafafa;color:#888;font-weight:400;text-align:left;padding:0 8px}.template-table td{height:42px;border-top:.5px solid #f0f0f0;color:#2b2c2d;padding:0 8px;white-space:nowrap}.template-table th:first-child,.template-table td:first-child{width:38px;text-align:center}.template-check{width:16px;height:16px;border:1px solid #d9d9d9;border-radius:2px;appearance:none;background:#fff;vertical-align:middle;cursor:pointer}.template-check:checked{border-color:#168aef;background:#168aef;position:relative}.template-check:checked::after{content:"";display:block;width:8px;height:4px;border-left:2px solid #fff;border-bottom:2px solid #fff;transform:rotate(-45deg);margin:4px 0 0 3px}.template-muted{color:#999}.template-foot{height:64px;border-top:.5px solid #f0f0f0;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;font-size:12px;color:#2b2c2d;background:#fff}.template-foot div{display:flex;gap:12px}.template-cancel,.template-confirm{height:32px;min-width:72px;border-radius:2px;border:.5px solid #d9d9d9;background:#fff;color:#2b2c2d;font-size:12px}.template-confirm{min-width:84px;background:#168aef;border-color:#168aef;color:#fff}.template-confirm:disabled{background:#e4e4e4;border-color:#d9d9d9;color:rgba(0,0,0,.25);cursor:not-allowed}.imported-flash{animation:importFlash 1.1s ease}@keyframes importFlash{0%{background:#f5f9ff}100%{background:transparent}}
+    @media(max-width:1250px){.filters{flex-wrap:wrap}.filters.visit-mode{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px}.view-switch{margin-left:0}.participants th:last-child,.participants td:last-child{padding-left:18px}.actions{gap:3px}.track{width:120px}}
+
+    .task-modal-mask{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:55;display:none;align-items:center;justify-content:center}.task-modal-mask.open{display:flex}.task-modal{background:#fff;border-radius:2px;box-shadow:0 14px 40px #00000024;overflow:hidden;color:#2b2c2d}.task-modal-head{height:56px;padding:0 24px;border-bottom:.5px solid #e5e5e5;display:flex;align-items:center;justify-content:space-between;font-size:16px;font-weight:600}.task-modal-close{width:28px;height:28px;border:0;background:transparent;color:#8c8c8c;font-size:24px;line-height:24px}.task-modal-body{background:#f7f7f7;padding:24px}.task-modal-foot{height:64px;padding:14px 24px;border-top:.5px solid #e5e5e5;background:#fff;display:flex;justify-content:flex-end;gap:12px}.task-btn{height:36px;min-width:84px;border:.5px solid #d9d9d9;border-radius:2px;background:#fff;color:#2b2c2d;font-size:14px}.task-btn.primary{background:#168aef;border-color:#168aef;color:#fff}.task-btn:disabled{background:#f0f0f0;border-color:#e5e5e5;color:#bfbfbf}.task-form{width:500px;margin:0 auto}.task-form-row{display:grid;grid-template-columns:72px 1fr;align-items:start;gap:12px;margin-bottom:18px}.task-form-row label{font-size:14px;line-height:36px;color:#2b2c2d;text-align:right}.required{color:#ff4d4f;margin-right:4px}.task-textarea{width:100%;height:74px;border:.5px solid #d9d9d9;border-radius:2px;background:#fff;padding:8px 10px;resize:none;font-size:14px;box-sizing:border-box}.counter{text-align:right;color:#bfbfbf;font-size:12px;margin-top:4px}.upload-tile{width:80px;height:80px;border:.5px dashed #d9d9d9;border-radius:2px;background:#fff;color:#8c8c8c;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;font-size:12px}.upload-tile.active{border-color:#168aef;background:#e8f3ff;color:#168aef}.upload-plus{font-size:22px;line-height:18px}.upload-help{margin-top:8px;color:#8c8c8c;font-size:12px}.radio-stack{display:flex;flex-direction:column;gap:10px;padding-top:8px}.radio-stack label,.radio-line label{display:flex;align-items:center;gap:8px;text-align:left;line-height:20px;font-size:14px;color:#2b2c2d}.radio-note{color:#8c8c8c;font-size:12px;margin-left:24px}.edu-modal{width:720px}.edu-body{height:430px;display:grid;grid-template-columns:208px 210px 1fr;gap:0;padding:0;background:#fff}.edu-panel{border-right:.5px solid #e5e5e5;padding:18px}.edu-title{font-size:16px;font-weight:600;margin-bottom:14px}.edu-search{height:34px;border:.5px solid #d9d9d9;border-radius:2px;padding:0 10px;color:#999;display:flex;align-items:center;font-size:13px;margin-bottom:14px}.edu-filter-title{font-size:12px;color:#888;margin:12px 0 8px}.edu-chips{display:flex;gap:6px;flex-wrap:wrap}.edu-chip{height:24px;padding:0 8px;border-radius:2px;background:#eef6ff;color:#168aef;font-size:12px;display:inline-flex;align-items:center}.edu-selects{display:flex;gap:6px;margin-top:14px}.edu-selects button{height:28px;border:.5px solid #e5e5e5;background:#fff;border-radius:2px;font-size:12px;color:#555;padding:0 8px}.edu-tree{margin-top:14px;display:flex;flex-direction:column;gap:4px}.edu-tree button,.edu-list button{height:34px;border:0;background:#fff;text-align:left;border-radius:2px;padding:0 10px;color:#2b2c2d;font-size:13px}.edu-tree button.active,.edu-list button.active{background:#e8f3ff;color:#168aef}.edu-list{padding:52px 12px 12px;border-right:.5px solid #e5e5e5}.edu-detail{padding:52px 18px;color:#8c8c8c;font-size:13px}.edu-lib{margin-right:auto;color:#168aef;border:0;background:transparent;font-size:13px}.visit-modal{width:800px}.visit-form{width:664px;margin:0 auto}.visit-row{display:grid;grid-template-columns:92px 1fr;gap:12px;margin-bottom:18px;align-items:start}.visit-row-label{text-align:right;font-size:14px;line-height:34px;color:#2b2c2d}.visit-static{height:34px;display:flex;align-items:center;font-size:14px}.crf-chips{display:flex;gap:8px;flex-wrap:wrap}.crf-chip{height:30px;border:.5px solid #d9d9d9;background:#fff;border-radius:2px;padding:0 10px;color:#2b2c2d;font-size:13px}.crf-chip.active{border-color:#168aef;color:#168aef;background:#e8f3ff}.radio-line{display:flex;gap:28px;align-items:center;height:34px}.visit-extra{display:none;margin-top:10px}.visit-extra.open{display:block}.visit-select{height:34px;min-width:180px;border:.5px solid #d9d9d9;border-radius:2px;background:#fff;padding:0 8px;color:#2b2c2d}.deadline-line{display:flex;align-items:center;gap:8px;color:#555;font-size:14px;min-height:34px}.inline-number{width:48px;height:32px;border:.5px solid #d9d9d9;border-radius:2px;text-align:center;background:#fff}.small-switch{width:36px;height:20px;border:0;border-radius:10px;background:#168aef;position:relative}.small-switch::after{content:"";position:absolute;right:2px;top:2px;width:16px;height:16px;background:#fff;border-radius:50%}
+
+    /* Figma modal refinement */
+    .task-modal{font-family:"PingFang SC","PingFang HK","Helvetica Neue",Arial,sans-serif;border-radius:2px;box-shadow:0 3px 6px -4px rgba(0,0,0,.12),0 6px 16px rgba(0,0,0,.08),0 9px 28px 8px rgba(0,0,0,.05);color:#2b2c2d}.task-modal-head{height:55px;box-sizing:border-box;padding:16px 24px;border-bottom:1px solid #f0f0f0;font-size:16px;line-height:22px;font-weight:500;color:#222}.task-modal-close{width:24px;height:24px;font-size:20px;color:rgba(43,44,45,.45)}.task-modal-body{background:#f7f7f7}.task-modal-foot{box-sizing:border-box;border-top:0}.task-btn{height:32px;min-width:110px;border:1px solid #d9d9d9;border-radius:2px;font-size:12px;line-height:18.858px;box-shadow:0 2px 0 rgba(0,0,0,.02);letter-spacing:0}.task-btn.primary{background:#1890ff;border-color:#1890ff;box-shadow:0 2px 0 rgba(0,0,0,.04)}.task-btn:disabled{background:#e4e4e4;border-color:#d9d9d9;color:rgba(0,0,0,.25)}
+    .reminder-task{width:580px}.reminder-task .task-modal-body{height:446px;box-sizing:border-box;padding:24px 40px}.reminder-task .task-modal-foot{height:64px;padding:16px 20px;gap:8px;background:#fff}.task-form{width:500px}.task-form-row{grid-template-columns:60px 440px;gap:0;margin:0}.task-form-row label{padding-right:12px;box-sizing:border-box;font-size:12px;line-height:18.858px;color:rgba(43,44,45,.75);font-weight:400;text-align:right}.task-form-row:nth-child(1){height:77px}.task-form-row:nth-child(2){height:128px;padding-top:24px;box-sizing:border-box}.task-form-row:nth-child(3){height:169px;padding-top:24px;box-sizing:border-box}.required{color:#f04438;margin-right:0}.task-textarea{height:73px;border:0;border-radius:2px;background:#fff;box-shadow:0 .5px 1.5px rgba(0,0,0,.1);padding:8px 10px;font-size:12px;line-height:18px;color:#2b2c2d}.reminder-task .counter{display:none}.upload-tile{width:80px;height:80px;border:1px dashed #d9d9d9;background:#fafafa;border-radius:2px;color:rgba(43,44,45,.45);font-size:12px;line-height:20px;gap:4px}.upload-tile.active{border-color:#1890ff;background:#f4faff;color:#168aef}.upload-plus{font-size:18px;line-height:18px}.upload-help{margin-top:4px;color:rgba(43,44,45,.45);font-size:12px;line-height:20px}.radio-stack{gap:13px;padding-top:2px}.radio-stack label,.radio-line label{font-size:12px;line-height:18px;color:#2b2c2d;gap:8px}.radio-stack input,.radio-line input{width:14px;height:14px;margin:0;accent-color:#1890ff}.radio-note{margin-left:24px;margin-top:-11px;color:rgba(43,44,45,.45);font-size:12px;line-height:18.858px;white-space:nowrap}
+    .edu-modal{width:650px;border-radius:4px}.edu-modal .task-modal-head{display:none}.edu-body{height:280px;grid-template-columns:190px 160px 300px;background:#fff}.edu-panel{box-sizing:border-box;padding:16px 12px 12px;border-right:.5px solid #eee}.edu-title{font-size:12px;line-height:18.858px;font-weight:400;margin:0 0 10px;color:#2b2c2d}.edu-search{height:30px;margin-bottom:12px;border:1px solid #d8b4ff;border-radius:4px;color:rgba(43,44,45,.45);font-size:12px;line-height:18px;padding:0 12px}.edu-filter-title{font-size:12px;line-height:18px;color:rgba(43,44,45,.45);margin:12px 0 8px}.edu-chips{gap:6px}.edu-chip{height:24px;background:#f7f7f7;color:#2b2c2d;border-radius:2px;padding:0 8px;font-size:12px}.edu-selects{display:flex;flex-direction:column;gap:8px;margin-top:12px}.edu-selects button{height:22px;border:0;background:#fff;color:#2b2c2d;padding:0;text-align:left;font-size:12px;line-height:18px}.edu-tree{margin-top:10px;gap:0}.edu-tree button,.edu-list button{height:28px;border-radius:0;padding:0 12px;font-size:12px;line-height:18.858px;color:#2b2c2d}.edu-tree button{display:flex;align-items:center;justify-content:space-between}.edu-tree button.active,.edu-list button.active{background:#e8f3ff;color:#168aef}.edu-list{box-sizing:border-box;padding:12px 0;border-right:.5px solid rgba(0,0,0,.08)}.edu-list button{height:43px;padding:10px 16px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.edu-detail{box-sizing:border-box;padding:0 20px;display:flex;align-items:center;justify-content:center;text-align:center;color:rgba(0,0,0,.85);font-size:12px;line-height:18.858px}.edu-modal .task-modal-foot{height:60px;padding:12px 14px 12px 12px;background:#f7f7f7;gap:20px;align-items:center}.edu-modal .task-modal-foot .task-btn{height:36px;min-width:140px}.edu-lib{height:36px;min-width:152px;margin-right:auto;background:#fff;border:1px solid transparent;border-radius:2px;color:#168aef;font-size:12px;box-shadow:0 .5px .75px rgba(0,0,0,.1)}
+    .visit-modal{width:800px;background:#f7f7f7}.visit-modal .task-modal-head{height:48px;padding:16px;background:#fff;border-bottom:0;color:#2b2c2d;line-height:16px}.visit-modal .task-modal-body{padding:32px 32px 0}.visit-form{width:736px;margin:0}.visit-row{grid-template-columns:86px 650px;gap:0;margin:0;align-items:start}.visit-row-label{box-sizing:border-box;padding-right:16px;padding-top:10px;text-align:right;font-size:12px;line-height:18.858px;color:rgba(43,44,45,.75)}.visit-static{height:38px;font-size:12px;line-height:18.858px;align-items:center}.visit-row:nth-child(1){height:38px}.visit-row:nth-child(2){min-height:89.7px}.visit-row:nth-child(3){height:128px;padding-top:8px;box-sizing:border-box}.visit-row:nth-child(4),.visit-row:nth-child(5),.visit-row:nth-child(6){height:47px;padding-top:8px;box-sizing:border-box}.visit-row:nth-child(7){min-height:113px;overflow:hidden}.crf-chips{gap:8px;align-content:center;align-items:center;min-height:89.7px}.crf-chip{height:36.85px;border:0;background:#fff;border-radius:2px;padding:0 16px;color:#2b2c2d;font-size:12px;line-height:18.858px;box-shadow:0 .5px .75px rgba(0,0,0,.1)}.crf-chip.active{border:0;background:#fff;color:#2b2c2d}.visit-modal .task-textarea{height:120px;width:650px}.visit-modal .counter{position:absolute;right:8px;bottom:7px;color:rgba(43,44,45,.75);font-size:12px;line-height:18.858px;margin:0}.radio-line{height:32px;gap:8px;padding-top:10px;box-sizing:border-box}.radio-line label{min-width:64px}.visit-extra{margin-top:8px}.visit-select{width:650px;height:32px;border:0;background:#fff;border-radius:2px;padding:0 11px;font-size:12px;color:rgba(43,44,45,.45);box-shadow:0 .5px 1.5px rgba(0,0,0,.1)}.deadline-line{height:auto;min-height:88px;align-items:flex-start;gap:8px;padding-top:16px;font-size:12px;line-height:32px;color:#2b2c2d;flex-wrap:wrap}.small-switch{width:44px;height:22px;margin-right:610px;background:#168aef}.small-switch::after{width:18px;height:18px;right:2px;top:2px}.inline-number{width:80px;height:32px;border:1px solid #d9d9d9;border-radius:2px;font-size:14px;text-align:left;padding:0 11px;box-sizing:border-box}.visit-modal .task-modal-foot{height:88px;padding:24px 30px;background:#f7f7f7;gap:8px}.visit-modal .task-modal-foot .task-btn{height:40px;min-width:120px;border-radius:4px;font-weight:500}.visit-modal .task-modal-foot .task-btn:not(.primary){border-color:#168aef;color:#168aef;background:#fff}
+
+    .task-textarea:focus,.visit-select:focus,.inline-number:focus{outline:none;border:1px solid #1890ff;box-shadow:0 0 0 1px #1890ff inset;background:#fff}.task-textarea:focus{padding:7px 9px}.visit-modal .task-textarea:focus{padding:7px 9px}.reminder-task .task-textarea:focus{padding:7px 9px}
+
+    /* Education picker: match Figma large dialog */
+    .edu-modal{width:min(1322px,calc(100vw - 60px));height:690px;border-radius:3px;background:#fff;overflow:hidden}.edu-modal .task-modal-head{display:none}.edu-body{height:608px;display:grid;grid-template-columns:385px 330px 1fr;background:#fff}.edu-panel{box-sizing:border-box;padding:32px 22px 0;border-right:1px solid #eee;background:#fff}.edu-title{font-size:16px;line-height:22px;font-weight:400;color:#2b2c2d;margin:0 0 18px}.edu-search{height:58px;box-sizing:border-box;border:1px solid #a780ff;border-radius:14px;padding:0 16px;display:flex;align-items:center;justify-content:space-between;color:rgba(43,44,45,.35);font-size:14px;line-height:22px;margin-bottom:18px;background:#fff}.edu-search-icon{font-size:30px;line-height:1;color:#8d6bff;transform:rotate(-15deg);font-family:Arial,sans-serif}.edu-filter-title{font-size:14px;line-height:22px;color:rgba(43,44,45,.45);margin:0 0 12px}.edu-chips{display:flex;gap:10px;margin-bottom:26px}.edu-chip{height:38px;box-sizing:border-box;padding:0 14px;border-radius:4px;background:#f7f7f7;color:#2b2c2d;font-size:16px;line-height:38px}.edu-selects{display:flex;flex-direction:column;gap:20px;margin:0 0 26px}.edu-selects button{height:22px;border:0;background:#fff;color:#2b2c2d;font-size:16px;line-height:22px;padding:0;display:flex;align-items:center;justify-content:space-between}.edu-selects button span{color:rgba(43,44,45,.45);font-size:14px}.edu-tree{margin:0 -22px;display:flex;flex-direction:column;gap:0}.edu-tree button{height:44px;border:0;background:#fff;border-radius:0;padding:0 30px 0 22px;color:#2b2c2d;font-size:16px;line-height:22px;display:flex;align-items:center;justify-content:space-between}.edu-tree button.active{background:#e8f3ff;color:#168aef;font-weight:500}.edu-tree .muted{color:rgba(43,44,45,.35)}.edu-tree b{font-size:14px;font-weight:500;color:#168aef}.edu-tree .muted-count{color:rgba(43,44,45,.35)}.edu-list{box-sizing:border-box;padding:22px 22px 0;border-right:1px solid #eee;background:#fff}.edu-list button{display:block;width:100%;height:60px;border:0;background:#fff;padding:0;text-align:left;color:#2b2c2d;font-size:16px;line-height:22px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.edu-list button.active{background:#fff;color:#168aef;font-weight:500}.edu-feedback{margin-top:24px;text-align:center;color:rgba(43,44,45,.65);font-size:16px;line-height:22px}.edu-feedback a{color:#168aef;text-decoration:underline}.edu-detail{box-sizing:border-box;padding:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;text-align:center;color:#2b2c2d;font-size:16px;line-height:22px;background:#fff}.edu-empty-art{width:120px;height:100px;background:linear-gradient(180deg,#eef4ff,#e8f0ff);clip-path:polygon(15% 74%,50% 46%,85% 74%,70% 88%,30% 88%);opacity:.85;position:relative}.edu-empty-art::before{content:"";position:absolute;left:42px;top:18px;width:42px;height:54px;border-radius:4px;background:#fff;box-shadow:0 0 0 4px #dfeaff inset}.edu-modal .task-modal-foot{height:82px;box-sizing:border-box;padding:16px 28px 16px 26px;background:#f7f7f7;display:flex;align-items:center;gap:28px;border-top:0}.edu-modal .task-modal-foot .task-btn{height:50px;min-width:194px;border-radius:4px;font-size:16px;background:#fff;border-color:#e5e5e5;color:#168aef;box-shadow:0 .5px .75px rgba(0,0,0,.1)}.edu-modal .task-modal-foot .task-btn.primary{background:#1890ff;border-color:#1890ff;color:#fff}.edu-modal .task-modal-foot .task-btn.primary:disabled{background:#e4e4e4;border-color:#d9d9d9;color:rgba(0,0,0,.25)}.edu-lib{height:50px;min-width:210px;margin-right:auto;border:1px solid transparent;border-radius:4px;background:#fff;color:#168aef;font-size:16px;box-shadow:0 .5px .75px rgba(0,0,0,.1)}
+
+    /* Visit modal behavior fixes */
+    .visit-form{width:736px}.visit-row{grid-template-columns:112px 624px}.visit-row-label{width:112px;white-space:nowrap;padding-right:16px}.visit-static,.crf-chips,.visit-detail-wrap,.visit-row>div:last-child{width:624px}.crf-chips{min-height:89.7px}.visit-modal .task-textarea.hidden-detail-input{display:none}.visit-detail-wrap{position:relative}.visit-detail-box{box-sizing:border-box;width:624px;min-height:120px;background:#fff;border-radius:2px;box-shadow:0 .5px 1.5px rgba(0,0,0,.1);padding:10px 12px;display:flex;align-content:flex-start;align-items:flex-start;gap:8px;flex-wrap:wrap}.visit-detail-box:focus{outline:none;border:1px solid #1890ff;box-shadow:0 0 0 1px #1890ff inset;padding:9px 11px}.visit-detail-tag{display:inline-flex;align-items:center;gap:2px;color:#168aef;font-size:12px;line-height:18px;background:#fff;border-radius:2px}.visit-detail-tag button{border:0;background:transparent;color:#168aef;padding:0 0 0 2px;font-size:12px;line-height:16px;cursor:pointer}.visit-detail-row{height:128px!important;padding-top:8px;box-sizing:border-box}.visit-row.collect-row{height:47px!important;padding-top:8px;box-sizing:border-box}.visit-extra{display:none!important;margin:0!important;height:47px!important;padding-top:8px;box-sizing:border-box}.visit-extra.open{display:grid!important}.visit-select{width:624px}.visit-row:nth-child(6),.visit-row:nth-child(7){height:47px;padding-top:8px;box-sizing:border-box}.visit-row:nth-child(8){min-height:113px;overflow:hidden}.deadline-line{width:624px}.small-switch{margin-right:580px}.small-switch.off{background:#bfbfbf}.small-switch.off::after{left:2px;right:auto}.inline-number:disabled{background:#f5f5f5;color:rgba(43,44,45,.35);border-color:#d9d9d9;cursor:not-allowed}
+
+    /* 患教选择弹窗：按设计稿恢复为紧凑三栏、12px 字号 */
+    .edu-modal{width:650px!important;height:340px!important;border-radius:2px!important;background:#fff!important;overflow:hidden!important;color:#2b2c2d!important}.edu-modal .task-modal-head{display:none!important}.edu-body{height:280px!important;display:grid!important;grid-template-columns:190px 160px 300px!important;background:#fff!important}.edu-panel{box-sizing:border-box!important;padding:16px 12px 0!important;border-right:1px solid #eeeeee!important;background:#fff!important}.edu-title{font-size:12px!important;line-height:18px!important;font-weight:400!important;margin:0 0 12px!important;color:#2b2c2d!important}.edu-search{height:30px!important;box-sizing:border-box!important;border:1px solid #a780ff!important;border-radius:8px!important;padding:0 12px!important;display:flex!important;align-items:center!important;justify-content:space-between!important;color:rgba(43,44,45,.35)!important;font-size:12px!important;line-height:18px!important;margin:0 0 12px!important;background:#fff!important}.edu-search-icon{font-size:18px!important;line-height:1!important;color:#8d6bff!important;transform:rotate(-15deg)!important;font-family:Arial,sans-serif!important}.edu-filter-title{font-size:12px!important;line-height:18px!important;color:rgba(43,44,45,.45)!important;margin:0 0 8px!important}.edu-chips{display:flex!important;gap:6px!important;margin:0 0 16px!important;flex-wrap:wrap!important}.edu-chip{height:24px!important;box-sizing:border-box!important;padding:0 8px!important;border-radius:2px!important;background:#f7f7f7!important;color:#2b2c2d!important;font-size:12px!important;line-height:24px!important}.edu-selects{display:flex!important;flex-direction:column!important;gap:10px!important;margin:0 0 14px!important}.edu-selects button{height:18px!important;border:0!important;background:#fff!important;color:#2b2c2d!important;font-size:12px!important;line-height:18px!important;padding:0!important;display:flex!important;align-items:center!important;justify-content:space-between!important}.edu-selects button span{color:rgba(43,44,45,.45)!important;font-size:12px!important}.edu-tree{margin:0 -12px!important;display:flex!important;flex-direction:column!important;gap:0!important}.edu-tree button{height:32px!important;border:0!important;background:#fff!important;border-radius:0!important;padding:0 16px 0 12px!important;color:#2b2c2d!important;font-size:12px!important;line-height:18px!important;display:flex!important;align-items:center!important;justify-content:space-between!important}.edu-tree button.active{background:#e8f3ff!important;color:#168aef!important;font-weight:500!important}.edu-tree .muted{color:rgba(43,44,45,.35)!important}.edu-tree b{font-size:12px!important;font-weight:500!important;color:#168aef!important}.edu-tree .muted-count{color:rgba(43,44,45,.35)!important}.edu-list{box-sizing:border-box!important;padding:22px 12px 0!important;border-right:1px solid #eeeeee!important;background:#fff!important}.edu-list button{display:block!important;width:100%!important;height:42px!important;border:0!important;background:#fff!important;padding:0!important;text-align:left!important;color:#2b2c2d!important;font-size:12px!important;line-height:18px!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important}.edu-list button.active{background:#fff!important;color:#168aef!important;font-weight:500!important}.edu-feedback{margin-top:14px!important;text-align:center!important;color:rgba(43,44,45,.65)!important;font-size:12px!important;line-height:18px!important}.edu-feedback a{color:#168aef!important;text-decoration:underline!important}.edu-detail{box-sizing:border-box!important;padding:0!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:10px!important;text-align:center!important;color:#2b2c2d!important;font-size:12px!important;line-height:18px!important;background:#fff!important}.edu-empty-art{width:72px!important;height:60px!important;background:linear-gradient(180deg,#eef4ff,#e8f0ff)!important;clip-path:polygon(15% 74%,50% 46%,85% 74%,70% 88%,30% 88%)!important;opacity:.85!important;position:relative!important}.edu-empty-art::before{content:""!important;position:absolute!important;left:25px!important;top:10px!important;width:26px!important;height:34px!important;border-radius:3px!important;background:#fff!important;box-shadow:0 0 0 3px #dfeaff inset!important}.edu-modal .task-modal-foot{height:60px!important;box-sizing:border-box!important;padding:12px!important;background:#f7f7f7!important;display:flex!important;align-items:center!important;gap:12px!important;border-top:0!important}.edu-modal .task-modal-foot .task-btn{height:36px!important;min-width:140px!important;border-radius:2px!important;font-size:12px!important;background:#fff!important;border-color:#e5e5e5!important;color:#168aef!important;box-shadow:0 .5px .75px rgba(0,0,0,.1)!important}.edu-modal .task-modal-foot .task-btn.primary{background:#1890ff!important;border-color:#1890ff!important;color:#fff!important}.edu-modal .task-modal-foot .task-btn.primary:disabled{background:#e4e4e4!important;border-color:#d9d9d9!important;color:rgba(0,0,0,.25)!important}.edu-lib{height:36px!important;min-width:152px!important;margin-right:auto!important;border:1px solid transparent!important;border-radius:2px!important;background:#fff!important;color:#168aef!important;font-size:12px!important;box-shadow:0 .5px .75px rgba(0,0,0,.1)!important}
+
+
+    /* 访视计划弹窗：收紧底部两行间距，让时限开关与标题同一行对齐 */
+    .visit-row:nth-child(7){height:38px;min-height:38px;padding-top:0;align-items:start}.visit-row:nth-child(7) .visit-row-label{padding-top:0;line-height:32px}.visit-row:nth-child(7) .radio-line{padding-top:0}
+    .visit-row.visit-deadline-row{height:auto;min-height:78px;padding:0;overflow:visible;align-items:start}.visit-deadline-row .visit-row-label{padding-top:0;line-height:32px}.visit-deadline-row .deadline-line{display:flex;flex-direction:column;align-items:flex-start;gap:8px;padding-top:5px;min-height:0;height:auto;line-height:22px}.visit-deadline-row .small-switch{margin:0;flex:none}.deadline-description{display:flex;align-items:center;gap:8px;min-height:32px;white-space:nowrap}
+    html.plan-embed,html.plan-embed body{background:transparent!important;min-width:0}html.plan-embed body>.sidebar,html.plan-embed body>main{display:none!important}
+
+
+
+    /* 患教弹窗底部操作区：固定在底部并遮住内容溢出 */
+    .edu-modal{display:flex!important;flex-direction:column!important}.edu-body{flex:0 0 280px!important;overflow:hidden!important}.edu-panel,.edu-list,.edu-detail{overflow:hidden!important}.edu-modal .task-modal-foot{position:relative!important;z-index:5!important;flex:0 0 60px!important;width:100%!important;background:#f7f7f7!important;border-top:0!important;justify-content:flex-end!important}.edu-modal .task-modal-foot .edu-lib{margin-right:auto!important}.edu-tree{max-height:120px!important;overflow:hidden!important}
+
+  
+.visit-modal #visit-detail-input{display:block;width:100%;height:120px;border:1px solid transparent;padding:10px 12px 28px;font-size:12px;line-height:20px;font-family:inherit;box-shadow:0 .5px 1.5px #0000001a}.visit-modal #visit-detail-input:focus{outline:none;border-color:#168aef}.visit-modal .crf-chip.active{background:#e8f3ff;color:#168aef;box-shadow:inset 0 0 0 1px #168aef}
+</style>
+<script>if(new URLSearchParams(location.search).has("planEmbed"))document.documentElement.classList.add("plan-embed");</script><link rel="stylesheet" href="clinical-research-shell.css">
+<script src="clinical-research-shell.js?v=6"></script>
+<link rel="stylesheet" href="participant-detail-modules.css?v=7">
+<link rel="stylesheet" href="participant-visits.css?v=8">
+</head>
+<body>
+  <aside class="sidebar" aria-label="系统导航">
+    <img class="logo" src="figma-clinical-assets/logo.png" alt="平台标识">
+    <div class="bolt-wrap"><img src="figma-clinical-assets/bolt.svg" alt=""><span class="badge">9</span></div>
+    <nav class="nav" aria-label="模块">
+      <div class="nav-item"><img src="figma-clinical-assets/nav_work.svg" alt="">工作台</div>
+      <div class="nav-item"><img src="figma-clinical-assets/nav_patient.svg" alt="">患者管理</div>
+      <div class="nav-item"><img src="figma-clinical-assets/nav_admission.svg" alt="">入院计划</div>
+      <div class="nav-item"><img src="figma-clinical-assets/nav_review.svg" alt="">复查监测</div>
+      <div class="nav-item"><img src="figma-clinical-assets/nav_follow.svg" alt="">患者随访</div>
+      <div class="nav-item"><img src="figma-clinical-assets/nav_nutrition.svg" alt="">营养检测</div>
+      <div class="nav-item"><img src="figma-clinical-assets/nav_dashboard.svg" alt="">数据看板</div>
+      <div class="nav-item"><img src="figma-clinical-assets/nav_notice.svg" alt="">消息通知</div>
+      <div class="nav-item active" aria-current="page"><img src="figma-clinical-assets/nav_clinical.svg" alt="">临床试验</div>
+    </nav>
+    <img class="settings" src="figma-clinical-assets/nav_settings.svg" alt="设置">
+  </aside>
+  <main class="page">
+    <nav class="management-sections" aria-label="参与者管理视图"><button type="button" data-management-section="participants" aria-pressed="true">参与者视图</button><button type="button" data-management-section="visits" aria-pressed="false">访视视图</button></nav>
+    <section aria-label="参与者筛选" class="filters">
+      <select class="control select project-filter" id="project-filter" aria-label="项目筛选"><option value="">全部项目</option></select>
+      <select class="control select hospital-filter" id="hospital-filter" aria-label="研究中心筛选"><option value="">全部中心</option><option>第一医院</option><option>第二医院</option><option>肿瘤专科医院</option></select>
+      <select class="control select status-filter" id="status-filter" aria-label="参与者状态"><option value="">参与者状态</option><option>已入组</option><option>筛选中</option><option>研究结束</option><option>筛选失败</option><option>随访中</option></select>
+      <select class="control select visit-filter" id="visit-filter" aria-label="访视是否完成"><option value="">访视是否完成</option><option value="complete">已完成</option><option value="incomplete">未完成</option></select>
+      <select class="control select visit-window-filter" id="visit-window-filter" aria-label="访视时间状态"><option value="">全部访视时间</option><option>窗口期内访视</option><option>超窗待访视</option><option>即将访视（7天后访视）</option></select>
+      <input class="control search" id="participant-search" type="search" placeholder="参与者姓名缩写/编号" aria-label="参与者姓名缩写或编号">
+      <select class="control select visit-progress-filter" id="visit-progress-filter" aria-label="访视状态" hidden><option value="">全部访视状态</option><option value="activated">已激活</option><option value="completed">已完成</option><option value="terminated">已终止</option></select>
+      <select class="control select visit-appointment-filter" id="visit-appointment-filter" aria-label="预约状态" hidden><option value="">全部预约</option><option value="booked">已预约</option><option value="unbooked">未预约</option><option value="cancelled">取消预约</option></select>
+      <select class="control select visit-time-window-filter" id="visit-time-window-filter" aria-label="访视窗口情况" hidden><option value="">全部窗口情况</option><option value="upcoming">未到窗口</option><option value="window">窗口期内</option><option value="overdue">已超窗</option><option value="soon">即将访视（7天后访视）</option></select>
+      <label class="visit-date-range" id="visit-date-range" hidden><input class="control" type="date" id="visit-start-filter" aria-label="访视开始日期"><span>至</span><input class="control" type="date" id="visit-end-filter" aria-label="访视结束日期"></label>
+      <button class="control reset" id="reset" type="button">重 置</button>
+    </section>
+    <div class="view-panel" id="participant-view"><div class="table-wrap"><table class="participants"><colgroup><col><col><col><col><col><col></colgroup><thead><tr><th>姓名</th><th>参与者编号</th><th>参与试验</th><th>参与者状态</th><th>访视完成率</th><th>操作</th></tr></thead><tbody id="rows"></tbody></table></div></div>
+    <section id="visit-view" class="view-panel" aria-label="访视列表" hidden></section>
+    <footer class="pagination"><span id="count">共 10 条</span><button class="page-btn" type="button" disabled aria-label="上一页"><img src="figma-clinical-assets/prev.svg" alt=""></button><button class="page-btn current" type="button" aria-current="page">1</button><button class="page-btn" type="button" disabled aria-label="下一页"><img src="figma-clinical-assets/next.svg" alt=""></button></footer>
+  </main>
+  <div class="drawer-mask" id="plan-drawer-mask" aria-hidden="true">
+    <section class="plan-drawer" role="dialog" aria-modal="true" aria-labelledby="plan-title">
+      <header class="drawer-head">
+        <div class="participant-summary">
+          <div class="summary-line"><span class="summary-name" id="drawer-participant">张*（S001）</span><span class="status enrolled" id="drawer-status">已入组</span></div>
+          <div class="summary-meta"><span>入组时间：<b>2026-04-24</b></span><span>参与试验：<b id="drawer-study">这是临床研究的名称这是临床研究的名称～</b></span></div>
+        </div>
+        <button class="drawer-close" id="drawer-close" type="button" aria-label="关闭">×</button>
+      </header>
+      <div class="drawer-body">
+        <div class="plan-toolbar">
+          <div class="plan-tabs" aria-label="计划视图"><button class="plan-tab active" type="button">计划管理</button><button class="plan-tab" type="button">计划历史</button></div>
+          <div class="plan-tools">
+            <span class="agent-switch">智能体 <span class="switch" aria-hidden="true"></span></span>
+            <span class="sort-link primary"><span class="sort-icon">T</span> 开始日期升序</span>
+            <span class="sort-link"><span class="sort-icon">P</span> 计划日期升序</span>
+          </div>
+        </div>
+        <div class="plan-list" id="plan-title"></div><div class="saved-toast" id="saved-toast">已保存</div>
+      </div>
+      <footer class="drawer-foot">
+        <div class="foot-left"><button class="drawer-btn" type="button"><img class="btn-icon" src="figma-clinical-assets/drawer-footer-end.svg" alt="">结束所有计划</button><button class="drawer-btn" id="import-template" type="button"><img class="btn-icon" src="figma-clinical-assets/drawer-footer-import.svg" alt="">从模板导入</button><button class="drawer-btn" id="add-single-plan" type="button"><img class="btn-icon" src="figma-clinical-assets/drawer-footer-add.svg" alt="">新增单项</button><button class="drawer-btn" type="button"><img class="btn-icon" src="figma-clinical-assets/drawer-footer-reuse.svg" alt="">复用历史计划</button></div>
+        <div class="foot-right"><label class="notify"><img class="checkbox-img" src="figma-clinical-assets/drawer-checkbox-checked.svg" alt="">通知患者</label><button class="drawer-btn ai" type="button"><span>智能校验</span></button><button class="drawer-btn primary" id="save-plan" type="button">保存</button></div>
+      </footer>
+    </section>
+
+    <div class="task-modal-mask" id="reminder-task-modal" aria-hidden="true">
+      <section class="task-modal reminder-task" role="dialog" aria-modal="true" aria-label="提醒计划">
+        <header class="task-modal-head"><span>提醒计划</span><button class="task-modal-close" type="button" data-task-close="reminder">×</button></header>
+        <div class="task-modal-body">
+          <div class="task-form">
+            <div class="task-form-row"><label><span class="required">*</span>标题</label><div><textarea class="task-textarea" id="reminder-title-input" maxlength="255" placeholder="请输入标题"></textarea><div class="counter" id="reminder-title-count">0/255</div></div></div>
+            <div class="task-form-row"><label>图片附件</label><div><button class="upload-tile" id="reminder-upload" type="button"><span class="upload-plus">+</span><span id="reminder-upload-text">点击上传</span></button><div class="upload-help">最多上传1张；仅支持jpg/jpeg/png格式；大小5M以内</div></div></div>
+            <div class="task-form-row"><label>跟进设置</label><div class="radio-stack" id="reminder-follow-radios"><label><input type="radio" name="reminder-follow" value="不跟进" checked>不跟进</label><label><input type="radio" name="reminder-follow" value="参与者未读跟进">参与者未读跟进</label><div class="radio-note">提醒发出后，参与者需阅读提醒，若超时未阅读，在工作台提醒我</div><label><input type="radio" name="reminder-follow" value="参与者未确认跟进">参与者未确认跟进</label><div class="radio-note">提醒发出后，参与者需手动确认完成提醒，若超时未确认，将在工作台提醒我</div></div></div>
+          </div>
+        </div>
+        <footer class="task-modal-foot"><button class="task-btn" type="button" data-task-cancel="reminder">取消</button><button class="task-btn primary" id="reminder-task-confirm" type="button">确定</button></footer>
+      </section>
+    </div>
+    <div class="task-modal-mask" id="education-task-modal" aria-hidden="true">
+      <section class="task-modal edu-modal" role="dialog" aria-modal="true" aria-label="选择患教内容">
+        <header class="task-modal-head"><span>请选择患教内容</span><button class="task-modal-close" type="button" data-task-close="education">×</button></header>
+        <div class="edu-body">
+          <aside class="edu-panel">
+            <div class="edu-title">请选择患教内容</div>
+            <div class="edu-search"><span>智能搜索</span><span class="edu-search-icon">⌕</span></div>
+            <div class="edu-filter-title">推荐搜索词</div>
+            <div class="edu-chips"><span class="edu-chip">脑胶质瘤</span><span class="edu-chip">初诊</span></div>
+            <div class="edu-selects"><button type="button">全部病种<span>⌄</span></button><button type="button">全部治疗方案<span>⌄</span></button></div>
+            <div class="edu-tree">
+              <button class="muted folder" type="button"><span>⌄　已删除目录</span></button>
+              <button class="active" type="button"><span>　　未分类</span><b>2</b></button>
+              <button class="muted folder" type="button"><span>⌄　海心回归1</span></button>
+              <button type="button"><span>　　海心回归子目录一</span><b class="muted-count">1</b></button>
+              <button class="muted folder" type="button"><span>⌄　测试患教推荐公共库</span></button>
+            </div>
+          </aside>
+          <div class="edu-list" id="education-list"><button type="button" data-edu-title="我多想回到家乡，再回到他的身旁">我多想回到家乡，再回到他的身旁</button><button type="button" data-edu-title="aweghdd">aweghdd</button><div class="edu-feedback">没有合适患教？<a href="javascript:void(0)">去反馈</a></div></div>
+          <div class="edu-detail" id="education-detail"><div class="edu-empty-art"></div><div>点击左侧列表查看详情</div></div>
+        </div>
+        <footer class="task-modal-foot"><button class="edu-lib" type="button">查看公共库的匹配患教</button><button class="task-btn" type="button" data-task-cancel="education">取消</button><button class="task-btn primary" id="education-task-confirm" type="button" disabled>确定</button></footer>
+      </section>
+    </div>
+    <div class="task-modal-mask" id="visit-task-modal" aria-hidden="true">
+      <section class="task-modal visit-modal" role="dialog" aria-modal="true" aria-label="访视计划">
+        <header class="task-modal-head"><span>访视计划</span><button class="task-modal-close" type="button" data-task-close="visit">×</button></header>
+        <div class="task-modal-body">
+          <div class="visit-form">
+            <div class="visit-row"><div class="visit-row-label">当前周期</div><div class="visit-static" id="visit-current-cycle">筛选期</div></div>
+            <div class="visit-row"><div class="visit-row-label"><span class="required">*</span>关联CRF</div><div class="crf-chips" id="visit-crf-chips"><button class="crf-chip" type="button">访视日期</button><button class="crf-chip" type="button">方案知情同意</button><button class="crf-chip" type="button">子课题知情同意</button><button class="crf-chip" type="button">人口学资料</button><button class="crf-chip" type="button">女性生育状态</button><button class="crf-chip" type="button">入组PIK3CA检测</button><button class="crf-chip" type="button">血生化全套</button></div></div>
+            <div class="visit-row visit-detail-row"><div class="visit-row-label"><span class="required">*</span>计划内容</div><div class="visit-detail-wrap"><textarea class="task-textarea" id="visit-detail-input" maxlength="255" aria-label="计划内容" placeholder="请输入计划内容"></textarea><div class="counter" id="visit-detail-count">0/255</div></div></div>
+            <div class="visit-row collect-row"><div class="visit-row-label"><span class="required">*</span>采集方式</div><div><div class="radio-line"><label><input type="radio" name="visit-collect" value="文件" checked>文件</label><label><input type="radio" name="visit-collect" value="表单">表单</label></div></div></div><div class="visit-row visit-extra" id="visit-form-extra"><div class="visit-row-label"><span class="required">*</span>选择表单</div><div><select class="visit-select"><option>请选择问卷</option><option>生命体征采集表</option><option>实验室检查表</option></select></div></div>
+            <div class="visit-row"><div class="visit-row-label"><span class="required">*</span>填写方式</div><div class="radio-line"><label><input type="radio" name="visit-fill" value="个案填写">个案填写</label><label><input type="radio" name="visit-fill" value="仅患者填写" checked>仅患者填写</label></div></div>
+            <div class="visit-row"><div class="visit-row-label"><span class="required">*</span>自动映射CRF</div><div class="radio-line"><label><input type="radio" name="visit-map" value="是">是</label><label><input type="radio" name="visit-map" value="否" checked>否</label></div></div>
+            <div class="visit-row visit-deadline-row"><div class="visit-row-label">计划完成时限配置</div><div class="deadline-line"><button class="small-switch" id="visit-deadline-switch" type="button" aria-label="计划完成时限已开启" aria-pressed="true"></button><div class="deadline-description"><span>在计划日期延后</span><input class="inline-number" id="visit-deadline-days" type="number" min="0" value="2"><span>天后，未完成计划将被标记为逾期。</span></div></div></div>
+          </div>
+        </div>
+        <footer class="task-modal-foot"><button class="task-btn" type="button" data-task-cancel="visit">取消</button><button class="task-btn primary" id="visit-task-confirm" type="button">确定</button></footer>
+      </section>
+    </div>
+    <section class="template-drawer" id="template-drawer" aria-hidden="true" role="dialog" aria-modal="true" aria-label="从模板导入">
+      <header class="template-head"><strong>从模板导入</strong><button class="drawer-close" id="template-close" type="button" aria-label="关闭模板导入">×</button></header>
+      <div class="template-body">
+        <aside class="template-side" id="template-side"></aside>
+        <main class="template-main">
+          <h3>筛选期-实验组</h3>
+          <label class="template-date-label"><span>*</span> 开始日期(T)<input id="template-start-date" type="date" aria-label="开始日期"></label>
+          <div class="template-table-wrap">
+            <table class="template-table">
+              <thead><tr><th></th><th>T+n</th><th>计划日期</th><th>计划类型</th><th>访视周期</th><th>计划内容</th><th>提醒/预约设置</th></tr></thead>
+              <tbody id="template-rows"></tbody>
+            </table>
+          </div>
+        </main>
+      </div>
+      <footer class="template-foot"><span id="template-count">已选计划总计 0</span><div><button class="template-cancel" id="template-cancel" type="button">取消</button><button class="template-confirm" id="template-confirm" type="button" disabled>确认导入</button></div></footer>
+    </section>
+  </div>
+  <script src="clinical-tasks-data.js"></script>
+  <script src="clinical-visit-store.js?v=4"></script>
+  <script src="participant-directory-data.js?v=2"></script>
+  <script>
+    const participantDirectory=window.clinicalParticipantDirectory.create();
+    const {participants,projectCatalog}=participantDirectory;
+    const projectFilter=document.getElementById('project-filter');
+    const hospitalFilter=document.getElementById('hospital-filter');
+    projectFilter.innerHTML+=Object.entries(projectCatalog).map(([code,name])=>`<option value="${code}">${code} ${name}</option>`).join('');
+    const statusClass={'已入组':'enrolled','筛选中':'screening','研究结束':'ended','筛选失败':'failed','随访中':'following'};
+    const rows=document.getElementById('rows');
+    const statusFilter=document.getElementById('status-filter');
+    const visitFilter=document.getElementById('visit-filter');
+    const visitWindowFilter=document.getElementById('visit-window-filter');
+    const search=document.getElementById('participant-search');
+    function render(){
+      if(window.participantVisits?.isActive()){window.participantVisits.render();return;}
+      const query=search.value.trim().toLowerCase();
+      const visible=participants.filter(p=>(!projectFilter.value||p.study===projectFilter.value)&&(!hospitalFilter.value||p.hospital===hospitalFilter.value)&&(!statusFilter.value||p.status===statusFilter.value)&&(!visitFilter.value||(visitFilter.value==='complete'?p.rate===100:p.rate<100))&&(!visitWindowFilter.value||p.visitWindow===visitWindowFilter.value)&&(!query||(p.name+p.initials+p.id).toLowerCase().includes(query)));
+      rows.innerHTML=visible.length?visible.map(p=>`<tr data-name="${p.name}" data-id="${p.id}" data-study="${p.study}" data-status="${p.status}"><td><a class="name participant-link" href="项目参与者详情-Figma.html?project=${encodeURIComponent(p.study)}&name=${encodeURIComponent(p.name)}&id=${encodeURIComponent(p.id)}&status=${encodeURIComponent(p.status)}">${p.name}（${p.initials}）</a></td><td>${p.id}</td><td>${p.study}</td><td><span class="status ${statusClass[p.status]}">${p.status}</span></td><td><div class="progress-cell"><div class="track"><div class="fill" style="width:${p.rate}%"></div></div><span class="rate">${p.rate}%</span></div></td><td><div class="actions">${p.actions.map(label=>`<button type="button" class="action" data-action="${label}">${label}</button>`).join('')}</div></td></tr>`).join(''):'<tr><td class="empty" colspan="6">暂无匹配参与者</td></tr>';
+      document.getElementById('count').textContent=`共 ${visible.length} 条`;
+      window.participantVisits?.syncURL();
+    }
+    const planList=document.getElementById('plan-title');
+    const kindOptions=['访视计划','患教计划','提醒计划'];
+    const activeCycles=['筛选期','第1周期','第2周期','第3周期','治疗结束访视'];
+    const templateCatalog=[
+      {key:'screening',title:'筛选期',open:true,items:[
+        {name:'筛选期-实验组',plans:[
+          {offset:'T+1',kind:'访视计划',cycle:'筛选期',task:'实验室检查、生命体征',remind:'不提前提醒'},
+          {offset:'T+3',kind:'患教计划',cycle:'筛选期',task:'问卷名称xxxxx',remind:'不提前提醒'},
+          {offset:'T+5',kind:'提醒计划',cycle:'筛选期',task:'标题文案xxxx',follow:'生成跟进任务',remind:'不提前提醒'}
+        ]},
+        {name:'筛选期-对照组',plans:[
+          {offset:'T+0',kind:'访视计划',cycle:'筛选期',task:'知情同意、基线资料采集',remind:'不提前提醒'},
+          {offset:'T+2',kind:'患教计划',cycle:'筛选期',task:'筛选期注意事项宣教',remind:'提前1天提醒'},
+          {offset:'T+7',kind:'提醒计划',cycle:'筛选期',task:'完成筛选期问卷',follow:'生成跟进任务',remind:'提前3天提醒'}
+        ]},
+        {name:'筛选期_1',plans:[
+          {offset:'T+1',kind:'访视计划',cycle:'筛选期',task:'血常规、尿常规、心电图',remind:'不提前提醒'},
+          {offset:'T+4',kind:'提醒计划',cycle:'筛选期',task:'补充上传检查报告',follow:'生成跟进任务',remind:'提前1天提醒'}
+        ]},
+        {name:'这是当前周期下不同模板的名字',plans:[
+          {offset:'T+1',kind:'访视计划',cycle:'筛选期',task:'实验室检查、生命体征、病史确认',remind:'不提前提醒'},
+          {offset:'T+3',kind:'患教计划',cycle:'筛选期',task:'用药指导、随访问卷',remind:'不提前提醒'},
+          {offset:'T+6',kind:'提醒计划',cycle:'筛选期',task:'标题文案xxxx',follow:'生成跟进任务',remind:'提前2天提醒'}
+        ]}
+      ]},
+      {key:'c1d1',title:'第1周期第1天(C1D1)',open:false,items:[
+        {name:'C1D1-标准访视模板',plans:[
+          {offset:'T+0',kind:'访视计划',cycle:'第1周期',task:'给药前检查、生命体征',remind:'不提前提醒'},
+          {offset:'T+1',kind:'患教计划',cycle:'第1周期',task:'给药后注意事项',remind:'提前1天提醒'},
+          {offset:'T+3',kind:'提醒计划',cycle:'第1周期',task:'不良反应随访提醒',follow:'生成跟进任务',remind:'提前1天提醒'}
+        ]},
+        {name:'C1D1-强化随访模板',plans:[
+          {offset:'T+0',kind:'访视计划',cycle:'第1周期',task:'首次给药、PK采血',remind:'不提前提醒'},
+          {offset:'T+2',kind:'提醒计划',cycle:'第1周期',task:'电话随访',follow:'生成跟进任务',remind:'提前1天提醒'}
+        ]}
+      ]},
+      {key:'c1d15',title:'第1周期第15天(C1D15)',open:false,items:[
+        {name:'C1D15-复查模板',plans:[
+          {offset:'T+0',kind:'访视计划',cycle:'第1周期',task:'复查实验室检查',remind:'不提前提醒'},
+          {offset:'T+5',kind:'患教计划',cycle:'第1周期',task:'复诊前准备提醒',remind:'提前3天提醒'}
+        ]},
+        {name:'C1D15-远程随访模板',plans:[
+          {offset:'T+0',kind:'提醒计划',cycle:'第1周期',task:'远程随访问卷填写',follow:'生成跟进任务',remind:'提前1天提醒'},
+          {offset:'T+1',kind:'患教计划',cycle:'第1周期',task:'下一周期宣教内容',remind:'不提前提醒'}
+        ]}
+      ]}
+    ];
+    let activeTemplateSectionKey='screening';
+    let activeTemplateItemIndex=0;
+    let templatePlans=templateCatalog[0].items[0].plans;
+    const remindOptions=['不提前提醒','提前1天提醒','提前2天提醒','提前3天提醒','提前4天提醒','提前5天提醒'];
+    const remindTimes=['08:00','09:00','10:00','11:00','12:00','13:00','14:00','15:00'];
+    const planTemplates={
+      '访视计划':{task:'',follow:'',span:true},
+      '患教计划':{task:'',follow:'',span:true},
+      '提醒计划':{task:'',follow:'',span:false}
+    };
+    const initialPlanRows=[
+      {axis:'08.12',offset:'T+0',date:'2021-05-21',kind:'访视计划',cycle:'筛选期',remind:'不提前提醒',remindTime:'08:00',source:'template',task:'实验室检查、生命体征'},
+      {axis:'',offset:'T+3',date:'2021-05-24',kind:'患教计划',cycle:'筛选期',remind:'不提前提醒',remindTime:'08:00',source:'template',task:'用药指导、随访问卷'},
+      {axis:'',offset:'T+8',date:'2021-05-29',kind:'提醒计划',cycle:'筛选期',remind:'不提前提醒',remindTime:'08:00',source:'template',task:'标题文字最多显示一行超出部分超出部分超出部分...',follow:'生成跟进任务'}
+    ];
+    let savedPlanRows=structuredClone(initialPlanRows);
+    let planRows=structuredClone(savedPlanRows);
+    let activeRemindIndex=null;
+    let pendingRemind=null;
+    let deleteIndex=null;
+    let activeTaskIndex=null;
+    let reminderHasImageDraft=false;
+    let educationSelectedTitle='';
+    let visitDetailTags=[];
+    let visitDeadlineEnabled=true;
+
+    const reminderTaskModal=document.getElementById('reminder-task-modal');
+    const reminderTitleInput=document.getElementById('reminder-title-input');
+    const reminderTitleCount=document.getElementById('reminder-title-count');
+    const reminderUpload=document.getElementById('reminder-upload');
+    const reminderUploadText=document.getElementById('reminder-upload-text');
+    const educationTaskModal=document.getElementById('education-task-modal');
+    const educationList=document.getElementById('education-list');
+    const educationDetail=document.getElementById('education-detail');
+    const educationConfirm=document.getElementById('education-task-confirm');
+    const visitTaskModal=document.getElementById('visit-task-modal');
+    const visitDetailInput=document.getElementById('visit-detail-input');
+    const visitDetailCount=document.getElementById('visit-detail-count');
+    const visitCurrentCycle=document.getElementById('visit-current-cycle');
+    const visitFormExtra=document.getElementById('visit-form-extra');
+    const visitDeadlineSwitch=document.getElementById('visit-deadline-switch');
+    const visitDeadlineDays=document.getElementById('visit-deadline-days');
+    function setTaskModal(modal,open){
+      modal.classList.toggle('open',open);
+      modal.setAttribute('aria-hidden',open?'false':'true');
+    }
+    function closeTaskModals(){
+      [reminderTaskModal,educationTaskModal,visitTaskModal].forEach(modal=>setTaskModal(modal,false));
+      activeTaskIndex=null;
+    }
+    function clearFloatingCards(){
+      activeRemindIndex=null;deleteIndex=null;pendingRemind=null;
+    }
+    function updateReminderUploadState(){
+      reminderUpload.classList.toggle('active',reminderHasImageDraft);
+      reminderUploadText.textContent=reminderHasImageDraft?'已上传图片':'点击上传';
+    }
+    function updateReminderCount(){
+      reminderTitleCount.textContent=`${reminderTitleInput.value.length}/255`;
+    }
+    function openReminderTaskModal(index){
+      activeTaskIndex=index;
+      reminderTitleInput.value=planRows[index].task||'';
+      reminderHasImageDraft=Boolean(planRows[index].hasImage);
+      const follow=planRows[index].followMode||'不跟进';
+      document.querySelectorAll('input[name="reminder-follow"]').forEach(input=>{input.checked=input.value===follow});
+      updateReminderUploadState();
+      updateReminderCount();
+      setTaskModal(reminderTaskModal,true);
+    }
+    function openEducationTaskModal(index){
+      activeTaskIndex=index;
+      educationSelectedTitle='';
+      educationList.querySelectorAll('button').forEach(button=>button.classList.remove('active'));
+      educationDetail.textContent='点击左侧列表查看详情';
+      educationConfirm.disabled=true;
+      setTaskModal(educationTaskModal,true);
+    }
+    function syncVisitDetailInput(){
+      visitDetailCount.textContent=`${visitDetailInput.value.length}/255`;
+    }
+    function setVisitDeadlineEnabled(enabled){
+      visitDeadlineEnabled=enabled;
+      visitDeadlineSwitch.classList.toggle('off',!enabled);
+      visitDeadlineSwitch.setAttribute('aria-pressed',String(enabled));
+      visitDeadlineSwitch.setAttribute('aria-label',enabled?'计划完成时限已开启':'计划完成时限已关闭');
+      visitDeadlineDays.disabled=!enabled;
+    }
+    function updateVisitCount(){
+      syncVisitDetailInput();
+    }
+    function openVisitTaskModal(index){
+      activeTaskIndex=index;
+      visitCurrentCycle.textContent=planRows[index].cycle||'筛选期';
+      visitDetailTags=[...(planRows[index].visitTags||[])];
+      visitDetailInput.value=planRows[index].planContent??planRows[index].task??'';
+      document.querySelectorAll('#visit-crf-chips .crf-chip').forEach(button=>{const selected=visitDetailTags.includes(button.textContent.trim());button.classList.toggle('active',selected);button.setAttribute('aria-pressed',String(selected));});
+      document.querySelector('input[name="visit-collect"][value="文件"]').checked=true;
+      visitFormExtra.classList.remove('open');
+      setVisitDeadlineEnabled(planRows[index].deadlineEnabled!==false);
+      syncVisitDetailInput();
+      setTaskModal(visitTaskModal,true);
+    }
+    function confirmReminderTask(){
+      if(activeTaskIndex===null)return;
+      const row=planRows[activeTaskIndex];
+      row.task=reminderTitleInput.value.trim()||'标题';
+      row.hasImage=reminderHasImageDraft;
+      row.followMode=document.querySelector('input[name="reminder-follow"]:checked')?.value||'不跟进';
+      closeTaskModals();
+      renderPlanRows();
+    }
+    function confirmEducationTask(){
+      if(activeTaskIndex===null||!educationSelectedTitle)return;
+      planRows[activeTaskIndex].task=educationSelectedTitle;
+      closeTaskModals();
+      renderPlanRows();
+    }
+    function confirmVisitTask(){
+      if(activeTaskIndex===null)return;
+      planRows[activeTaskIndex].visitTags=[...visitDetailTags];
+      planRows[activeTaskIndex].deadlineEnabled=visitDeadlineEnabled;
+      planRows[activeTaskIndex].planContent=visitDetailInput.value.trim();
+      planRows[activeTaskIndex].task=planRows[activeTaskIndex].planContent;
+      closeTaskModals();
+      renderPlanRows();
+    }
+    function slashDate(value){return value?value.replaceAll('-','/'):''}
+    function todayDate(){
+      const date=new Date();
+      const offset=date.getTimezoneOffset()*60000;
+      return new Date(date.getTime()-offset).toISOString().slice(0,10);
+    }
+    function addDays(value,days){
+      const [year,month,day]=value.split('-').map(Number);
+      const date=new Date(year,month-1,day);
+      date.setDate(date.getDate()+days);
+      const yyyy=date.getFullYear();
+      const mm=String(date.getMonth()+1).padStart(2,'0');
+      const dd=String(date.getDate()).padStart(2,'0');
+      return `${yyyy}-${mm}-${dd}`;
+    }
+    function offsetDays(offset){return Number(String(offset).replace('T+',''))||0}
+    function nextOffset(anchorIndex=null){
+      const base=anchorIndex===null?(planRows.at(-1)?.offset||'T+8'):(planRows[anchorIndex]?.offset||planRows.at(-1)?.offset||'T+8');
+      const value=Number(String(base).replace('T+',''))||0;
+      return `T+${value+3}`;
+    }
+    function optionMarkup(options,value){return options.map(item=>`<option value="${item}"${item===value?' selected':''}>${item}</option>`).join('')}
+    function axisFromDate(value){
+      if(!value)return '';
+      const [,month,day]=value.split('-');
+      return `${month}.${day}`;
+    }
+    function makePlanRow(afterIndex=null){
+      const date=todayDate();
+      const row={axis:afterIndex===null?axisFromDate(date):'',offset:afterIndex===null?'T+0':nextOffset(afterIndex),date,kind:'访视计划',cycle:'筛选期',remind:'不提前提醒',remindTime:'08:00',source:'single',task:'',follow:''};
+      if(afterIndex===null)planRows.push(row);else planRows.splice(afterIndex+1,0,row);
+      activeRemindIndex=null;deleteIndex=null;
+      renderPlanRows();
+    }
+    function escapeText(value){return String(value??'').replace(/[&<>"]/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[char]))}
+    function renderPlanRows(){
+      planList.innerHTML=planRows.map((row,index)=>{
+        const taskText=row.task||'';
+        const followText=row.follow||'';
+        const cycleDisabled=row.source==='template';
+        const taskCell=row.kind==='提醒计划'
+          ? `<div class="cell task ${taskText?'':'placeholder'}" data-plan-action="open-task"><span class="text">${escapeText(taskText||'标题')}</span>${row.hasImage?'<span class="asset-tag"><img src="figma-clinical-assets/drawer-inline-image.svg" alt=""></span>':''}<img class="arrow" src="figma-clinical-assets/drawer-inline-edit.svg" alt=""></div><div class="cell follow ${followText?'':'placeholder'}"><span class="input-mark"></span><span class="text">${escapeText(followText||'生成跟进任务')}</span><img class="arrow" src="figma-clinical-assets/drawer-follow-caret.svg" alt=""></div>`
+          : `<div class="cell task span-follow ${taskText?'':'placeholder'}" data-plan-action="open-task"><span class="text">${escapeText(taskText||'请选择内容')}</span><img class="arrow" src="figma-clinical-assets/caret-down.svg" alt=""></div>`;
+        const remindPopup=activeRemindIndex===index&&pendingRemind?`<div class="remind-popover" role="dialog" aria-label="提醒推送设置">
+              <div class="remind-title">提醒推送设置</div>
+              <div class="remind-picker">
+                <div class="remind-col">${remindOptions.map(item=>`<button type="button" class="remind-option ${pendingRemind.remind===item?'active':''}" data-remind-option="${item}">${item}</button>`).join('')}</div>
+                <div class="remind-col">${remindTimes.map(item=>`<button type="button" class="remind-option ${pendingRemind.time===item?'active':''}" data-remind-time="${item}">${item}</button>`).join('')}</div>
+              </div>
+              <div class="remind-summary">提醒时间： ${slashDate(row.date)} ${pendingRemind.time}</div>
+              <div class="remind-actions"><button type="button" data-plan-action="cancel-remind">取消</button><button class="primary" type="button" data-plan-action="confirm-remind">确定</button></div>
+            </div>`:'';
+        const deletePopup=deleteIndex===index?`<div class="delete-confirm" role="dialog" aria-label="删除确认"><div class="confirm-line"><span class="warn-dot">!</span><span>确定要删除该项目吗？</span></div><div class="confirm-actions"><button type="button" data-plan-action="cancel-delete">取消</button><button class="primary" type="button" data-plan-action="confirm-delete">确定</button></div></div>`:'';
+        return `<div class="plan-row ${row.imported?'imported-flash':''}" data-index="${index}">
+            <div class="date-axis">${row.axis?`<span class="axis-date">${row.axis}</span>`:''}</div>
+            <div class="offset">${row.offset}</div>
+            <button class="mini-btn" type="button" data-plan-action="delete" aria-label="删除"><img src="figma-clinical-assets/drawer-delete.svg" alt=""></button>
+            <div class="cell date" data-plan-action="pick-date"><span class="text">${slashDate(row.date)}</span><img class="calendar-icon" src="figma-clinical-assets/drawer-calendar.svg" alt=""><input class="date-picker" type="date" value="${row.date}" aria-label="计划日期"></div>
+            <div class="cell kind"><span class="text">${row.kind}</span><select data-field="kind" aria-label="计划类型">${optionMarkup(kindOptions,row.kind)}</select><img class="arrow" src="figma-clinical-assets/caret-down.svg" alt=""></div>
+            <div class="cell cycle ${cycleDisabled?'disabled':''}"><span class="text">${row.cycle}</span><select data-field="cycle" aria-label="访视周期" ${cycleDisabled?'disabled':''}>${optionMarkup(activeCycles,row.cycle)}</select><img class="arrow" src="figma-clinical-assets/caret-down.svg" alt=""></div>
+            ${taskCell}
+            <button class="cell remind" type="button" data-plan-action="open-remind"><span class="text">${row.remind}</span><img class="arrow" src="figma-clinical-assets/caret-down.svg" alt=""></button>
+            <button class="mini-btn add-plan" type="button" data-plan-action="add-after" aria-label="新增"><img src="figma-clinical-assets/drawer-plus.svg" alt=""></button>
+            ${remindPopup}${deletePopup}
+          </div>`;
+      }).join('');
+    }
+    const templateDrawer=document.getElementById('template-drawer');
+    const templateSide=document.getElementById('template-side');
+    const templateRowsEl=document.getElementById('template-rows');
+    const templateStartDate=document.getElementById('template-start-date');
+    const templateConfirm=document.getElementById('template-confirm');
+    const templateCount=document.getElementById('template-count');
+    let selectedTemplateIndexes=new Set();
+    function activeTemplateSection(){
+      return templateCatalog.find(section=>section.key===activeTemplateSectionKey)||templateCatalog[0];
+    }
+    function refreshTemplatePlans(){
+      const section=activeTemplateSection();
+      templatePlans=section.items[activeTemplateItemIndex]?.plans||[];
+      const title=document.getElementById('template-current-title');
+      if(title)title.textContent=section.items[activeTemplateItemIndex]?.name||section.title;
+    }
+    function renderTemplateSide(){
+      templateSide.innerHTML=templateCatalog.map(section=>`<section class="template-section ${section.open?'':'collapsed'}" data-template-section="${section.key}">
+          <button class="${section.key==='screening'?'template-cycle-open':'template-cycle'}" type="button" data-template-toggle="${section.key}">${section.title} <span>${section.open?'⌄':'›'}</span></button>
+          <div class="template-list">${section.items.map((item,index)=>`<button class="template-item ${section.key===activeTemplateSectionKey&&index===activeTemplateItemIndex?'active':''}" type="button" data-template-item-section="${section.key}" data-template-item-index="${index}">${item.name}</button>`).join('')}</div>
+        </section>`).join('');
+    }
+    function renderTemplateRows(){
+      const base=templateStartDate.value;
+      templateRowsEl.innerHTML=templatePlans.map((item,index)=>{
+        const date=base?slashDate(addDays(base,offsetDays(item.offset))):'-';
+        return `<tr>
+          <td><input class="template-check" type="checkbox" data-template-index="${index}" ${selectedTemplateIndexes.has(index)?'checked':''} aria-label="选择${item.offset}"></td>
+          <td><strong>${item.offset}</strong></td>
+          <td class="template-muted">${date}</td>
+          <td>${item.kind}</td>
+          <td>${item.cycle}</td>
+          <td>${item.task}</td>
+          <td class="template-muted">${item.remind}</td>
+        </tr>`;
+      }).join('');
+      templateCount.textContent=`已选计划总计 ${selectedTemplateIndexes.size}`;
+      templateConfirm.disabled=selectedTemplateIndexes.size===0||!templateStartDate.value;
+    }
+    function openTemplateDrawer(){
+      selectedTemplateIndexes=new Set();
+      activeTemplateSectionKey='screening';
+      activeTemplateItemIndex=0;
+      templateCatalog.forEach(section=>{section.open=section.key==='screening'});
+      templateStartDate.value='';
+      refreshTemplatePlans();
+      renderTemplateSide();
+      renderTemplateRows();
+      templateDrawer.classList.add('open');
+      templateDrawer.setAttribute('aria-hidden','false');
+      templateStartDate.focus();
+    }
+    function closeTemplateDrawer(){
+      templateDrawer.classList.remove('open');
+      templateDrawer.setAttribute('aria-hidden','true');
+    }
+    function importSelectedTemplateRows(){
+      if(selectedTemplateIndexes.size===0||!templateStartDate.value)return;
+      const base=templateStartDate.value;
+      const imported=[...selectedTemplateIndexes].sort((a,b)=>a-b).map((index,order)=>{
+        const item=templatePlans[index];
+        const date=addDays(base,offsetDays(item.offset));
+        return {axis:order===0?axisFromDate(base):'',offset:item.offset,date,kind:item.kind,cycle:item.cycle,remind:item.remind,remindTime:'08:00',source:'template',task:item.task,follow:item.follow||'',imported:true};
+      });
+      planRows.push(...imported);
+      selectedTemplateIndexes=new Set();
+      closeTemplateDrawer();
+      renderPlanRows();
+    }
+    const drawerMask=document.getElementById('plan-drawer-mask');
+    const drawerClose=document.getElementById('drawer-close');
+    function openPlanDrawer(row){
+      planRows=structuredClone(savedPlanRows);
+      activeRemindIndex=null;deleteIndex=null;pendingRemind=null;
+      renderPlanRows();
+      document.getElementById('drawer-participant').textContent=`${row.dataset.name}（${row.dataset.id}）`;
+      document.getElementById('drawer-status').textContent=row.dataset.status;
+      document.getElementById('drawer-status').className=`status ${statusClass[row.dataset.status]||''}`;
+      document.getElementById('drawer-study').textContent=row.dataset.study||'这是临床研究的名称这是临床研究的名称～';
+      drawerMask.classList.add('open');
+      drawerMask.setAttribute('aria-hidden','false');
+      drawerClose.focus();
+    }
+    function closePlanDrawer(){
+      activeRemindIndex=null;deleteIndex=null;pendingRemind=null;
+      planRows=structuredClone(savedPlanRows);
+      drawerMask.classList.remove('open');
+      drawerMask.setAttribute('aria-hidden','true');
+    }
+    function savePlanDrawer(){
+      savedPlanRows=structuredClone(planRows);
+      const toast=document.getElementById('saved-toast');
+      toast.classList.add('show');
+      setTimeout(()=>toast.classList.remove('show'),450);
+      drawerMask.classList.remove('open');
+      drawerMask.setAttribute('aria-hidden','true');
+    }
+    planList.addEventListener('click',event=>{
+      const rowEl=event.target.closest('.plan-row');
+      if(!rowEl)return;
+      const index=Number(rowEl.dataset.index);
+      const action=event.target.closest('[data-plan-action]')?.dataset.planAction;
+      event.stopPropagation();
+      if(action==='open-task'){
+        clearFloatingCards();
+        if(planRows[index].kind==='提醒计划')openReminderTaskModal(index);
+        if(planRows[index].kind==='患教计划')openEducationTaskModal(index);
+        if(planRows[index].kind==='访视计划')openVisitTaskModal(index);
+        renderPlanRows();
+        return;
+      }
+      if(action==='add-after')makePlanRow(index);
+      if(action==='delete'){
+        deleteIndex=index;activeRemindIndex=null;pendingRemind=null;renderPlanRows();
+      }
+      if(action==='cancel-delete'){
+        deleteIndex=null;renderPlanRows();
+      }
+      if(action==='confirm-delete'){
+        planRows.splice(index,1);deleteIndex=null;renderPlanRows();
+      }
+      if(action==='pick-date'){
+        const input=rowEl.querySelector('.date-picker');
+        if(input?.showPicker)input.showPicker();else input?.focus();
+      }
+      if(action==='open-remind'){
+        activeRemindIndex=index;deleteIndex=null;pendingRemind={remind:planRows[index].remind||'不提前提醒',time:planRows[index].remindTime||'08:00'};renderPlanRows();
+      }
+      const remindOption=event.target.closest('[data-remind-option]')?.dataset.remindOption;
+      if(remindOption){pendingRemind.remind=remindOption;renderPlanRows();}
+      const remindTime=event.target.closest('[data-remind-time]')?.dataset.remindTime;
+      if(remindTime){pendingRemind.time=remindTime;renderPlanRows();}
+      if(action==='cancel-remind'){
+        activeRemindIndex=null;pendingRemind=null;renderPlanRows();
+      }
+      if(action==='confirm-remind'){
+        planRows[index].remind=pendingRemind.remind;
+        planRows[index].remindTime=pendingRemind.time;
+        activeRemindIndex=null;pendingRemind=null;renderPlanRows();
+      }
+    });
+    planList.addEventListener('change',event=>{
+      const rowEl=event.target.closest('.plan-row');
+      if(!rowEl)return;
+      const index=Number(rowEl.dataset.index);
+      const field=event.target.dataset.field;
+      if(event.target.classList.contains('date-picker')){
+        planRows[index].date=event.target.value;
+        if(planRows[index].offset==='T+0')planRows[index].axis=axisFromDate(event.target.value);
+        activeRemindIndex=null;deleteIndex=null;
+        renderPlanRows();
+        return;
+      }
+      if(!field)return;
+      planRows[index][field]=event.target.value;
+      if(field==='kind'){
+        planRows[index].task='';
+        planRows[index].follow='';
+        delete planRows[index].hasImage;
+        delete planRows[index].followMode;
+      }
+      activeRemindIndex=null;deleteIndex=null;
+      renderPlanRows();
+    });
+    document.getElementById('add-single-plan').addEventListener('click',()=>makePlanRow());
+    document.getElementById('import-template').addEventListener('click',openTemplateDrawer);
+    document.getElementById('template-close').addEventListener('click',closeTemplateDrawer);
+    document.getElementById('template-cancel').addEventListener('click',closeTemplateDrawer);
+    templateStartDate.addEventListener('change',renderTemplateRows);
+    templateStartDate.addEventListener('click',()=>{if(templateStartDate.showPicker)templateStartDate.showPicker()});
+    document.querySelector('.template-date-label').addEventListener('click',event=>{
+      if(event.target!==templateStartDate){templateStartDate.focus();if(templateStartDate.showPicker)templateStartDate.showPicker();}
+    });
+    templateSide.addEventListener('click',event=>{
+      const toggle=event.target.closest('[data-template-toggle]')?.dataset.templateToggle;
+      if(toggle){
+        const section=templateCatalog.find(item=>item.key===toggle);
+        if(section)section.open=!section.open;
+        renderTemplateSide();
+        return;
+      }
+      const itemButton=event.target.closest('[data-template-item-section]');
+      if(itemButton){
+        activeTemplateSectionKey=itemButton.dataset.templateItemSection;
+        activeTemplateItemIndex=Number(itemButton.dataset.templateItemIndex)||0;
+        selectedTemplateIndexes=new Set();
+        refreshTemplatePlans();
+        renderTemplateSide();
+        renderTemplateRows();
+      }
+    });
+    templateRowsEl.addEventListener('change',event=>{
+      if(!event.target.classList.contains('template-check'))return;
+      const index=Number(event.target.dataset.templateIndex);
+      if(event.target.checked)selectedTemplateIndexes.add(index);else selectedTemplateIndexes.delete(index);
+      renderTemplateRows();
+    });
+    templateConfirm.addEventListener('click',importSelectedTemplateRows);
+
+    reminderTitleInput.addEventListener('input',updateReminderCount);
+    reminderUpload.addEventListener('click',()=>{reminderHasImageDraft=!reminderHasImageDraft;updateReminderUploadState();});
+    document.getElementById('reminder-task-confirm').addEventListener('click',confirmReminderTask);
+    document.getElementById('education-task-confirm').addEventListener('click',confirmEducationTask);
+    document.getElementById('visit-task-confirm').addEventListener('click',confirmVisitTask);
+    educationList.addEventListener('click',event=>{
+      const button=event.target.closest('[data-edu-title]');
+      if(!button)return;
+      educationSelectedTitle=button.dataset.eduTitle;
+      educationList.querySelectorAll('button').forEach(item=>item.classList.toggle('active',item===button));
+      educationDetail.textContent=`已选择：${educationSelectedTitle}`;
+      educationConfirm.disabled=false;
+    });
+    document.getElementById('visit-crf-chips').addEventListener('click',event=>{
+      const button=event.target.closest('.crf-chip');
+      if(!button)return;
+      const label=button.textContent.trim();
+      if(visitDetailTags.includes(label))visitDetailTags=visitDetailTags.filter(item=>item!==label);else visitDetailTags.push(label);
+      button.classList.toggle('active',visitDetailTags.includes(label));
+      button.setAttribute('aria-pressed',String(visitDetailTags.includes(label)));
+      syncVisitDetailInput();
+    });
+    visitDeadlineSwitch.addEventListener('click',()=>setVisitDeadlineEnabled(!visitDeadlineEnabled));
+    visitDetailInput.addEventListener('input',updateVisitCount);
+    document.querySelectorAll('input[name="visit-collect"]').forEach(input=>input.addEventListener('change',()=>{
+      visitFormExtra.classList.toggle('open',document.querySelector('input[name="visit-collect"]:checked')?.value==='表单');
+    }));
+    document.querySelectorAll('[data-task-close],[data-task-cancel]').forEach(button=>button.addEventListener('click',closeTaskModals));
+    [reminderTaskModal,educationTaskModal,visitTaskModal].forEach(modal=>modal.addEventListener('click',event=>{if(event.target===modal)closeTaskModals();}));
+    document.getElementById('save-plan').addEventListener('click',savePlanDrawer);
+    renderPlanRows();
+    rows.addEventListener('click',event=>{
+      const button=event.target.closest('.action');
+      if(!button)return;
+      if(['数据录入','访视任务'].includes(button.dataset.action)){
+        const person=button.closest('tr').dataset;
+        location.href='项目参与者详情-Figma.html?'+new URLSearchParams({project:person.study,id:person.id,name:person.name,status:person.status,tab:button.dataset.action==='访视任务'?'participant-tasks':'data-entry'});
+        return;
+      }
+      if(button.dataset.action!=='访视计划')return;
+      openPlanDrawer(button.closest('tr'));
+    });
+    drawerClose.addEventListener('click',closePlanDrawer);
+    drawerMask.addEventListener('click',event=>{if(event.target===drawerMask)closePlanDrawer()});
+    document.addEventListener('click',event=>{
+      if(!drawerMask.classList.contains('open'))return;
+      if(activeRemindIndex===null&&deleteIndex===null)return;
+      if(event.target.closest('.remind-popover,.delete-confirm,[data-plan-action="open-remind"],[data-plan-action="delete"]'))return;
+      activeRemindIndex=null;
+      deleteIndex=null;
+      pendingRemind=null;
+      renderPlanRows();
+    });
+    document.addEventListener('keydown',event=>{if(event.key==='Escape'){if([reminderTaskModal,educationTaskModal,visitTaskModal].some(modal=>modal.classList.contains('open'))){closeTaskModals();return;}if(drawerMask.classList.contains('open'))closePlanDrawer();}});
+    statusFilter.addEventListener('change',render);
+    visitFilter.addEventListener('change',render);
+    visitWindowFilter.addEventListener('change',render);
+    projectFilter.addEventListener('change',render);
+    hospitalFilter.addEventListener('change',render);
+    search.addEventListener('input',render);
+    document.getElementById('reset').addEventListener('click',()=>{projectFilter.value='';hospitalFilter.value='';statusFilter.value='';visitFilter.value='';visitWindowFilter.value='';search.value='';window.participantVisits?.reset();render()});
+    render();
+    if(new URLSearchParams(location.search).has('planEmbed')){
+      const embedParams=new URLSearchParams(location.search);
+      const embeddedPerson=participants.find(p=>p.id===embedParams.get('id'))||participants[0];
+      const openEmbedded=()=>openPlanDrawer({dataset:{...embeddedPerson,id:embedParams.get('id')||embeddedPerson.id,name:embedParams.get('name')||embeddedPerson.name,status:embedParams.get('status')||embeddedPerson.status}});
+      window.addEventListener('message',event=>{if(event.source===parent&&event.data?.type==='open-participant-plan')openEmbedded();});
+      new MutationObserver(()=>{if(!drawerMask.classList.contains('open'))parent.postMessage({type:'participant-plan-closed'},'*');}).observe(drawerMask,{attributes:true,attributeFilter:['class']});
+      openEmbedded();
+    }
+  </script>
+<script src="participant-tasks.js?v=6"></script>
+<script src="participant-visits.js?v=8"></script>
+<script src="clinical-settings.js"></script></body>
+</html>

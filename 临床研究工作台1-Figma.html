@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>工作台 · 临床研究</title>
+  <link rel="stylesheet" href="clinical-research-shell.css">
+  <link rel="stylesheet" href="clinical-workbench-one.css?v=25">
+  <link rel="stylesheet" href="workbench-visit-overview.css?v=1">
+<script src="clinical-research-shell.js?v=6"></script>
+</head>
+<body>
+  <main class="page">
+    <section class="workbench-one" aria-label="工作台">
+      <header class="wb1-toolbar">
+        <div class="wb1-toolbar-title"><strong>任务与访视概览</strong><span>查看当前研究项目的任务和近期访视</span></div>
+        <label class="wb1-filter is-select"><select data-wb1-project aria-label="项目筛选"><option value="">全部项目</option><option>SUN真实世界研究</option><option>恒星肺癌观察研究</option><option>启航症状管理研究</option></select></label>
+        <label class="wb1-filter is-select"><select data-wb1-center aria-label="研究中心筛选"><option value="">全部中心</option><option>第一医院</option><option>第二医院</option></select></label>
+        <label class="wb1-filter is-search is-wide"><input data-wb1-participant type="search" aria-label="搜索参与者姓名缩写或编号" placeholder="参与者姓名缩写/编号"></label>
+      </header>
+
+      <div class="wb1-layout">
+        <section class="wb1-panel" aria-labelledby="wb1-task-title">
+          <header class="wb1-panel-head"><h1 id="wb1-task-title">待办任务</h1></header>
+          <div class="wb1-task-summary" aria-label="待办任务统计">
+            <button class="wb1-task-card is-active" data-wb1-summary="issue" type="button" aria-pressed="true"><img src="figma-clinical-assets/stat_plan.png" alt=""><strong>7</strong><span>待发放访视任务</span></button>
+            <button class="wb1-task-card" data-wb1-summary="execution" type="button" aria-pressed="false"><img src="figma-clinical-assets/stat_execute.png" alt=""><strong>6</strong><span>待执行访视任务</span></button>
+            <button class="wb1-task-card" data-wb1-summary="execution-overdue" type="button" aria-pressed="false"><img src="figma-clinical-assets/stat_overdue.png" alt=""><strong>1</strong><span>逾期待执行访视任务</span></button>
+            <button class="wb1-task-card" data-wb1-summary="followup" type="button" aria-pressed="false"><img src="figma-clinical-assets/stat_follow.png" alt=""><strong>4</strong><span>待跟进参与者</span></button>
+            <button class="wb1-task-card" data-wb1-summary="processing" type="button" aria-pressed="false"><img src="figma-clinical-assets/stat_data.png" alt=""><strong>4</strong><span>待数据处理</span></button>
+          </div>
+          <div class="wb1-task-tools" role="tablist" aria-label="任务状态">
+            <button class="wb1-task-tab" data-wb1-tab="draft" role="tab" aria-selected="true" type="button">待发放（7）</button>
+            <button class="wb1-task-tab" data-wb1-tab="sent" role="tab" aria-selected="false" type="button">已发放（5）</button>
+            <button class="wb1-task-tab" data-wb1-tab="none" role="tab" aria-selected="false" type="button">无需处理（5）</button>
+            <button class="wb1-task-tab" data-wb1-tab="completed" role="tab" aria-selected="false" type="button" hidden>已完成（0）</button>
+            <button class="wb1-task-tab" data-wb1-tab="execution-none" role="tab" aria-selected="false" type="button" hidden>无需处理（0）</button>
+          </div>
+          <div class="wb1-table-wrap">
+            <table class="wb1-table">
+              <colgroup data-wb1-table-cols><col style="width:16%"><col style="width:20%"><col style="width:15%"><col style="width:12%"><col style="width:22%"><col style="width:15%"></colgroup>
+              <thead data-wb1-table-head><tr><th>参与者</th><th>任务名称</th><th>参与试验</th><th>访视</th><th>计划日期/访视窗口</th><th>操作</th></tr></thead>
+              <tbody data-wb1-table-body></tbody>
+            </table>
+          </div>
+        </section>
+
+        <aside class="wb1-panel wb1-visit-panel" aria-labelledby="wb1-visit-title">
+          <header class="wb1-panel-head"><h2 id="wb1-visit-title">访视管理</h2><button type="button" data-wb1-all-visits>查看全部 ›</button></header>
+          <div class="wb1-visit-groups" data-visit-overview></div>
+        </aside>
+      </div>
+    </section>
+  </main>
+  <div class="wb1-issue-mask" data-wb1-issue-modal hidden>
+    <section class="wb1-issue-modal" role="dialog" aria-modal="true" aria-labelledby="wb1-issue-title">
+      <header class="wb1-issue-head">
+        <div>
+          <h2 id="wb1-issue-title" data-wb1-issue-title>发放任务</h2>
+          <div class="wb1-issue-subject"><strong data-wb1-issue-participant></strong><span data-wb1-issue-id></span><em data-wb1-issue-status>已入组</em></div>
+        </div>
+        <button type="button" data-wb1-issue-close aria-label="关闭">×</button>
+      </header>
+      <div class="wb1-issue-body">
+        <section class="wb1-issue-card">
+          <h3><span>1</span>任务信息</h3>
+          <dl class="wb1-issue-info">
+            <div><dt>任务名称</dt><dd data-wb1-issue-task></dd></div>
+            <div><dt>访视</dt><dd data-wb1-issue-visit></dd></div>
+            <div><dt>采集方式</dt><dd data-wb1-issue-method></dd><small data-wb1-issue-form-name hidden></small></div>
+            <div><dt>填写方式</dt><dd data-wb1-issue-fill-mode></dd></div>
+            <div class="is-full"><dt>任务说明</dt><dd class="is-description" data-wb1-issue-description></dd></div>
+          </dl>
+        </section>
+
+        <section class="wb1-issue-card">
+          <div class="wb1-issue-section-head"><h3><span>2</span>采集配置</h3><em>配置来源：任务模板</em></div>
+          <dl class="wb1-issue-config">
+            <div><dt>采集周期</dt><dd data-wb1-issue-cycle></dd></div>
+            <div><dt>时间基准</dt><dd data-wb1-issue-baseline></dd></div>
+            <div><dt>采集安排</dt><dd data-wb1-issue-template-times></dd></div>
+            <div><dt>时间窗口</dt><dd data-wb1-issue-window></dd></div>
+            <div><dt>逾期执行</dt><dd><span class="wb1-config-switch" data-wb1-issue-overdue></span></dd></div>
+            <div><dt>自动映射CRF</dt><dd><span class="wb1-config-switch" data-wb1-issue-auto-map></span></dd></div>
+          </dl>
+        </section>
+
+        <section class="wb1-issue-card">
+          <div class="wb1-issue-section-head"><h3><span>3</span>基准日期及生成结果</h3><em data-wb1-issue-count></em></div>
+          <div class="wb1-date-anchor">
+            <div><strong>访视日期（基准日期）</strong><span data-wb1-issue-date-help>修改后，系统将立即重新计算下方尚未执行的任务。</span></div>
+            <input data-wb1-issue-date type="date" aria-label="访视日期" required>
+          </div>
+          <div class="wb1-issue-preview-wrap">
+            <table class="wb1-issue-preview">
+              <thead><tr><th>执行任务</th><th>计划日期</th><th>采集时间</th><th>允许执行窗口</th><th>状态</th></tr></thead>
+              <tbody data-wb1-issue-preview></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+      <footer class="wb1-issue-foot">
+        <button type="button" data-wb1-issue-cancel>取消</button>
+        <button class="is-secondary" type="button" data-wb1-issue-save>保存暂不发放</button>
+        <button class="is-primary" type="button" data-wb1-issue-confirm>确认发放</button>
+      </footer>
+    </section>
+  </div>
+  <div class="wb1-execution-mask" data-wb1-execution-modal hidden>
+    <section class="wb1-execution-modal" role="dialog" aria-modal="true" aria-labelledby="wb1-execution-title">
+      <header class="wb1-execution-head">
+        <div><h2 id="wb1-execution-title" data-wb1-execution-title>查看任务</h2><p data-wb1-execution-subject></p></div>
+        <button type="button" data-wb1-execution-close aria-label="关闭">×</button>
+      </header>
+      <div class="wb1-execution-body" data-wb1-execution-body></div>
+      <footer class="wb1-execution-foot">
+        <button type="button" data-wb1-execution-package>查看任务包配置</button>
+        <button type="button" data-wb1-execution-cancel>关闭</button>
+        <button class="is-primary" type="button" data-wb1-execution-submit hidden>提交任务</button>
+      </footer>
+    </section>
+  </div>
+  <div class="wb1-reason-mask" data-wb1-reason-modal hidden>
+    <section class="wb1-reason-modal" role="dialog" aria-modal="true" aria-labelledby="wb1-reason-title">
+      <header class="wb1-reason-head">
+        <div><h2 id="wb1-reason-title" data-wb1-reason-title>无需处理</h2><p data-wb1-reason-subject></p></div>
+        <button type="button" data-wb1-reason-close aria-label="关闭">×</button>
+      </header>
+      <div class="wb1-reason-body">
+        <label><span data-wb1-reason-label>无需处理原因 <em>*</em></span><textarea data-wb1-reason-input maxlength="500" placeholder="请填写无需处理原因，最多500字符"></textarea></label>
+        <div class="wb1-reason-meta"><strong data-wb1-reason-error></strong><span><b data-wb1-reason-count>0</b>/500</span></div>
+      </div>
+      <footer class="wb1-reason-foot">
+        <button type="button" data-wb1-reason-cancel>取消</button>
+        <button class="is-primary" type="button" data-wb1-reason-submit>确认无需处理</button>
+      </footer>
+    </section>
+  </div>
+  <div class="wb1-reason-mask" data-wb1-followup-modal hidden>
+    <section class="wb1-reason-modal" role="dialog" aria-modal="true" aria-labelledby="wb1-followup-title">
+      <form data-wb1-followup-form>
+        <header class="wb1-reason-head">
+          <div><h2 id="wb1-followup-title">添加跟进</h2><p data-wb1-followup-subject></p></div>
+          <button type="button" data-wb1-followup-close aria-label="关闭添加跟进">×</button>
+        </header>
+        <div class="wb1-reason-body wb1-followup-fields">
+          <label><span>跟进日期 <em>*</em></span><input name="date" type="date" required aria-label="跟进日期"></label>
+          <label><span>跟进内容 <em>*</em></span><textarea name="content" required maxlength="500" placeholder="请输入跟进内容，最多500字符" aria-label="跟进内容"></textarea></label>
+          <div class="wb1-reason-meta"><strong data-wb1-followup-error role="alert"></strong><span><b data-wb1-followup-count>0</b>/500</span></div>
+        </div>
+        <footer class="wb1-reason-foot">
+          <button type="button" data-wb1-followup-close>取消</button>
+          <button class="is-primary" type="submit">保存</button>
+        </footer>
+      </form>
+    </section>
+  </div>
+  <div class="wb1-toast" data-wb1-toast hidden></div>
+  <div class="wb1-action-menu" data-wb1-action-menu hidden></div>
+  <div class="wvc-mask" data-calendar-drawer hidden>
+    <section class="wvc-drawer" role="dialog" aria-modal="true" aria-labelledby="wvc-drawer-title" tabindex="-1">
+      <header><div><small>访视管理</small><h2 id="wvc-drawer-title"></h2></div><button type="button" data-calendar-close aria-label="关闭访视详情">×</button></header>
+      <div class="wvc-drawer-body" data-calendar-detail></div>
+      <footer><button type="button" data-calendar-close>关闭</button></footer>
+    </section>
+  </div>
+  <script src="workbench-visit-overview.js?v=2"></script>
+  <script src="clinical-workbench-one.js?v=25"></script>
+</body>
+</html>

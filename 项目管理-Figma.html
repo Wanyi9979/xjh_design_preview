@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>项目管理 · 临床研究</title>
+  <link rel="stylesheet" href="project-management.css?v=3">
+  <link rel="stylesheet" href="clinical-research-shell.css">
+  <script src="clinical-research-shell.js?v=6"></script>
+</head>
+<body>
+  <main class="page">
+    <h1>项目管理</h1>
+    <section class="project-filters" aria-label="项目筛选">
+      <input id="project-search" class="control" type="search" placeholder="项目编号/项目名称" aria-label="搜索项目编号或名称">
+      <button id="project-reset" class="control" type="button">重置</button>
+    </section>
+    <div class="project-table-wrap">
+      <table class="project-table">
+        <colgroup><col style="width:145px"><col style="width:300px"><col style="width:100px"><col style="width:90px"><col style="width:90px"><col style="width:250px"></colgroup>
+        <thead><tr><th>项目编号</th><th>项目名称</th><th>参与者数</th><th>已入组</th><th>筛选中</th><th>操作</th></tr></thead>
+        <tbody id="project-rows"></tbody>
+      </table>
+    </div>
+    <footer id="project-count" aria-live="polite"></footer>
+  </main>
+  <script src="clinical-tasks-data.js"></script>
+  <script src="clinical-visit-store.js?v=4"></script>
+  <script src="participant-directory-data.js?v=1"></script>
+  <script src="project-management.js?v=3"></script>
+</body>
+</html>

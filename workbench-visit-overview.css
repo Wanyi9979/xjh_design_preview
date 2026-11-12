@@ -1,0 +1,31 @@
+.wvc-mask[hidden] { display: none; }
+.wvc-mask, .wvc-mask * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif; }
+.wvc-mask { position: fixed; inset: 0; z-index: 82; display: flex; justify-content: flex-end; background: #0f172a55; }
+.wvc-drawer { display: flex; flex-direction: column; width: min(480px, 90vw); height: 100%; background: #fff; color: #334155; box-shadow: -12px 0 40px #1720331a; outline: 0; }
+.wvc-drawer > header { display: flex; justify-content: space-between; align-items: center; padding: 22px 24px; border-bottom: 1px solid #e8eef5; }
+.wvc-drawer > header small { color: #8b98a9; font-size: 11px; }
+.wvc-drawer h2 { margin: 5px 0 0; font-size: 17px; font-weight: 600; }
+.wvc-drawer > header button { border: 0; background: transparent; color: #8b98a9; font-size: 26px; }
+.wvc-drawer-body { flex: 1; overflow: auto; padding: 22px 24px; }
+.wvc-drawer h3 { margin: 0; font-size: 14px; font-weight: 600; }
+.wvc-detail-heading { display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px; }
+.wvc-state { padding: 4px 8px; border-radius: 4px; background: var(--event-bg); color: var(--event-color); font-size: 11px; }
+.wvc-mask .is-booked { --event-color: #3576cc; --event-bg: #eff5ff; }
+.wvc-mask .is-unbooked { --event-color: #b08432; --event-bg: #fffaed; }
+.wvc-mask .is-completed { --event-color: #8b98a9; --event-bg: #f5f7fa; }
+.wvc-mask .is-overdue { --event-color: #ce6555; --event-bg: #fff2ef; }
+.wvc-detail-fields { display: grid; gap: 17px; margin: 0 0 26px; font-size: 12px; }
+.wvc-detail-fields div { display: grid; grid-template-columns: 72px 1fr; gap: 12px; }
+.wvc-detail-fields dt { color: #8b98a9; }
+.wvc-detail-fields dd { margin: 0; }
+.wvc-date-form { display: grid; gap: 16px; padding: 18px; border: 1px solid #e2e8f0; border-radius: 8px; background: #fafcfe; }
+.wvc-date-form label { display: grid; gap: 7px; font-size: 12px; }
+.wvc-date-form input, .wvc-date-form textarea { width: 100%; padding: 9px; border: 1px solid #d5deea; border-radius: 5px; background: #fff; color: #334155; font: inherit; }
+.wvc-date-form textarea { min-height: 75px; resize: vertical; }
+.wvc-form-error { margin: 0; color: #c55643; font-size: 11px; line-height: 18px; }
+.wvc-date-form button { height: 35px; border: 0; border-radius: 5px; background: #2f6fd6; color: #fff; }
+.wvc-participant-link { display: block; margin-top: 22px; color: #2f6fd6; font-size: 12px; text-decoration: none; }
+.wvc-drawer > footer { display: flex; justify-content: flex-end; padding: 16px 24px; border-top: 1px solid #e8eef5; }
+.wvc-drawer > footer button { padding: 8px 20px; border: 1px solid #d5deea; border-radius: 5px; background: #fff; color: #526075; }
+.wvc-drawer button { cursor: pointer; }
+.wvc-drawer :focus-visible { outline: 2px solid #2f6fd6; outline-offset: 2px; }

@@ -1,0 +1,122 @@
+:root {
+  --clinical-primary: #2f6fd6;
+  --clinical-primary-hover: #245fbe;
+  --clinical-primary-soft: #edf4ff;
+  --clinical-ink: #172033;
+  --clinical-muted: #64748b;
+  --clinical-line: #dce5ef;
+  --clinical-canvas: #f2f6fb;
+}
+
+html[data-clinical-module="research"] body { background: var(--clinical-canvas); color: var(--clinical-ink); }
+html[data-clinical-module="research"] body > .sidebar { display: none; }
+html[data-clinical-module="research"] body > .page {
+  margin-left: 0;
+  min-height: calc(100vh - 60px);
+  padding: 20px;
+  background: var(--clinical-canvas);
+}
+
+html[data-clinical-module="research"] .clinical-module-header {
+  position: sticky;
+  top: 0;
+  z-index: 18;
+  height: 60px;
+  display: grid;
+  grid-template-columns: 270px minmax(0, 1fr) auto;
+  align-items: stretch;
+  column-gap: 16px;
+  padding: 0 20px;
+  border-bottom: 1px solid var(--clinical-line);
+  background: #fff;
+  color: var(--clinical-ink);
+  font: 14px "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+}
+
+html[data-clinical-module="research"] .clinical-module-header a { color: inherit; text-decoration: none; }
+html[data-clinical-module="research"] .clinical-module-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: none;
+  white-space: nowrap;
+}
+html[data-clinical-module="research"] .clinical-brand-mark {
+  width: 26px;
+  height: 26px;
+  display: grid;
+  place-items: center;
+  border-radius: 0;
+  background: transparent;
+}
+html[data-clinical-module="research"] .clinical-brand-mark img {
+  width: 22px;
+  height: 22px;
+  filter: none;
+}
+html[data-clinical-module="research"] .clinical-module-brand strong { font-size: 17px; font-weight: 600; letter-spacing: 0; }
+html[data-clinical-module="research"] .clinical-module-links { display: flex; align-items: stretch; gap: 32px; }
+html[data-clinical-module="research"] .clinical-module-links a {
+  position: relative;
+  display: flex;
+  align-items: center;
+  color: #475569;
+  font-size: 15px;
+  font-weight: 500;
+}
+html[data-clinical-module="research"] .clinical-module-links a[aria-current="page"] { color: var(--clinical-primary); font-weight: 650; }
+html[data-clinical-module="research"] .clinical-module-links a[aria-current="page"]::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 3px;
+  border-radius: 3px 3px 0 0;
+  background: var(--clinical-primary);
+}
+html[data-clinical-module="research"] .clinical-module-return {
+  display: flex;
+  align-items: center;
+  color: #334155;
+  white-space: nowrap;
+}
+html[data-clinical-module="research"] .clinical-module-header a:hover { color: var(--clinical-primary-hover); }
+html[data-clinical-module="research"] .clinical-module-header a:focus-visible {
+  outline: 2px solid var(--clinical-primary);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+html[data-clinical-module="research"] #clinical-module-tabs,
+html[data-clinical-module="research"] #clinical-overview-panel { display: none !important; }
+html[data-clinical-module="research"] #clinical-calendar-panel { display: block !important; }
+html[data-clinical-module="research"] .clinical-task-heading {
+  margin: 0 0 18px;
+  color: var(--clinical-ink);
+  font-size: 18px;
+  font-weight: 650;
+}
+
+html[data-clinical-module="care"] .clinical-module-header { display: none; }
+html[data-clinical-module="care"] #clinical-module-tabs,
+html[data-clinical-module="care"] #clinical-calendar-panel { display: none !important; }
+html[data-clinical-module="care"] .sidebar a.nav-item { text-decoration: none; }
+html[data-clinical-module="care"] .sidebar a.nav-item:hover { background: #edf5ff; color: #168aef; }
+
+@media (max-width: 900px) {
+  html[data-clinical-module="research"] .clinical-module-header {
+    grid-template-columns: 220px minmax(0, 1fr) auto;
+    column-gap: 12px;
+    padding: 0 14px;
+  }
+  html[data-clinical-module="research"] .clinical-module-links { gap: 18px; }
+  html[data-clinical-module="research"] body > .page { padding: 14px; }
+}
+
+@media (min-width: 901px) and (max-width: 1280px) {
+  html[data-clinical-module="research"] .clinical-module-header {
+    grid-template-columns: 244px minmax(0, 1fr) auto;
+    column-gap: 12px;
+  }
+}

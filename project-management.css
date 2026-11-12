@@ -1,0 +1,27 @@
+:root { font-family:"PingFang SC","Noto Sans SC","Microsoft YaHei",sans-serif; color:#262626; font-synthesis:none; }
+* { box-sizing:border-box; }
+body { margin:0; min-width:850px; }
+button,input,select { font:inherit; }
+button { cursor:pointer; }
+button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible { outline:2px solid #168aef; outline-offset:2px; }
+.page h1 { margin:0 0 18px; font-size:18px; font-weight:600; }
+.project-filters { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px; }
+.control { height:36px; padding:0 12px; border:1px solid #e5e5e5; border-radius:3px; background:#fff; color:#606060; font-size:12px; }
+select.control { min-width:150px; padding-right:30px; appearance:none; background:#fff url('figma-clinical-assets/caret-down.svg') right 10px center / 12px 12px no-repeat; }
+input.control { width:300px; }
+input::placeholder { color:#bfbfbf; }
+button.control { min-width:72px; }
+button.control:hover { border-color:#168aef; color:#168aef; }
+.project-table-wrap { overflow-x:auto; background:#fff; }
+.project-table { width:100%; min-width:975px; border-collapse:collapse; table-layout:fixed; text-align:left; font-size:12px; }
+.project-table th { height:40px; background:#fafafa; color:#888; }
+.project-table th,.project-table td { padding:12px 14px; border-bottom:1px solid #f0f0f0; font-weight:400; line-height:22px; overflow-wrap:anywhere; }
+.project-table td { height:80px; }
+.project-actions { display:flex; flex-wrap:wrap; gap:4px 14px; }
+.project-actions a { color:#168aef; text-decoration:none; white-space:nowrap; }
+.project-actions a:hover { text-decoration:underline; }
+.project-rate { display:flex; align-items:center; gap:8px; }
+.project-track { flex:1; height:4px; border-radius:4px; background:#f0f0f0; overflow:hidden; }
+.project-track span { display:block; height:100%; background:#168aef; }
+.project-empty { height:150px!important; text-align:center; color:#999; }
+#project-count { padding:16px; text-align:right; color:#888; font-size:12px; }

@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>任务模板 · 临床研究</title>
+  <link rel="stylesheet" href="clinical-research-shell.css">
+  <link rel="stylesheet" href="task-template.css?v=1">
+  <script src="clinical-research-shell.js?v=6"></script>
+</head>
+<body>
+  <main class="page task-template-page">
+    <header class="task-template-heading">
+      <div><h1>任务模板</h1><p id="template-project"></p></div>
+      <span>选择左侧版本查看对应任务配置</span>
+    </header>
+    <div class="task-template-workspace">
+      <aside class="template-version-panel" aria-label="任务模板版本">
+        <header><h2>模板版本</h2><span id="version-count"></span></header>
+        <div id="version-list" class="template-version-list" role="listbox" aria-label="模板版本列表"></div>
+      </aside>
+      <section class="template-task-panel" aria-label="具体任务">
+        <header class="template-task-head">
+          <div><h2 id="task-version-title"></h2><p id="task-version-description"></p></div>
+          <span id="task-count"></span>
+        </header>
+        <div class="template-task-table-wrap">
+          <table class="template-task-table">
+            <colgroup><col style="width:17%"><col style="width:24%"><col style="width:12%"><col style="width:12%"><col style="width:11%"><col style="width:18%"><col style="width:6%"></colgroup>
+            <thead><tr><th>任务名称</th><th>适用访视</th><th>采集方式</th><th>填写方式</th><th>采集周期</th><th>时间窗口</th><th>操作</th></tr></thead>
+            <tbody id="template-task-rows"></tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  </main>
+  <dialog class="task-detail-dialog" id="task-detail-dialog" aria-labelledby="task-detail-title">
+    <header><h2 id="task-detail-title">任务详情</h2><button type="button" data-task-close aria-label="关闭">×</button></header>
+    <div id="task-detail-content" class="task-detail-content"></div>
+    <footer><button type="button" data-task-close>关闭</button></footer>
+  </dialog>
+  <script src="task-template.js?v=1"></script>
+</body>
+</html>

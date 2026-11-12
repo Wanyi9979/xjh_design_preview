@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>临床研究 · 工作台1</title>
+  <style>
+    :root{font-family:"PingFang SC","Noto Sans SC","Microsoft YaHei",sans-serif;color:#262626;background:#f7f7f7;font-synthesis:none}
+    *{box-sizing:border-box}body{margin:0;min-width:760px}button,input{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible{outline:2px solid #168aef;outline-offset:2px}
+    .sidebar{width:60px;height:100vh;min-height:825px;background:#fff;box-shadow:1px 0 3px #0000000f;position:fixed;left:0;top:0;display:flex;flex-direction:column;align-items:center;z-index:2}
+    .logo{width:36px;height:36px;object-fit:contain;margin:12px 0 4px}.bolt-wrap{height:34px;position:relative;width:60px;display:flex;align-items:center;justify-content:center}.bolt-wrap img{width:24px;height:24px}.badge{position:absolute;top:0;left:32px;min-width:14px;height:14px;padding:0 3px;border-radius:12px;background:#ff6363;color:white;text-align:center;font-size:10px;line-height:14px}
+    .nav{display:flex;flex-direction:column;width:100%;gap:0}.nav-item{width:60px;height:52px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:3px;color:#8d9092;font-size:8px;line-height:10px;white-space:nowrap;position:relative}.nav-item img{width:20px;height:20px;object-fit:contain}.nav-item.active{color:#168aef;background:#f7f7f7;border-radius:8px 0 0 8px}.nav-item.active::before{content:"";position:absolute;left:0;top:17px;width:2px;height:20px;border-radius:0 2px 2px 0;background:#168aef}.nav-item.active img{filter:brightness(0) saturate(100%) invert(46%) sepia(96%) saturate(1165%) hue-rotate(174deg) brightness(97%) contrast(95%)}.nav-item.active img[src$="nav_clinical.svg"]{filter:none}.settings{margin-top:auto;margin-bottom:12px;width:20px;height:20px}
+    .page{margin-left:60px;min-height:100vh;padding:15px 20px 30px;background:#f7f7f7;position:relative}
+    .page-top{height:24px;margin-bottom:8px}.page-title,.status-title{margin:0;font-size:14px;line-height:24px;font-weight:500;color:rgba(43,44,45,.75)}
+    .group-filter{position:absolute;right:20px;top:20px;height:36px;width:207px;border:1px solid transparent;border-radius:999px;background:#edf1f5;color:rgba(0,6,10,.89);padding:4px 12px;display:inline-flex;align-items:center;justify-content:center;gap:8px;font-size:12px;line-height:18px;font-weight:400;white-space:nowrap}
+    .group-filter::before{content:"";flex:none;width:16px;height:16px;background:url("figma-clinical-assets/group-filter.svg") center no-repeat}.group-filter::after{content:"";flex:none;width:9px;height:9px;background:url("figma-clinical-assets/group-filter-caret.svg") center no-repeat}
+    .stats,.status-stats{display:grid;grid-auto-flow:column;grid-auto-columns:160px;justify-content:start;gap:12px;width:max-content}
+    .stat{width:160px;height:94px;border:0;border-radius:5px;background:#fff;padding:17px;display:flex;flex-direction:column;min-width:0;box-shadow:0 .5px .75px #0000001a;color:#2b2c2d}
+    .stat-title{height:16px;font-size:14px;line-height:14px;font-weight:500;white-space:nowrap}.stat-bottom{height:38px;padding-top:14px;display:flex;align-items:flex-end;justify-content:space-between;gap:8px}.stat-value{display:flex;align-items:flex-end;gap:10px;white-space:nowrap}.stat-value strong{font-family:"Helvetica Neue",Arial,sans-serif;font-size:24px;line-height:24px;font-weight:700}.stat-value small{font-size:11px;line-height:15px;color:#333}.stat-icon{width:16px;height:16px;object-fit:contain;flex:none}
+    .status-title{margin:18px 0 8px}.status-stats{margin-bottom:18px}
+    .list-header{height:36px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;gap:20px}.list-header h1{font-size:14px;line-height:24px;margin:0;font-weight:500;color:rgba(43,44,45,.75)}.search{width:314px;height:36px;border:1px solid #e5e5e5;border-radius:2px;background:white;color:#262626;padding:0 12px;font-size:12px}.search::placeholder{color:#b5b5b5}
+    .table-shell{background:white;overflow-x:auto}.table{width:100%;min-width:1000px;border-collapse:collapse;table-layout:fixed;text-align:left;font-size:12px}.table th{height:37px;color:#606060;font-weight:500;background:#fafafa;border-bottom:1px solid #f0f0f0;padding:0 16px}.table td{height:48px;padding:0 16px;border-bottom:1px solid #f0f0f0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.table tr:last-child td{border-bottom:0}.table .number{width:152px}.table .name-col{width:calc(100% - 152px - 150px - 250px - 120px - 174px)}.table .status-col{width:150px}.table .group-col{width:250px}.table .count{width:120px}.table .action{width:174px}.project-name{display:flex;align-items:center;gap:10px;min-width:0}.folder-box{width:28px;height:28px;border-radius:6px;background:#ebf5ff;display:flex;align-items:center;justify-content:center;flex:none}.folder-box img{width:18px;height:18px}.project-name span:last-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.action-text{color:#168aef;white-space:nowrap}.empty{height:96px;text-align:center!important;color:#999}
+    .pagination{display:flex;align-items:center;justify-content:flex-end;gap:8px;height:48px;font-size:12px}.page-btn{width:32px;height:32px;background:#fff;border:1px solid #d9d9d9;border-radius:2px;color:#666;display:flex;align-items:center;justify-content:center;padding:0}.page-btn img{width:12px;height:12px}.page-btn.current{border-color:#1890ff;color:#1890ff}.page-btn:disabled{opacity:.5;cursor:default}.action-text{text-decoration:none}.action-text:hover{text-decoration:underline}
+    @media(max-width:1190px){.table .status-col{width:130px}.table .count{width:120px}.table .name-col{width:calc(100% - 152px - 130px - 250px - 120px - 134px)}.table .action{width:134px}.page-top{height:49px}}
+    @media(max-width:950px){.stats,.status-stats{width:100%;grid-auto-flow:row;grid-template-columns:repeat(auto-fit,160px)}.table{min-width:1000px}}
+    .table td.project-groups{white-space:normal;padding-top:10px;padding-bottom:10px;line-height:20px}
+  </style>
+<link rel="stylesheet" href="workbench-group-filter.css">
+<link rel="stylesheet" href="crc-calendar.css">
+<script src="clinical-visit-store.js?v=4" defer></script>
+<script src="crc-calendar.js?v=2" defer></script>
+<script src="crc-calendar-integration.js?v=3" defer></script>
+<link rel="stylesheet" href="clinical-research-shell.css">
+<script src="clinical-research-shell.js?v=6"></script>
+</head>
+<body>
+  <aside class="sidebar" aria-label="系统导航">
+    <img class="logo" src="figma-clinical-assets/logo.png" alt="平台标识">
+    <div class="bolt-wrap"><img src="figma-clinical-assets/bolt.svg" alt=""><span class="badge">9</span></div>
+    <nav class="nav" aria-label="模块">
+      <div class="nav-item"><img src="figma-clinical-assets/nav_work.svg" alt="">工作台</div>
+      <div class="nav-item"><img src="figma-clinical-assets/nav_patient.svg" alt="">患者管理</div>
+      <div class="nav-item"><img src="figma-clinical-assets/nav_admission.svg" alt="">入院计划</div>
+      <div class="nav-item"><img src="figma-clinical-assets/nav_review.svg" alt="">复查监测</div>
+      <div class="nav-item"><img src="figma-clinical-assets/nav_follow.svg" alt="">患者随访</div>
+      <div class="nav-item"><img src="figma-clinical-assets/nav_nutrition.svg" alt="">营养检测</div>
+      <div class="nav-item"><img src="figma-clinical-assets/nav_dashboard.svg" alt="">数据看板</div>
+      <div class="nav-item"><img src="figma-clinical-assets/nav_notice.svg" alt="">消息通知</div>
+      <div class="nav-item active" aria-current="page"><img src="figma-clinical-assets/nav_clinical.svg" alt="">临床试验</div>
+    </nav>
+    <img class="settings" src="figma-clinical-assets/nav_settings.svg" alt="设置">
+  </aside>
+  <main class="page">
+    <nav id="clinical-module-tabs" role="tablist" aria-label="临床研究">
+      <button id="clinical-overview-tab" type="button" role="tab" aria-selected="true" aria-controls="clinical-overview-panel">项目概览</button>
+      <button id="clinical-calendar-tab" type="button" role="tab" aria-selected="false" aria-controls="clinical-calendar-panel" tabindex="-1">工作台1</button>
+    </nav>
+    <div id="clinical-overview-panel" role="tabpanel" aria-labelledby="clinical-overview-tab">
+    <div class="page-top"><h1 class="page-title">待办任务</h1><button class="group-filter" type="button">全部医院/科室/治疗组</button></div>
+    <section class="stats" aria-label="待办任务统计">
+      <div class="stat"><div class="stat-title">待制定访视计划</div><div class="stat-bottom"><div class="stat-value"><strong>3</strong></div><img class="stat-icon" src="figma-clinical-assets/stat_plan.png" alt=""></div></div>
+      <div class="stat"><div class="stat-title">待执行访视计划</div><div class="stat-bottom"><div class="stat-value"><strong>0</strong><small>未提醒 0</small></div><img class="stat-icon" src="figma-clinical-assets/stat_execute.png" alt=""></div></div>
+      <div class="stat"><div class="stat-title">逾期未执行访视</div><div class="stat-bottom"><div class="stat-value"><strong>6</strong><small>未提醒 6</small></div><img class="stat-icon" src="figma-clinical-assets/stat_overdue.png" alt=""></div></div>
+      <div class="stat"><div class="stat-title">待跟进参与者</div><div class="stat-bottom"><div class="stat-value"><strong>0</strong></div><img class="stat-icon" src="figma-clinical-assets/stat_follow.png" alt=""></div></div>
+      <div class="stat"><div class="stat-title">待数据处理</div><div class="stat-bottom"><div class="stat-value"><strong>6</strong></div><img class="stat-icon" src="figma-clinical-assets/stat_data.png" alt=""></div></div>
+    </section>
+    <h2 class="status-title">状态统计</h2>
+    <section class="status-stats" aria-label="状态统计">
+      <div class="stat"><div class="stat-title">即将访视</div><div class="stat-bottom"><div class="stat-value"><strong>3</strong></div><img class="stat-icon" src="figma-clinical-assets/stat_upcoming.png" alt=""></div></div>
+      <div class="stat"><div class="stat-title">进行中访视</div><div class="stat-bottom"><div class="stat-value"><strong>0</strong></div><img class="stat-icon" src="figma-clinical-assets/stat_execute.png" alt=""></div></div>
+      <div class="stat"><div class="stat-title">超窗访视</div><div class="stat-bottom"><div class="stat-value"><strong>6</strong></div><img class="stat-icon" src="figma-clinical-assets/stat_overdue.png" alt=""></div></div>
+    </section>
+    <section aria-labelledby="project-heading">
+      <header class="list-header"><h1 id="project-heading">项目列表</h1><input id="project-search" class="search" type="search" placeholder="项目编号/项目名称" aria-label="搜索项目编号或名称"></header>
+      <div class="table-shell"><table class="table"><thead><tr><th class="number">项目编号</th><th class="name-col">项目名称</th><th class="status-col">项目状态</th><th class="group-col">治疗组</th><th class="count">项目参与者数</th><th class="action">操作</th></tr></thead><tbody id="project-rows"></tbody></table></div>
+      <div class="pagination"><span id="count-label">共 6 条</span><button class="page-btn" disabled aria-label="上一页"><img src="figma-clinical-assets/prev.svg" alt=""></button><button class="page-btn current" aria-current="page">1</button><button class="page-btn" disabled aria-label="下一页"><img src="figma-clinical-assets/next.svg" alt=""></button></div>
+    </section>
+    </div>
+    <section id="clinical-calendar-panel" role="tabpanel" aria-labelledby="clinical-calendar-tab" hidden><div id="clinical-calendar" class="crc-workbench"></div></section>
+  </main>
+  <script>
+    const projects=[
+      ['CT-2026-001','HER2 阳性晚期乳腺癌新辅助治疗临床研究','8 人',['乳腺肿瘤一组','乳腺肿瘤二组']],
+      ['CT-2026-002','非小细胞肺癌免疫联合治疗有效性及安全性研究','3 人',['胸部肿瘤二组','肺癌综合治疗组']],
+      ['CT-2026-003','2 型糖尿病患者新型口服降糖药物临床试验','3 人',['内分泌治疗组']],
+      ['CT-2026-004','HER2 阳性晚期乳腺癌新辅助治疗临床研究','8 人',['乳腺肿瘤二组']],
+      ['CT-2026-005','非小细胞肺癌免疫联合治疗有效性及安全性研究','3 人',['肺癌综合治疗组']],
+      ['CT-2026-006','2 型糖尿病患者新型口服降糖药物临床试验','3 人',['糖尿病管理组','内分泌治疗组']]
+    ];
+    const body=document.getElementById('project-rows');
+    const count=document.getElementById('count-label');
+    const search=document.getElementById('project-search');
+    let selectedGroups=new Set(projects.flatMap(p=>p[3]));
+    function render(){
+      const q=search.value.trim().toLowerCase();
+      const visible=projects.filter(p=>p[3].some(group=>selectedGroups.has(group))&&(p[0]+p[1]).toLowerCase().includes(q));
+      body.innerHTML=visible.length?visible.map(p=>`<tr><td>${p[0]}</td><td><div class="project-name"><span class="folder-box"><img src="figma-clinical-assets/folder.svg" alt=""></span><span>${p[1]}</span></div></td><td>从EDC回显</td><td class="project-groups">${p[3].join('、')}</td><td>${p[2]}</td><td><a class="action-text" href="项目参与者-Figma.html">查看详情</a><a class="action-text calendar-link" data-calendar-project="${p[0]}" href="?tab=workbench&project=${encodeURIComponent(p[0])}">工作台1</a></td></tr>`).join(''):'<tr><td class="empty" colspan="6">暂无匹配项目</td></tr>';
+      count.textContent=`共 ${visible.length} 条`;
+    }
+    search.addEventListener('input',render);
+    render();
+  </script>
+<script src="workbench-group-filter.js"></script>
+<script src="clinical-tasks-data.js"></script><script>const statPages=["待制定访视计划","待执行访视计划","逾期未执行访视","待跟进参与者","待数据处理"];document.querySelectorAll(".stats .stat").forEach((el,i)=>{el.tabIndex=0;el.setAttribute("role","link");el.style.cursor="pointer";el.setAttribute("aria-label",statPages[i]);const go=()=>location.href=statPages[i]+"-Figma.html";el.addEventListener("click",go);el.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();go();}});const rows=[clinicalTasks.draft,clinicalTasks.pendingTasks(),clinicalTasks.pendingTasks().filter(r=>r.overdue),clinicalTasks.follow.filter(r=>!r.handled),clinicalTasks.processing.filter(r=>!r.handled)][i];el.querySelector("strong").textContent=(i===1||i===2)?rows.length:clinicalTasks.countParticipants(rows);const small=el.querySelector("small");if(small)small.textContent="未提醒 "+((i===1||i===2)?rows.filter(r=>r.remind==="未提醒").length:clinicalTasks.countParticipants(rows.filter(r=>r.remind==="未提醒")));});</script><script src="clinical-settings.js"></script></body>
+</html>
