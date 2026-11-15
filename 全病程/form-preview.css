@@ -1,0 +1,22 @@
+[data-form-preview]{padding:0;border:0;background:transparent;color:var(--brand-primary);font:inherit;text-align:left;cursor:pointer}
+[data-form-preview]:hover{text-decoration:underline}
+.clinical-form-preview{position:fixed;inset:0 0 0 auto;margin:0;width:min(680px,92vw);max-width:92vw;height:100dvh;max-height:100dvh;padding:0;border:0;border-radius:0;background:white;color:var(--text-primary);box-shadow:-12px 0 24px #17203324}
+.clinical-form-preview[open]{display:flex;flex-direction:column}
+.clinical-form-preview::backdrop{background:#0f172a44}
+.clinical-form-preview>header{display:flex;align-items:center;justify-content:space-between;flex:none;min-height:64px;padding:16px 24px;border-bottom:1px solid var(--border-default)}
+.clinical-form-preview h2{margin:0;font-size:17px;font-weight:600;line-height:26px}
+.clinical-form-preview>header button{border:0;background:transparent;color:var(--text-muted);font-size:26px;cursor:pointer}
+.clinical-form-preview-body{flex:1;min-height:0;overflow:auto;padding:24px}
+.clinical-form-preview-heading{margin-bottom:24px}
+.clinical-form-preview-heading h3{margin:0 0 8px;font-size:16px}
+.clinical-form-preview-heading p{margin:0;color:var(--text-muted);font-size:12px}
+.clinical-form-question{padding:0 0 22px;margin-bottom:22px;border-bottom:1px solid var(--border-default)}
+.clinical-form-question h4{margin:0 0 12px;font-size:13px;line-height:20px;font-weight:500}
+.clinical-form-required{color:var(--status-error);margin-right:4px}
+.clinical-form-options{display:flex;flex-wrap:wrap;gap:12px 20px}
+.clinical-form-options label{display:flex;align-items:center;gap:6px;font-size:12px;line-height:20px;color:var(--text-secondary)}
+.clinical-form-options input{margin:0}
+.clinical-form-question>input,.clinical-form-question textarea{width:100%;box-sizing:border-box;padding:10px;border:1px solid var(--border-default);border-radius:5px;background:var(--surface-table-head);font:inherit;font-size:12px;resize:none;color:var(--text-muted)}
+.clinical-form-question textarea::placeholder{color:var(--text-muted)}
+.clinical-form-preview>footer{display:flex;justify-content:flex-end;flex:none;padding:16px 24px;border-top:1px solid var(--border-default)}
+.clinical-form-preview>footer button{height:34px;min-width:72px;border:1px solid var(--border-default);border-radius:5px;background:white;color:var(--text-primary);font:inherit;font-size:13px;cursor:pointer}

@@ -1,0 +1,211 @@
+/* Figma 1094:3856: compact workspace, illustrated task selectors and visit date rails.
+   Loaded only by index.html; business dialogs keep their shared styles. */
+html[data-workbench-style=figma]{--rail-width:200px;--wb-stat-selected:linear-gradient(107deg,#cbddff 5%,#f5f4ff 100%);--wb-tab-surface:#eef1fa}
+html[data-workbench-style=figma][data-rail-collapsed=true]{--rail-width:64px}
+html[data-workbench-style=figma] body>.page{padding:18px 22px!important}
+html[data-workbench-style=figma] .page-context{height:48px;min-height:48px;margin:0;flex:none}
+html[data-workbench-style=figma] .context-row{height:32px;align-items:center;gap:24px;flex-wrap:nowrap}
+html[data-workbench-style=figma] .context-row>div:first-child{flex:none}
+html[data-workbench-style=figma] .context-row h1{font-size:21px;line-height:31.5px}
+html[data-workbench-style=figma] .wb1-toolbar{width:747px;max-width:76%;min-width:0;flex:none;margin-left:auto!important;gap:10px!important;padding:0!important;background:none!important;border:0!important;border-radius:0!important}
+html[data-workbench-style=figma] .wb1-toolbar .wb1-filter{background:white;box-shadow:none;border-radius:7px;height:34px}
+html[data-workbench-style=figma] .workbench-one{gap:0}
+html[data-workbench-style=figma] .wb1-layout{grid-template-columns:minmax(0,1fr) 310px!important;gap:20px!important;max-height:calc(100dvh - 134px)}
+html[data-workbench-style=figma] .wb1-panel{border-radius:10px;border:1px solid var(--border-default);box-shadow:0 3px 16px #26364b0a;background:white}
+html[data-workbench-style=figma] .wb1-panel-head{height:44px;min-height:44px;padding:16px 18px 6px!important;border-bottom:0!important}
+html[data-workbench-style=figma] .wb1-panel-head h1,html[data-workbench-style=figma] .wb1-panel-head h2{font-size:15px!important;line-height:22px;font-weight:600}
+html[data-workbench-style=figma] .wb1-task-summary{display:grid;grid-template-columns:repeat(5,minmax(0,1fr))!important;padding:12px 16px 14px!important;gap:8px!important;background:white}
+html[data-workbench-style=figma] .wb1-task-card{display:grid!important;grid-template-columns:56px minmax(0,1fr);grid-template-rows:36px 24px;align-content:center;align-items:center!important;column-gap:10px!important;row-gap:4px!important;padding:6px 12px 6px 8px!important;height:80px!important;min-height:80px!important;background:white;border:1px solid var(--border-default);border-radius:7px;text-align:left;box-shadow:none}
+html[data-workbench-style=figma] .wb1-task-card.is-active{background:var(--wb-stat-selected)!important;border-color:white!important;box-shadow:0 0 3px #c9d1ff80}
+html[data-workbench-style=figma] .wb1-task-card:hover{border-color:#b8cefc}
+html[data-workbench-style=figma] .wb1-task-card>span:not(.wb1-stat-art){grid-column:2;grid-row:1;font-size:14px!important;line-height:18px!important;color:var(--text-primary);white-space:nowrap}
+html[data-workbench-style=figma] .wb1-task-card>strong{grid-column:2;grid-row:2;font:700 20px/24px 'DIN Alternate','Arial Narrow',sans-serif!important;color:var(--text-primary)}
+.wb1-stat-art{position:relative;grid-row:1/3;grid-column:1;width:56px;height:56px;overflow:hidden;display:block;pointer-events:none}
+html[data-workbench-style=figma] .wb1-stat-art>img{display:block!important;position:absolute;max-width:none!important;width:240px!important;height:120px!important;left:0;top:-32px;opacity:1!important}
+.wb1-task-card:nth-child(2) .wb1-stat-art>img{left:-46.6px}
+html[data-workbench-style=figma] .wb1-task-card:nth-child(3) .wb1-stat-art>img{left:-96.2px;top:-34px;width:247px!important;height:123px!important}
+.wb1-task-card:nth-child(4) .wb1-stat-art>img{left:-139.8px}
+.wb1-task-card:nth-child(5) .wb1-stat-art>img{left:-188.4px}
+html[data-workbench-style=figma] .wb1-task-tools{height:42px!important;min-height:42px!important;gap:22px!important;padding:0 16px!important}
+html[data-workbench-style=figma] .wb1-task-tab{font-size:12px!important}
+html[data-workbench-style=figma] .wb1-table-wrap{padding:12px;overflow:auto!important}
+html[data-workbench-style=figma] .wb1-table{display:table!important;min-width:720px!important;width:100%!important;table-layout:fixed}
+html[data-workbench-style=figma] .wb1-table colgroup{display:table-column-group!important}
+html[data-workbench-style=figma] .wb1-table thead{display:table-header-group!important}
+html[data-workbench-style=figma] .wb1-table tbody{display:table-row-group!important;width:auto!important}
+html[data-workbench-style=figma] .wb1-table tbody tr{display:table-row!important}
+html[data-workbench-style=figma] .wb1-table th{height:44px;font-size:11px!important;font-weight:400;background:var(--surface-table-head)!important;color:var(--text-primary);padding:10px 12px!important;line-height:18px}
+html[data-workbench-style=figma] .wb1-table td{display:table-cell!important;position:static!important;height:73px!important;min-height:0!important;padding:15px 12px!important;font-size:12px!important;line-height:20px!important;white-space:normal!important;box-shadow:none!important;font-weight:400!important;vertical-align:middle}
+html[data-workbench-style=figma] .wb1-table td:last-child{padding-left:8px!important;padding-right:8px!important}
+html[data-workbench-style=figma] .wb1-table-actions{justify-content:flex-start;gap:9px;flex-wrap:wrap}
+html[data-workbench-style=figma] .wb1-table-actions button{font-size:12px!important}
+html[data-workbench-style=figma] .wb1-participant-cell small{font-size:11px;display:flex;gap:9px}
+html[data-workbench-style=figma] .focus-tabs{margin:12px 12px 0;padding:2px;gap:0;background:var(--wb-tab-surface);border:0;border-radius:6px}
+html[data-workbench-style=figma] .focus-tabs button{height:39px;font-size:11px;padding:0 3px;border-radius:6px;font-weight:400}
+html[data-workbench-style=figma] .focus-tabs button[aria-selected=true]{background:white;box-shadow:0 0 2px #0000000d;color:var(--brand-primary)}
+html[data-workbench-style=figma] .focus-tabs button[aria-selected=true]:after{display:none}
+html[data-workbench-style=figma] .focus-tabs button span{color:var(--text-muted)}
+html[data-workbench-style=figma] .focus-list-caption{padding:12px 18px}
+html[data-workbench-style=figma] .focus-list{padding:0 12px 12px}
+html[data-workbench-style=figma] .focus-list .recent-visit{position:relative;display:flex;align-items:stretch;gap:12px;padding:0 8px 0 0;border:1px solid #f0f0f3;border-radius:6px;box-shadow:0 0 2px #0000000d;min-height:96px;background:white;margin:0}
+html[data-workbench-style=figma] .recent-visit:hover{border-color:#c6d9ff;background:#fcfdff}
+.visit-date-rail{display:flex;align-items:center;justify-content:center;background:var(--surface-table-head);border-radius:4px 0 0 4px;width:25px;flex:none;writing-mode:vertical-rl;letter-spacing:2px;font-size:10px;color:var(--text-muted);line-height:1.4}
+.recent-visit-content{display:block;flex:1;min-width:0;padding:8px 0}
+html[data-workbench-style=figma] .recent-visit-date{gap:3px;font-size:10px}
+html[data-workbench-style=figma] .recent-visit-name{margin-top:5px;line-height:18px}
+html[data-workbench-style=figma] .recent-visit-project{margin-top:2px}
+html[data-workbench-style=figma] .recent-visit .protocol-tag{font-size:9px;line-height:16px;padding:0 4px}
+html[data-workbench-style=figma] .focus-project-link{padding:4px 0 10px}
+html[data-workbench-style=figma] .rail-brand{gap:4px;padding:0 16px}
+html[data-workbench-style=figma] .rail-brand>img{width:48px;height:44px}
+html[data-workbench-style=figma] .rail-brand strong{font-size:17px;font-weight:600;letter-spacing:.4px}
+.rail-design-icon{display:block;flex:none;width:18px;height:18px}
+html[data-workbench-style=figma] .rail-navigation>a{border-radius:6px}
+html[data-workbench-style=figma][data-rail-collapsed=true] .rail-brand{padding:0 8px}
+html[data-workbench-style=figma][data-rail-collapsed=true] .rail-toggle>img{transform:rotate(180deg)}
+@media(max-width:1550px){html[data-workbench-style=figma] .wb1-task-summary{grid-template-columns:repeat(3,minmax(0,1fr))!important}}
+@media(max-width:1100px){html[data-workbench-style=figma] .wb1-layout{grid-template-columns:minmax(0,1fr) 280px!important;gap:16px!important}html[data-workbench-style=figma] .wb1-task-summary{grid-template-columns:repeat(2,minmax(0,1fr))!important}html[data-workbench-style=figma] .wb1-task-card{column-gap:4px!important;padding-right:4px!important;grid-template-columns:56px minmax(0,1fr)}html[data-workbench-style=figma] .wb1-task-card>span:not(.wb1-stat-art){font-size:12px!important}html[data-workbench-style=figma] .wb1-toolbar{max-width:82%;gap:6px!important}html[data-workbench-style=figma] .wb1-toolbar input,html[data-workbench-style=figma] .wb1-toolbar select{font-size:10px!important;padding-left:10px}html[data-workbench-style=figma] .wb1-toolbar .is-search input{padding-left:28px}}
+@media(max-width:799px){html[data-workbench-style=figma] body>.page{height:auto!important;overflow:visible!important}html[data-workbench-style=figma] .page-context{height:auto;margin-bottom:16px}html[data-workbench-style=figma] .context-row{height:auto;flex-wrap:wrap}html[data-workbench-style=figma] .wb1-toolbar{width:100%;max-width:none;flex:1 1 100%}html[data-workbench-style=figma] .wb1-layout{grid-template-columns:1fr!important;max-height:none}html[data-workbench-style=figma] .wb1-task-summary{grid-template-columns:repeat(2,minmax(0,1fr))!important}html[data-workbench-style=figma] .wb1-visit-panel{min-height:450px!important}}
+html[data-workbench-style=figma] .wb1-table th:last-child{position:static!important;box-shadow:none!important}
+html[data-workbench-style=figma] .wb1-table td{border-bottom:1px solid var(--border-default)!important}
+html[data-workbench-style=figma] .wb1-table tbody tr:last-child td{border-bottom:0!important}
+html[data-workbench-style=figma] .wb1-task-card>span:not(.wb1-stat-art),html[data-workbench-style=figma] .wb1-task-card.is-active>span:not(.wb1-stat-art){min-width:0;max-width:100%;overflow:hidden;text-overflow:ellipsis;color:var(--text-primary)!important}
+html[data-workbench-style=figma] .wb1-task-card.is-active>strong{color:var(--text-primary)!important}
+@media(max-width:1100px) and (min-width:800px){html[data-workbench-style=figma]{--rail-width:164px}html[data-workbench-style=figma][data-rail-collapsed=true]{--rail-width:64px}html[data-workbench-style=figma] .rail-brand{gap:2px;padding:0 12px}html[data-workbench-style=figma] .rail-brand>img{width:36px;height:33px}html[data-workbench-style=figma] .rail-brand strong{font-size:14px}html[data-workbench-style=figma] .wb1-task-card{grid-template-columns:56px minmax(0,1fr)}}
+html[data-workbench-style=figma] .wb1-task-tools{overflow-x:auto;overflow-y:hidden;scrollbar-width:thin}
+html[data-workbench-style=figma] .wb1-task-tab{flex:none;white-space:nowrap}
+html[data-workbench-style=figma] .wb1-task-card>span:not(.wb1-stat-art){white-space:normal!important;text-align:left!important;line-height:18px!important;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+html[data-workbench-style=figma] .wb1-task-card>strong{font-weight:700!important}
+
+html[data-workbench-style=figma] .focus-list .recent-visit + .recent-visit{margin-top:12px}
+
+/* Latest Figma review: 14px labels, 56px art, 4px label/value gap,
+   white-to-mist-blue selection with an explicit brand-blue outline. */
+html[data-workbench-style=figma]{--wb-stat-selected:linear-gradient(103.073deg,#fff 5.1049%,#e7f0ff 99.911%)}
+html[data-workbench-style=figma] .wb1-task-card{display:flex!important;flex-direction:row!important;align-items:center!important;gap:10px!important;padding:12px 12px 12px 8px!important;height:82px!important;min-height:82px!important}
+html[data-workbench-style=figma] .wb1-task-card.is-active{border-color:var(--brand-primary)!important;box-shadow:0 0 2.8px #c9d1ff80!important}
+html[data-workbench-style=figma] .wb1-task-card .wb1-stat-art{flex:none;width:56px;height:56px}
+html[data-workbench-style=figma] .wb1-task-card>.wb1-stat-copy,html[data-workbench-style=figma] .wb1-task-card.is-active>.wb1-stat-copy{display:flex!important;flex-direction:column;align-items:flex-start;gap:4px;min-width:0;max-width:none;overflow:visible;white-space:normal!important;color:var(--text-primary)!important}
+html[data-workbench-style=figma] .wb1-task-card .wb1-stat-label{display:block;font-size:14px!important;font-weight:500;line-height:16px!important;text-align:left;white-space:normal!important;color:var(--text-primary)!important}
+html[data-workbench-style=figma] .wb1-task-card .wb1-stat-copy strong{font:700 20px/24px 'DIN Alternate','Arial Narrow',sans-serif!important;color:var(--text-primary)!important}
+html[data-workbench-style=figma] .wb1-date-window small{color:var(--brand-primary)!important}
+html[data-workbench-style=figma] .wb1-table th:last-child,html[data-workbench-style=figma] .wb1-table td:last-child{position:sticky!important;right:0;background:var(--surface-content);box-shadow:-1px 0 0 var(--border-default)!important;z-index:2}
+html[data-workbench-style=figma] .wb1-table th:last-child{background:var(--surface-table-head)!important}
+@media(max-width:1100px){html[data-workbench-style=figma] .wb1-task-card{gap:4px!important;padding-right:6px!important;height:86px!important;min-height:86px!important}}
+
+/* Keep icon geometry independent of control width and font baselines. */
+html[data-workbench-style=figma] .wb1-filter.is-search::before,
+html[data-workbench-style=figma] .wb1-filter.is-search::after{content:none!important;display:none!important}
+.wb1-search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:18px;height:18px;aspect-ratio:1;display:block;color:var(--text-secondary);pointer-events:none;z-index:1}
+html[data-workbench-style=figma] .wb1-filter.is-search input{padding-left:38px!important}
+html[data-workbench-style=figma] .wb1-table-actions [data-wb1-more-action]{display:inline-flex;align-items:center;justify-content:center;gap:3px;white-space:nowrap;vertical-align:middle;line-height:20px}
+html[data-workbench-style=figma] [data-wb1-more-action]>svg{display:block;flex:none;width:12px;height:12px;transition:transform .15s}
+html[data-workbench-style=figma] [data-wb1-more-action][aria-expanded=true]>svg{transform:rotate(180deg)}
+
+/* Visit card copy and colors from Figma 1094:4117 / 1094:4122. */
+html[data-workbench-style=figma]{--visit-name-text:#303a48}
+html[data-workbench-style=figma] .recent-visit-name{color:var(--visit-name-text);font-weight:400}
+html[data-workbench-style=figma] .recent-visit-date{color:var(--text-muted)}
+html[data-workbench-style=figma] .recent-visit-date>.visit-primary-date{color:var(--brand-primary)}
+html[data-workbench-style=figma] .recent-visit.is-overdue .visit-primary-date{color:var(--status-error)}
+
+html[data-workbench-style=figma]{--status-following:#13B9C8;--status-following-soft:#EBFAFC}
+html[data-workbench-style=figma] .wb1-participant-cell small{align-items:center;row-gap:4px}
+html[data-workbench-style=figma] .wb1-participant-cell .status{display:inline-flex;align-items:center;justify-content:center;flex:none;padding:1px 6px;border-radius:4px;white-space:nowrap;font-size:11px!important;line-height:18px!important;font-style:normal;font-weight:400}
+html[data-workbench-style=figma] .wb1-participant-cell .status.following{background:var(--status-following-soft)!important;color:var(--status-following)!important}
+/* Table text palette verified against Figma node 1094:3928. */
+html[data-workbench-style=figma] .wb1-table{--table-text-primary:rgba(0,5,9,.89);--table-text-window:#ABABAB;--wb1-ink:var(--table-text-primary);--wb1-text:var(--table-text-primary)}
+html[data-workbench-style=figma] .wb1-table thead th,
+html[data-workbench-style=figma] .wb1-table tbody td{color:var(--table-text-primary)!important}
+html[data-workbench-style=figma] .wb1-table .wb1-participant-cell strong,
+html[data-workbench-style=figma] .wb1-table .wb1-participant-cell small>span,
+html[data-workbench-style=figma] .wb1-table .wb1-date-window>span{color:var(--table-text-primary)!important}
+html[data-workbench-style=figma] .wb1-table .wb1-date-window>small{color:var(--table-text-window)!important}
+html[data-workbench-style=figma] .wb1-table .status.enrolled{background:#E6F7EC!important;color:#119E58!important}
+html[data-workbench-style=figma] .wb1-table .status.screening{background:#E6F2FF!important;color:#2D5AFA!important}
+html[data-workbench-style=figma] .wb1-table .status.following{background:#F1FBFC!important;color:#00BECB!important}
+.wb1-pagination{flex:none;display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:8px;padding:10px 12px;border-top:1px solid var(--border-default);background:white;font-size:12px;color:var(--text-secondary);min-height:52px}
+.wb1-page-total{margin-right:auto;white-space:nowrap}
+.wb1-page-size select{height:28px;padding:0 6px;border:1px solid var(--border-default);border-radius:5px;background:white;color:var(--text-secondary);font-size:11px}
+.wb1-page-buttons{display:flex;align-items:center;gap:4px}
+.wb1-page-buttons button{display:inline-flex;align-items:center;justify-content:center;min-width:28px;height:28px;padding:0 6px;border:1px solid transparent;border-radius:5px;background:white;color:var(--text-secondary);font-size:12px;line-height:1}
+.wb1-page-buttons button[aria-current=page]{border-color:var(--brand-primary);color:var(--brand-primary);background:var(--brand-primary-soft)}
+.wb1-page-buttons button:hover:not(:disabled){color:var(--brand-primary);background:var(--brand-primary-soft)}
+.wb1-page-buttons button:disabled{color:#C4CBD5;cursor:not-allowed;background:var(--surface-disabled)}
+.pagination-ellipsis{padding:0 2px;color:var(--text-muted)}
+
+.recent-visit-states{display:inline-flex;align-items:center;justify-content:flex-end;gap:4px;flex-wrap:wrap}
+.recent-appointment-date{display:block;margin-top:4px;font-size:10px;line-height:16px;color:var(--text-secondary)}
+
+.wb1-task-visit{display:flex;align-items:flex-start;flex-direction:column;gap:4px}
+html[data-workbench-style=figma] .wb1-table .wb1-task-visit .protocol-tag{font-size:10px!important;line-height:18px;font-weight:400;white-space:nowrap;color:var(--text-secondary)!important}
+
+/* Figma 1094:4131: overdue duration belongs in the left date rail. */
+html[data-workbench-style=figma]{--visit-overdue-days:#F04438}
+html[data-workbench-style=figma] .is-overdue .visit-date-rail{writing-mode:horizontal-tb;flex-direction:column;gap:1px;letter-spacing:0;padding:5px 4px;text-align:center;line-height:12px}
+.overdue-rail-label{width:11px;overflow-wrap:anywhere;font-size:10px;line-height:12px}
+.overdue-rail-days{display:block;max-width:100%;font-size:10px;font-weight:500;line-height:13px;color:var(--visit-overdue-days);white-space:nowrap}
+
+/* Clearable toolbar fields retain the existing filtering and context restoration. */
+html[data-workbench-style=figma] .wb1-toolbar{width:815px;max-width:84%}
+.wb1-filter-clear{position:absolute;right:8px;top:50%;transform:translateY(-50%);z-index:2;display:flex;align-items:center;justify-content:center;width:20px;height:20px;padding:0;border:0;border-radius:50%;background:#F2F4F7;color:var(--text-muted);font-size:15px;line-height:1;cursor:pointer}
+.wb1-filter-clear:hover{background:var(--brand-primary-soft);color:var(--brand-primary)}
+.wb1-filter-clear[hidden]{display:none!important}
+html[data-workbench-style=figma] .wb1-filter input{padding-right:34px!important}
+.wb1-filter input[type=search]::-webkit-search-cancel-button{display:none}
+.wb1-filter.is-select.has-value::after{display:none}
+.wb1-filter-reset{height:34px;min-width:54px;flex:none;padding:0 12px;border:1px solid var(--border-default);border-radius:7px;background:white;color:var(--text-primary);font-size:12px;cursor:pointer;white-space:nowrap}
+.wb1-filter-reset:hover{color:var(--brand-primary);border-color:var(--brand-primary)}
+@media(max-width:799px){html[data-workbench-style=figma] .wb1-toolbar{max-width:100%}}
+/* Keep scrolled rows below the opaque sticky header, including fixed actions. */
+html[data-workbench-style=figma] .wb1-table-wrap{padding:0 12px 12px!important;isolation:isolate}
+html[data-workbench-style=figma] .wb1-table{border-collapse:separate;border-spacing:0}
+html[data-workbench-style=figma] .wb1-table thead{position:sticky;top:0;z-index:10;background:var(--surface-table-head)}
+html[data-workbench-style=figma] .wb1-table thead th{background:var(--surface-table-head)!important}
+html[data-workbench-style=figma] .wb1-table thead th:last-child{z-index:12}
+html[data-workbench-style=figma] .wb1-table tbody td:last-child{z-index:2}
+@media(min-width:800px){html[data-workbench-style=figma] .wb1-layout{max-height:none!important}}
+html[data-workbench-style=figma] .focus-list .recent-visit{min-height:112px}
+html[data-workbench-style=figma] .recent-visit-content{display:flex;flex-direction:column;min-height:110px;padding:10px 0}
+html[data-workbench-style=figma] .recent-visit-date{margin-top:auto;padding-top:7px}
+/* Fixed actions extend to the scrollport edge; outer spacing never scrolls. */
+html[data-workbench-style=figma] .wb1-table-wrap{padding:0 0 12px 12px!important;margin-top:12px;background:white}
+html[data-workbench-style=figma] .wb1-table th:last-child,
+html[data-workbench-style=figma] .wb1-table td:last-child{right:0!important;background-color:#FFF!important;box-shadow:none!important;border-left:0!important}
+html[data-workbench-style=figma] .wb1-table th:last-child{background-color:var(--surface-table-head)!important}
+html[data-workbench-style=figma] .wb1-table th:last-child::before,
+html[data-workbench-style=figma] .wb1-table td:last-child::before{content:none;pointer-events:none}
+html[data-workbench-style=figma] .wb1-table-wrap.has-hidden-columns .wb1-table th:last-child::before,
+html[data-workbench-style=figma] .wb1-table-wrap.has-hidden-columns .wb1-table td:last-child::before{content:'';position:absolute;left:-10px;top:0;bottom:0;width:10px;background:linear-gradient(to right,transparent,rgba(38,54,75,.07));pointer-events:none}
+/* Card gutters sit outside the scrollport so fixed cells cover its whole edge. */
+html[data-workbench-style=figma] .wb1-table-wrap{margin:12px 12px 0!important;padding:0 0 12px!important}
+/* Reserve enough room for the full action group instead of wrapping buttons. */
+html[data-workbench-style=figma] .wb1-table col:last-child{width:var(--task-action-width,152px)!important}
+html[data-workbench-style=figma] .wb1-table-actions{flex-wrap:nowrap!important;white-space:nowrap;gap:9px}
+html[data-workbench-style=figma] .wb1-table-actions>button{flex:0 0 auto;white-space:nowrap}
+
+
+/* Figma 1094:3858: independent task selectors above the task list. */
+html[data-workbench-style=figma] .wb1-layout{gap:16px!important}
+.wb1-task-workspace{display:flex;flex-direction:column;min-width:0;min-height:0;container-type:inline-size}
+html[data-workbench-style=figma] .wb1-task-workspace>.wb1-task-summary{padding:0 0 16px!important;background:transparent!important;grid-template-columns:repeat(5,minmax(0,1fr))!important}
+html[data-workbench-style=figma] .wb1-task-workspace>.wb1-task-panel{display:flex;flex-direction:column;flex:1;min-height:0;overflow:hidden}
+/* Keep all five selectors on one row; compress their contents with the workspace. */
+@container(max-width:1000px){
+ html[data-workbench-style=figma] .wb1-task-workspace .wb1-task-card{padding:10px 6px!important;gap:5px!important}
+ html[data-workbench-style=figma] .wb1-task-workspace .wb1-stat-art{zoom:.7}
+ html[data-workbench-style=figma] .wb1-task-workspace .wb1-stat-label{font-size:12px!important;line-height:16px!important}
+}
+@container(max-width:650px){
+ html[data-workbench-style=figma] .wb1-task-workspace>.wb1-task-summary{gap:6px!important}
+ html[data-workbench-style=figma] .wb1-task-workspace .wb1-task-card{flex-direction:column!important;justify-content:center!important;padding:8px 4px!important;gap:4px!important;height:124px!important;min-height:124px!important}
+ html[data-workbench-style=figma] .wb1-task-workspace .wb1-stat-art{zoom:.57}
+ html[data-workbench-style=figma] .wb1-task-workspace .wb1-task-card>.wb1-stat-copy{align-items:center!important;gap:4px!important;width:100%}
+ html[data-workbench-style=figma] .wb1-task-workspace .wb1-stat-label{font-size:10px!important;line-height:14px!important;text-align:center!important;min-height:42px;display:flex;align-items:center;justify-content:center;overflow-wrap:anywhere}
+}
+@media(max-width:799px){html[data-workbench-style=figma] .wb1-task-workspace>.wb1-task-panel{min-height:360px}}
+html[data-workbench-style=figma] .wb1-task-workspace .wb1-stat-label{text-wrap:balance}
+
+html[data-workbench-style=figma] .wb1-table .wb1-participant-cell .wb1-participant-link{color:var(--brand-primary)!important;font-weight:400;white-space:nowrap;text-decoration:none;justify-self:start}
+html[data-workbench-style=figma] .wb1-table .wb1-participant-cell .wb1-participant-link:hover{text-decoration:underline;text-underline-offset:3px}
+.wb1-participant-link:focus-visible{outline:2px solid var(--brand-primary);outline-offset:3px;border-radius:2px}

@@ -1,0 +1,30 @@
+/* Match the workbench task windows while keeping participant task handlers. */
+html[data-clinical-module=research] dialog.participant-task-drawer{width:min(680px,94vw);border-radius:0;background:white!important;color:var(--dialog-text-primary);box-shadow:-12px 0 20px #1720331a}
+html[data-clinical-module=research] dialog.participant-task-drawer[data-layout=issue]{width:min(760px,94vw)}
+.participant-task-drawer::backdrop{background:#0f172a55}
+.participant-task-drawer h2{font-size:17px;line-height:26px;font-weight:600}
+.participant-task-drawer header p{font-size:12px;line-height:18px;color:var(--dialog-text-secondary)}
+.participant-task-drawer-body{font-size:12px;line-height:18px}
+.participant-task-drawer .participant-task-card{flex:none;margin:0;padding:16px;border:1px solid var(--brand-primary-soft);border-radius:8px;background:#F3F8FF}
+.participant-task-drawer .participant-task-card:first-child{padding:0;border:0;border-radius:0;background:white}
+.participant-task-drawer .participant-task-card h3{font-size:14px;line-height:20px;font-weight:500;margin:0 0 16px}
+.participant-task-drawer .participant-task-field{grid-template-columns:72px minmax(0,1fr);gap:12px;margin-bottom:17px;line-height:18px;font-size:12px}
+.participant-task-drawer .participant-task-field>span{font-size:12px;line-height:18px;color:var(--dialog-text-tertiary)}
+.participant-task-drawer .participant-task-field-grid{gap:0 24px}
+.participant-task-drawer label{font-size:12px;line-height:18px;color:var(--dialog-text-secondary);font-weight:400}
+.participant-task-drawer :is(input,select,textarea){font-size:12px;line-height:18px;border-color:var(--border-default);border-radius:5px;background:white;color:var(--dialog-text-primary)}
+.participant-task-drawer :is(input,select,textarea):focus{border-color:var(--brand-primary);outline:2px solid #2c73f614;outline-offset:0}
+.participant-task-drawer input:disabled{background:var(--surface-disabled);color:var(--text-muted)}
+.participant-task-drawer textarea:read-only{background:var(--dialog-form-surface)}
+.participant-task-drawer footer button{height:35px;min-height:35px;border:1px solid var(--border-default);border-radius:5px;font-size:13px;line-height:18px;background:white;color:var(--dialog-text-primary)}
+.participant-task-drawer footer button.primary{background:var(--brand-primary);border-color:var(--brand-primary);color:white}
+html[data-clinical-module=research] dialog.participant-task-drawer[data-layout=centered]{inset:0;margin:auto;width:min(560px,calc(100vw - 48px));height:fit-content;max-height:calc(100dvh - 48px);border-radius:10px!important;box-shadow:0 12px 36px #17203324}
+.participant-task-drawer[data-layout=centered] form{height:auto;max-height:calc(100dvh - 48px)}
+.participant-task-drawer[data-layout=centered] header{padding:14px 24px}
+.participant-task-drawer[data-layout=centered] .participant-task-drawer-body{padding:20px 24px;overflow:auto}
+.participant-task-drawer[data-layout=centered] footer{padding:16px 24px}
+.participant-task-drawer .participant-task-template-link{font-size:12px;line-height:18px}
+
+html[data-clinical-module=research] .participant-task-drawer>form>header{background:white!important;min-height:58px;padding:12px 24px}
+html[data-clinical-module=research] .participant-task-drawer>form>footer{background:white;min-height:68px;padding:16px 24px}
+html[data-clinical-module=research] .participant-task-drawer[data-layout=centered]>form>header{padding:14px 24px}

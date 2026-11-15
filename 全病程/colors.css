@@ -1,0 +1,94 @@
+/* 全病程 · 临床研究平台共享色彩。配置中心、研究人员端和参与者端保持同一语义。 */
+:root{
+ --brand-primary:#2C73F6;
+ --brand-primary-soft:#EAF2FF;
+ --brand-primary-deep:#2456A6;
+ --surface-page:#E7F0FF;
+ --surface-page-middle:#EEF1FA;
+ --surface-page-end:#F4EFF7;
+ --surface-page-gradient:linear-gradient(120deg,var(--surface-page) 0%,var(--surface-page-middle) 64%,var(--surface-page-end) 100%);
+ --brand-selected:#E5EEFF;
+ --shadow-surface:0 3px 16px rgba(38,54,75,.035);
+ --surface-content:#FFFFFF;
+ --surface-table-head:#F3F6FB;
+ --border-default:#E6EBF2;
+ --text-primary:#26364B;
+ --text-secondary:#5F6F85;
+ --text-muted:#8996A8;
+ --surface-disabled:#F2F4F7;
+ --status-success:#16B887;
+ --status-success-soft:#E8F8F2;
+ --status-pending:#2C73F6;
+ --status-pending-soft:#EAF2FF;
+ --status-warning:#F2A23A;
+ --status-warning-soft:#FFF5E6;
+ --status-error:#E65B65;
+ --status-error-soft:#FDEEF0;
+ --status-inactive:#8996A8;
+ --status-inactive-soft:#F2F4F7;
+ --clinical-primary:var(--brand-primary);
+ --clinical-primary-hover:var(--brand-primary-deep);
+ --clinical-primary-soft:var(--brand-primary-soft);
+ --clinical-ink:var(--text-primary);
+ --clinical-muted:var(--text-secondary);
+ --clinical-line:var(--border-default);
+ --clinical-canvas:var(--surface-page);
+ --accent:var(--brand-primary);
+}
+/* Only the outer page carries the atmosphere; business surfaces remain opaque white. */
+html[data-clinical-module=research]{background:var(--surface-page)}
+html[data-clinical-module=research] body{background:var(--surface-page-gradient)!important;background-attachment:fixed!important;background-repeat:no-repeat!important;background-size:cover!important;color:var(--text-primary)}
+html[data-clinical-module=research] body>.page{background:transparent!important;color:var(--text-primary)}
+html.plan-embed,html.plan-embed body{background:var(--surface-content)!important}
+.app-header{background:var(--surface-content);border-color:var(--border-default)}
+.app-brand,.app-brand strong,.context-row h1,.project-label,.wb1-panel-head h1,.wb1-panel-head h2,.study-card h2 a,.study-metrics strong,.portfolio-summary strong{color:var(--text-primary)!important}
+.brand-symbol{background:var(--brand-primary);color:white}.app-brand strong span,.eyebrow,.context-row p,.date-block>span,.date-block small,.study-description,.study-code,.study-metrics span,.portfolio-summary span,#project-count{color:var(--text-muted)!important}
+.app-header>nav a,.user-meta,.project-navigation a,.project-switch,.study-card footer a{color:var(--text-secondary)}
+.app-header>nav a[aria-current],.project-navigation a[aria-current],.study-card footer .study-primary,.wb1-panel-head>button{color:var(--brand-primary)!important}
+.app-header>nav a[aria-current]:after,.project-navigation a[aria-current]:after{background:var(--brand-primary)}
+.avatar,.study-icon{background:var(--brand-primary-soft);color:var(--brand-primary)}
+.project-label i{background:var(--brand-primary)}.date-block strong{color:var(--brand-primary-deep)}
+.demo-tag{background:var(--surface-table-head);color:var(--text-muted);border-color:var(--border-default)}
+.project-navigation,.wb1-panel,.study-card,.filters,.table-wrap,.panel,.participant-header,.project-switch select,.project-filters .control,.wb1-filter{background:var(--surface-content)!important;border-color:var(--border-default)!important}
+.portfolio-summary,.portfolio-summary>div,.study-card footer,.wb1-panel-head,.app-header,.date-block{border-color:var(--border-default)!important}
+.study-card:hover{box-shadow:0 8px 24px #26364B0A}.project-switch select{color:var(--text-primary)}
+.wb1-task-card{background:var(--surface-content)!important;border-color:var(--border-default)!important}.wb1-task-card strong{color:var(--text-primary)!important}.wb1-task-card span{color:var(--text-secondary)!important}
+.wb1-task-card.is-active{background:var(--brand-selected)!important;border-color:#B9D0FB!important}.wb1-task-card.is-active strong,.wb1-task-card.is-active span{color:var(--brand-primary)!important}
+.wb1-task-summary,.wb1-visit-row{background:var(--surface-content)!important}.wb1-visit-row:hover{background:var(--surface-table-head)!important}
+.wb1-table th,.participants th,.visit-table th,.participant-detail-table th,.task-template-table th,.template-task-table th{background:var(--surface-table-head)!important;color:var(--text-secondary)!important}
+.wb1-table td,.participants td,.visit-table td,.participant-detail-table td{background:var(--surface-content);border-color:var(--border-default)!important;color:var(--text-primary)}
+.wb1-table button,.wb1-table a,.participants .action,.visit-table button,.visit-table a,.participant-detail-action,.participant-task-link,.entry-source,.participant-journey-more button{color:var(--brand-primary)!important}
+.participants .name{color:var(--text-primary)!important}.participants .fill{background:var(--brand-primary)!important}
+.wb1-task-tab[aria-selected=true],.participant-detail-tabs .tab.active{color:var(--brand-primary)!important;border-color:var(--brand-primary)!important}
+.wb1-task-tab[aria-selected=true]:after,.participant-detail-tabs .tab.active:after{background:var(--brand-primary)!important}
+.participant-detail-tabs,.participant-detail-table thead,.wb1-issue-head,.wb1-execution-head,.wb1-reason-head,.participant-action-dialog header{background:var(--surface-table-head)!important}
+.is-primary,.primary,.top-btn.primary,.wvc-date-form button,.template-confirm,.participant-task-submit{background:var(--brand-primary)!important;border-color:var(--brand-primary)!important;color:white!important}
+button:disabled,input:disabled,select:disabled{background:var(--surface-disabled)!important;color:var(--text-muted)!important;border-color:var(--border-default)!important;cursor:not-allowed}
+:focus-visible{outline-color:var(--brand-primary)!important}
+.template-version-card[aria-selected=true]{background:var(--brand-selected)!important;border-color:#B9D0FB!important}
+/* Status fills remain deliberately pale; interaction links always remain brand blue. */
+.status.enrolled,.state.done,.visit-progress.completed,.participant-task-state.done,.participant-journey-state.done,.entry-complete,.wb1-execution-status.is-completed{background:var(--status-success-soft)!important;color:var(--status-success)!important}
+.visit-progress.activated,.participant-task-state.pending,.participant-journey-state.active,.state.active,.status.screening{background:var(--status-pending-soft)!important;color:var(--status-pending)!important}
+.visit-window.window,.participant-journey-window.window,.entry-pending{background:var(--status-warning-soft)!important;color:var(--status-warning)!important}
+.visit-window.overdue,.participant-journey-window.overdue,.participant-task-state.overdue,.wb1-execution-status.is-overdue,.status.failed,.state.over{background:var(--status-error-soft)!important;color:var(--status-error)!important}
+.visit-progress.terminated,.participant-journey-state.terminated,.wb1-execution-status.is-none,.status.ended,.state.off{background:var(--status-inactive-soft)!important;color:var(--status-inactive)!important}
+.wb1-visit-group.is-overdue .wb1-visit-group-head,.wb1-visit-group.is-overdue .wb1-visit-state{color:var(--status-error)!important}
+.wb1-visit-group.is-upcoming .wb1-visit-group-head{color:var(--status-warning)!important}.wb1-visit-group.is-today .wb1-visit-group-head{color:var(--brand-primary)!important}
+.visit-dialog-error,.wb1-reason-error,.wb1-form-error{color:var(--status-error)!important}.danger{color:var(--status-error)!important}.entry-notice{background:var(--status-warning-soft)!important;color:var(--text-secondary)!important}
+
+/* Shared white surfaces and restrained elevation. Geometry and interactions are unchanged. */
+.app-header,.sidebar,.plan-drawer,.wvc-drawer,.visit-dialog,.participant-task-drawer,.wb1-issue-modal,.wb1-execution-modal,.wb1-reason-modal,.participant-action-dialog,dialog{background:var(--surface-content)!important}
+.wb1-panel,.study-card,.filters,.table-wrap,.panel,.participant-header,.project-navigation{box-shadow:var(--shadow-surface)!important;border-color:var(--border-default)!important}
+.study-card:hover{box-shadow:0 6px 22px rgba(38,54,75,.055)!important}
+.participant-detail-toolbar,.data-form-panel,.data-upload-panel,.v1-stage,.v1-source-panel,.template-main,.template-sidebar,.template-task-panel,.template-version-list,.template-layout,.wb1-task-summary,.wb1-task-tools{background:var(--surface-content)!important}
+.wb1-filter input,.wb1-filter select,.filters input,.filters select,.project-switch select{background-color:var(--surface-content)!important;color:var(--text-primary);border-color:var(--border-default)!important}
+.app-header>nav a[aria-current],.project-navigation a[aria-current]{color:var(--brand-primary)!important}
+.participant-detail-tabs .tab.active,.data-crf-card[aria-selected=true],.participant-task-view [role=tab][aria-selected=true]{background-color:var(--brand-selected)!important}
+.wb1-table th,.participants th,.visit-table th,.participant-detail-table th,.participant-detail-table thead,.template-task-table th,.template-table th{background:var(--surface-table-head)!important;color:var(--text-secondary)!important;border-color:var(--border-default)!important}
+.wb1-table td,.participants td,.visit-table td,.participant-detail-table td,.template-table td{background:var(--surface-content)!important;border-color:var(--border-default)!important}
+.wb1-panel-head,.study-card footer,.participant-action-dialog footer{border-color:var(--border-default)!important}
+
+/* 访视方案版本是中性业务归属，避免与状态颜色混用。 */
+.protocol-tag { display:inline-flex; align-items:center; white-space:nowrap; padding:1px 7px; border-radius:4px; background:var(--surface-table-head,#F3F6FB); color:var(--text-secondary,#5F6F85); font-size:11px; line-height:20px; font-weight:400; vertical-align:middle; }
+.protocol-policy { margin:0 0 12px; color:var(--text-muted,#8996A8); font-size:12px; line-height:1.6; }
+.protocol-filter { min-width:156px; width:156px; flex-shrink:0; }

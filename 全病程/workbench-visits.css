@@ -1,0 +1,60 @@
+.wvc-mask[hidden] { display: none; }
+.wvc-mask, .wvc-mask * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif; }
+.wvc-mask { position: fixed; inset: 0; z-index: 82; display: flex; justify-content: flex-end; background: #0f172a55; }
+.wvc-drawer { display: flex; flex-direction: column; width: min(480px, 90vw); height: 100%; background: var(--surface-content); color: var(--text-secondary); box-shadow: -12px 0 40px #1720331a; outline: 0; }
+.wvc-drawer > header { display: flex; justify-content: space-between; align-items: center; padding: 22px 24px; border-bottom: 1px solid var(--brand-primary-soft); }
+.wvc-drawer > header small { color: var(--text-muted); font-size: 11px; }
+.wvc-drawer h2 { margin: 5px 0 0; font-size: 17px; font-weight: 600; }
+.wvc-drawer > header button { border: 0; background: transparent; color: var(--text-muted); font-size: 26px; }
+.wvc-drawer-body { flex: 1; overflow: auto; padding: 22px 24px; }
+.wvc-drawer h3 { margin: 0; font-size: 14px; font-weight: 600; }
+.wvc-detail-heading { display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px; }
+.wvc-state { padding: 4px 8px; border-radius: 4px; background: var(--event-bg); color: var(--event-color); font-size: 11px; }
+.wvc-mask .is-booked { --event-color: var(--brand-primary); --event-bg: var(--brand-primary-soft); }
+.wvc-mask .is-unbooked { --event-color: var(--status-warning); --event-bg: var(--status-warning-soft); }
+.wvc-mask .is-completed { --event-color: var(--text-muted); --event-bg: var(--brand-primary-soft); }
+.wvc-mask .is-overdue { --event-color: var(--status-error); --event-bg: var(--status-error-soft); }
+.wvc-detail-fields { display: grid; gap: 17px; margin: 0 0 26px; font-size: 12px; }
+.wvc-detail-fields div { display: grid; grid-template-columns: 72px 1fr; gap: 12px; }
+.wvc-detail-fields dt { color: var(--text-muted); }
+.wvc-detail-fields dd { margin: 0; }
+.wvc-date-form { display: grid; gap: 16px; padding: 18px; border: 1px solid var(--brand-primary-soft); border-radius: 8px; background: var(--brand-primary-soft); }
+.wvc-date-form label { display: grid; gap: 7px; font-size: 12px; }
+.wvc-date-form input, .wvc-date-form textarea { width: 100%; padding: 9px; border: 1px solid var(--border-default); border-radius: 5px; background: var(--surface-content); color: var(--text-secondary); font: inherit; }
+.wvc-date-form textarea { min-height: 75px; resize: vertical; }
+.wvc-form-error { margin: 0; color: var(--status-error); font-size: 11px; line-height: 18px; }
+.wvc-date-form button { height: 35px; border: 0; border-radius: 5px; background: var(--brand-primary); color: var(--surface-content); }
+.wvc-participant-link { display: block; margin-top: 22px; color: var(--brand-primary); font-size: 12px; text-decoration: none; }
+.wvc-drawer > footer { display: flex; justify-content: flex-end; padding: 16px 24px; border-top: 1px solid var(--brand-primary-soft); }
+.wvc-drawer > footer button { padding: 8px 20px; border: 1px solid var(--border-default); border-radius: 5px; background: var(--surface-content); color: var(--text-secondary); }
+.wvc-drawer button { cursor: pointer; }
+.wvc-drawer :focus-visible { outline: 2px solid var(--brand-primary); outline-offset: 2px; }
+
+/* Figma 1095:5846 — visit drawer; existing form controls and validation retained. */
+.wvc-mask{--drawer-text-primary:rgba(0,5,9,.89);--drawer-text-secondary:rgba(0,7,20,.62);--drawer-text-tertiary:rgba(0,5,29,.45)}
+.wvc-drawer{color:var(--drawer-text-primary);box-shadow:-12px 0 20px #1720331a}
+.wvc-drawer>header{flex:none;height:58px;min-height:58px;padding:12px 24px;background:white}
+.wvc-drawer h2{margin:0;font-size:17px;line-height:26px;font-weight:600;color:var(--drawer-text-primary)}
+.wvc-drawer>header button{display:flex;align-items:center;justify-content:center;width:30px;height:32px;padding:0 6px;line-height:30px}
+.wvc-drawer-body{min-height:0;padding:22px 24px;scrollbar-width:thin}
+.wvc-drawer h3{font-size:14px;line-height:20px;font-weight:500;color:var(--drawer-text-primary)}
+.wvc-detail-heading{margin-bottom:16px;min-height:22px}
+.wvc-detail-fields{gap:17px;margin:0 0 16px;font-size:12px;line-height:17px}
+.wvc-detail-fields dt{color:var(--drawer-text-tertiary)}
+.wvc-detail-fields dd{color:var(--drawer-text-primary);overflow-wrap:anywhere}
+.wvc-date-form{gap:14px;padding:16px;background:#F3F8FF;border:1px solid var(--brand-primary-soft);border-radius:8px}
+.wvc-date-form label{gap:7px;line-height:17px;color:var(--drawer-text-secondary)}
+.wvc-date-form input{height:36px;min-width:0;padding:8px 9px;color:var(--drawer-text-primary)}
+.wvc-date-form textarea{height:75px;min-height:75px;padding:9px;color:var(--drawer-text-primary);font-size:12px;line-height:17px}
+.wvc-date-form textarea::placeholder{color:#757575;opacity:1}
+.wvc-date-form input:focus,.wvc-date-form textarea:focus{border-color:var(--brand-primary)}
+.wvc-drawer>footer{flex:none;justify-content:space-between;align-items:center;min-height:68px;padding:16px 24px;background:white}
+.wvc-drawer>footer .wvc-participant-link{display:inline-flex;align-items:center;margin:0;color:var(--brand-primary);font-size:14px;font-weight:500;line-height:20px}
+.wvc-drawer>footer button{font-size:14px;line-height:18px;color:var(--drawer-text-primary)}
+@media(max-height:820px){
+ .wvc-drawer-body{padding:18px 24px}
+ .wvc-detail-heading{margin-bottom:14px}
+ .wvc-detail-fields{gap:14px;margin-bottom:14px}
+ .wvc-date-form{gap:12px}
+ .wvc-date-form label{gap:6px}
+}

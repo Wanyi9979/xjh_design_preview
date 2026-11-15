@@ -1,0 +1,14 @@
+.directory-pagination{flex:none;display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:8px;padding:10px 12px;border-top:1px solid var(--border-default);background:white;font-size:12px;color:var(--text-secondary);min-height:52px}
+.directory-page-total{margin-right:auto;white-space:nowrap}
+.directory-pagination select{height:28px;padding:0 6px;border:1px solid var(--border-default);border-radius:5px;background:white;color:var(--text-secondary);font-size:11px}
+.directory-page-buttons{display:flex;align-items:center;gap:4px}
+.directory-page-buttons button{display:inline-flex;align-items:center;justify-content:center;min-width:28px;height:28px;padding:0 6px;border:1px solid transparent;border-radius:5px;background:white;color:var(--text-secondary);font-size:12px;line-height:1}
+.directory-page-buttons button[aria-current=page]{border-color:var(--brand-primary);color:var(--brand-primary);background:var(--brand-primary-soft)}
+.directory-page-buttons button:hover:not(:disabled){color:var(--brand-primary);background:var(--brand-primary-soft)}
+.directory-page-buttons button:disabled{color:#C4CBD5;cursor:not-allowed;background:var(--surface-disabled)}
+.pagination-ellipsis{padding:0 2px;color:var(--text-muted)}
+.project-content-surface>footer.directory-pagination{margin:0!important;margin-top:auto!important;padding:10px 12px!important;height:auto;border-radius:0 0 10px 10px}
+
+html[data-clinical-module=research] body>main.page.participant-directory-page{display:flex;flex-direction:column;min-height:100dvh;box-sizing:border-box}
+.participant-directory-page>.research-topbar,.participant-directory-page>.page-context{flex:none}
+.participant-directory-page>.project-content-surface{flex:1;min-height:0}

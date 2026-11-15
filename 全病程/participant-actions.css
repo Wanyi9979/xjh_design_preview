@@ -1,0 +1,9 @@
+html[data-project-scope=single] .participants col:nth-child(7){width:250px}
+.participants .actions{gap:10px;flex-wrap:nowrap}
+.participants .actions .action{flex:none;white-space:nowrap}
+.participant-action-subject{display:flex;flex-direction:column;gap:5px;padding:12px 14px;background:#F3F8FF;border-radius:6px;font-size:12px;line-height:18px;color:var(--text-secondary)}
+.participant-action-subject strong{font-size:14px;font-weight:500;color:var(--text-primary)}
+.participant-action-subject span:last-child{font-size:11px;color:var(--text-muted)}
+
+.participants a.name.participant-link{color:var(--brand-primary)!important;text-decoration:none}
+.participants a.name.participant-link:hover{text-decoration:underline}

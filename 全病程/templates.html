@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>任务模板 · 临床研究</title>
+  <link rel="stylesheet" href="app-shell.css">
+  <script src="dialog-focus.js"></script><script src="required-fields.js?v=1"></script>
+<script src="visit-protocols.js"></script>
+<script src="app-shell.js?v=title-switch-button-13"></script>
+<link rel="stylesheet" href="redesign.css"><link rel="stylesheet" href="colors.css?v=restore-medical-blue-4"><link rel="stylesheet" href="navigation.css?v=square-collapsed-6"><style>.workbench-return{display:inline-flex;margin-bottom:12px;color:var(--brand-primary);font-size:12px;text-decoration:none}</style><link rel="stylesheet" href="centered-dialogs.css?v=required-markers-2"><style>[data-quiet-dialog]:focus,[data-quiet-dialog]:focus-visible{outline:none!important}</style><link rel="stylesheet" href="global-topbar.css?v=title-switch-button-14"><link rel="stylesheet" href="task-template.css?v=surface-fill-11"><link rel="stylesheet" href="form-preview.css?v=1"><script src="form-preview.js?v=1" defer></script></head>
+<body>
+  <main class="page task-template-page">
+    <div class="task-template-workspace">
+      <aside class="template-version-panel" aria-label="任务模板版本">
+        <header><h2>模板版本</h2><span id="version-count"></span></header>
+        <div class="template-version-filters" role="search" aria-label="任务模板筛选">
+          <div class="template-version-select"><select id="template-version-filter" aria-label="模板版本筛选"><option value="">全部版本</option></select></div>
+          <input id="template-name-search" type="search" aria-label="任务模板名称搜索" placeholder="搜索任务模板名称">
+        </div>
+        <p class="template-version-empty" id="version-empty" role="status" hidden>未找到匹配的任务模板</p>
+        <div id="version-list" class="template-version-list" role="listbox" aria-label="模板版本列表"></div>
+      </aside>
+      <section class="template-task-panel" aria-label="具体任务">
+        <header class="template-task-head">
+          <div><h2 id="task-version-title"></h2><p id="task-version-description"></p></div>
+          <span id="task-count"></span>
+        </header>
+        <div class="template-task-filters" role="search" aria-label="具体任务筛选">
+          <input id="task-name-search" type="search" aria-label="任务名称搜索" placeholder="搜索任务名称">
+          <div class="template-task-visit-select"><select id="task-visit-filter" aria-label="适用访视筛选"><option value="">全部适用访视</option></select></div>
+        </div>
+        <p class="template-task-empty" id="task-empty" hidden>暂无匹配的任务模板，请调整筛选条件</p>
+        <div class="template-task-table-wrap">
+          <table class="template-task-table">
+            <colgroup><col style="width:17%"><col style="width:24%"><col style="width:12%"><col style="width:12%"><col style="width:11%"><col style="width:18%"><col style="width:6%"></colgroup>
+            <thead><tr><th>任务名称</th><th>适用访视</th><th>采集方式</th><th>填写方式</th><th>采集周期</th><th>时间窗口</th><th>操作</th></tr></thead>
+            <tbody id="template-task-rows"></tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  </main>
+  <dialog class="task-detail-dialog" id="task-detail-dialog" aria-labelledby="task-detail-title">
+    <header><h2 id="task-detail-title">任务详情</h2><button type="button" data-task-close aria-label="关闭">×</button></header>
+    <div id="task-detail-content" class="task-detail-content"></div>
+    <footer><button type="button" data-task-close>关闭</button></footer>
+  </dialog>
+  <script src="task-template.js?v=form-preview-6"></script>
+<script src="research-data.js?v=visit-example-3"></script><script src="clinical-visit-store.js?v=activation-history-3"></script><script src="participant-directory-data.js?v=restore-actions-4"></script><script src="global-participant-search.js?v=single-clear-4"></script>
+</body>
+</html>

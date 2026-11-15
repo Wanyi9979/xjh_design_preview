@@ -1,0 +1,121 @@
+:root { font-family:"PingFang SC","Noto Sans SC","Microsoft YaHei",sans-serif; color:var(--text-secondary); font-synthesis:none; }
+* { box-sizing:border-box; }
+body { margin:0; min-width:1000px; }
+button { font:inherit; cursor:pointer; }
+button:focus-visible { outline:2px solid var(--brand-primary); outline-offset:2px; }
+.task-template-page { display:flex; flex-direction:column; }
+.task-template-heading { min-height:62px; display:flex; align-items:flex-start; justify-content:space-between; gap:24px; margin-bottom:14px; }
+.task-template-heading h1 { margin:0 0 7px; font-size:18px; font-weight:600; }
+.task-template-heading p { margin:0; color:var(--text-secondary); font-size:12px; }
+.task-template-heading>span { padding-top:6px; color:var(--text-muted); font-size:12px; }
+.task-template-workspace { min-height:650px; height:calc(100dvh - 156px); display:grid; grid-template-columns:339px minmax(0,1fr); overflow:hidden; border:1px solid var(--brand-primary-soft); background:var(--surface-content); }
+.template-version-panel { min-width:0; min-height:0; display:flex; flex-direction:column; align-self:stretch; border-right:1px solid var(--brand-primary-soft); background:var(--surface-content); }
+.template-version-panel>header,.template-task-head { min-height:60px; display:flex; align-items:center; justify-content:space-between; gap:12px; padding:0 18px; border-bottom:1px solid var(--brand-primary-soft); background:var(--surface-content); }
+.template-version-panel h2,.template-task-head h2 { margin:0; font-size:14px; font-weight:600; }
+.template-version-panel header span,.template-task-head>span { flex:none; color:var(--text-muted); font-size:12px; }
+.template-version-list { min-height:0; padding:10px; overflow-y:auto; }
+.template-version-card { width:100%; display:block; margin:0 0 8px; padding:12px; border:1px solid var(--brand-primary-soft); border-radius:4px; background:var(--surface-content); text-align:left; color:var(--text-secondary); }
+.template-version-card:hover { border-color:var(--border-default); }
+.task-template-page .template-version-card[aria-selected=true] { border-color:transparent!important; background:var(--template-selection)!important; box-shadow:inset 3px 0 var(--brand-primary); }
+.template-version-card-head { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:8px; }
+.template-version-card-head strong { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:14px; font-weight:600; }
+.template-version-tag,.visit-version-tag { flex:none; display:inline-flex; align-items:center; min-height:24px; padding:0 8px; border-radius:4px; background:var(--brand-primary-soft); color:var(--brand-primary); font-size:12px; }
+.visit-version-tag { background:var(--brand-primary-soft); color:var(--text-secondary); }
+.template-version-description { margin:0 0 8px; color:var(--text-secondary); font-size:12px; line-height:18px; }
+.template-version-meta { display:grid; grid-template-columns:80px minmax(0,1fr); gap:4px 8px; margin:0; font-size:12px; line-height:20px; }
+.template-version-meta dt { color:var(--text-muted); }
+.template-version-meta dd { min-width:0; margin:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--text-secondary); }
+.template-task-panel { min-width:0; min-height:0; display:flex; flex-direction:column; }
+.template-task-head { min-height:72px; padding:12px 18px; }
+.template-task-head>div { min-width:0; }
+.template-task-head h2 { margin-bottom:6px; }
+.template-task-head p { margin:0; overflow:hidden; color:var(--text-secondary); font-size:12px; text-overflow:ellipsis; white-space:nowrap; }
+.template-task-table-wrap { flex:1; min-height:0; overflow:auto; margin:0 16px; }
+.template-task-table { width:100%; min-width:920px; border-collapse:collapse; table-layout:fixed; text-align:left; font-size:12px; }
+.template-task-table th { position:sticky; top:0; z-index:1; height:46px; background:var(--surface-page); color:var(--text-secondary); font-weight:600; }
+.template-task-table th,.template-task-table td { padding:12px 14px; border-bottom:1px solid var(--brand-primary-soft); line-height:20px; vertical-align:middle; overflow-wrap:anywhere; }
+.template-task-table td { min-height:68px; color:var(--text-secondary); }
+.template-task-table tbody tr:hover { background:var(--brand-primary-soft); }
+.template-task-table td:first-child { font-weight:600; color:var(--text-secondary); }
+.template-task-table th:nth-child(6),.template-task-table td:nth-child(6) { white-space:nowrap; }
+.template-task-table button { padding:0; border:0; background:transparent; color:var(--brand-primary); white-space:nowrap; }
+.task-detail-dialog { width:min(620px,90vw); padding:0; border:0; border-radius:4px; color:var(--text-secondary); box-shadow:0 14px 46px #0f172a33; }
+.task-detail-dialog::backdrop { background:#0f172a66; }
+.task-detail-dialog>header { height:58px; display:flex; align-items:center; justify-content:space-between; padding:0 20px; border-bottom:1px solid var(--brand-primary-soft); }
+.task-detail-dialog h2 { margin:0; font-size:16px; font-weight:600; }
+.task-detail-dialog>header button { border:0; background:transparent; color:var(--text-muted); font-size:25px; }
+.task-detail-content { display:grid; grid-template-columns:1fr 1fr; gap:18px 24px; padding:22px; }
+.task-detail-field { min-width:0; }
+.task-detail-field span { display:block; margin-bottom:6px; color:var(--text-muted); font-size:12px; }
+.task-detail-field strong { display:block; color:var(--text-secondary); font-size:13px; font-weight:400; line-height:21px; overflow-wrap:anywhere; }
+.task-detail-field:first-child,.task-detail-field:nth-child(2) { grid-column:1 / -1; }
+.task-detail-dialog footer { display:flex; justify-content:flex-end; padding:12px 20px; border-top:1px solid var(--brand-primary-soft); }
+.task-detail-dialog footer button { min-width:72px; height:34px; border:1px solid var(--border-default); border-radius:3px; background:var(--surface-content); color:var(--text-secondary); }
+/* Figma 1103:3887: shared white version/task workspace. */
+.task-template-page { --template-selection:#F2F6FF; }
+.task-template-page .project-content-surface>.project-module-tabs { margin-bottom:0; }
+.task-template-page .project-content-surface>.task-template-workspace { margin:0; min-height:623px; }
+.template-version-panel h2,.template-task-head h2 { color:var(--text-primary); }
+.template-task-head { border-bottom:0; }
+.template-task-panel { padding-bottom:16px; }
+.template-version-list { flex:1; }
+.template-version-card:last-child { margin-bottom:0; }
+.template-version-card:focus-visible { outline-offset:-2px; }
+.template-task-table th { border-bottom-color:var(--border-default); }
+
+.template-version-card-head strong { color:var(--text-primary); }
+.template-version-filters { display:flex; gap:8px; padding:12px 10px 2px; }
+.template-version-filters select,.template-version-filters input { height:34px; min-width:0; border:1px solid var(--border-default); border-radius:5px; background:var(--surface-content); color:var(--text-primary); font:inherit; font-size:12px; }
+.template-version-filters select { flex:0 0 100px; padding:0 8px; }
+.template-version-filters input { flex:1; width:0; padding:0 10px; }
+.template-version-filters input::placeholder { color:var(--text-muted); }
+.template-version-filters :is(input,select):focus-visible { outline:2px solid var(--brand-primary); outline-offset:1px; }
+.template-version-empty,.template-task-empty { margin:0; padding:32px 16px; text-align:center; color:var(--text-muted); font-size:12px; line-height:20px; }
+.template-task-table-wrap[hidden],.template-version-empty[hidden],.template-task-empty[hidden] { display:none; }
+
+.template-version-panel>header { min-height:0; padding:18px 18px 12px; border-bottom:0; }
+.template-version-filters { padding:0 10px 12px; }
+.template-version-list { padding-top:0; }
+
+.template-version-select { position:relative; flex:0 0 100px; min-width:0; }
+.template-version-select::after { content:''; position:absolute; right:12px; top:50%; width:6px; height:6px; border-right:1.5px solid var(--text-secondary); border-bottom:1.5px solid var(--text-secondary); transform:translateY(-70%) rotate(45deg); pointer-events:none; }
+.template-version-filters .template-version-select select { appearance:none; -webkit-appearance:none; width:100%; padding:0 28px 0 10px; }
+
+.template-task-filters { display:flex; gap:10px; padding:0 16px 12px; }
+.template-task-filters input,.template-task-filters select { height:34px; min-width:0; border:1px solid var(--border-default); border-radius:5px; background:var(--surface-content); color:var(--text-primary); font:inherit; font-size:12px; }
+.template-task-filters input { width:180px; flex:1 1 180px; max-width:240px; padding:0 10px; }
+.template-task-filters input::placeholder { color:var(--text-muted); }
+.template-task-visit-select { position:relative; flex:1 1 180px; max-width:260px; min-width:0; }
+.template-task-visit-select::after { content:''; position:absolute; right:12px; top:50%; width:6px; height:6px; border-right:1.5px solid var(--text-secondary); border-bottom:1.5px solid var(--text-secondary); transform:translateY(-70%) rotate(45deg); pointer-events:none; }
+.template-task-filters select { appearance:none; -webkit-appearance:none; width:100%; padding:0 28px 0 10px; text-overflow:ellipsis; }
+.template-task-filters :is(input,select):focus-visible { outline:2px solid var(--brand-primary); outline-offset:1px; }
+.template-task-filters[hidden] { display:none; }
+.template-task-table td.template-task-no-results { padding:36px 14px; text-align:center; color:var(--text-muted); font-weight:400; }
+
+html[data-clinical-module=research] .task-detail-dialog { position:fixed; inset:0 0 0 auto; margin:0; width:min(760px,94vw); height:100dvh; max-height:100dvh; max-width:94vw; border:0; border-radius:0!important; padding:0; box-shadow:-12px 0 20px #1720331a; }
+.task-detail-dialog[open] { display:flex; flex-direction:column; }
+.task-detail-dialog>header { flex:none; min-height:58px; height:auto; }
+.task-detail-dialog .task-detail-content { display:flex; flex:1; min-height:0; flex-direction:column; gap:16px; overflow:auto; padding:22px 24px; background:white; }
+.template-detail-section { flex:none; padding:16px; border:1px solid var(--brand-primary-soft); border-radius:8px; background:#F3F8FF; }
+.template-detail-section:first-child { padding:0; border:0; background:white; }
+.template-detail-section h3 { display:flex; align-items:center; justify-content:space-between; gap:12px; margin:0 0 16px; }
+.template-detail-section h3 small { color:var(--text-muted); font-size:11px; font-weight:400; }
+.template-detail-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:17px 24px; margin:0; }
+.template-detail-grid>div { display:grid; grid-template-columns:72px minmax(0,1fr); gap:12px; font-size:12px; line-height:18px; }
+.template-detail-grid>.is-full { grid-column:1/-1; }
+.template-detail-grid :is(dt,dd) { margin:0; overflow-wrap:anywhere; }
+.template-detail-hint { color:var(--text-muted); font-size:12px; line-height:20px; margin:0 0 12px; }
+.template-detail-plan-wrap { overflow:auto; border:1px solid var(--border-default); border-radius:5px; background:white; }
+.template-detail-plan { width:100%; min-width:460px; border-collapse:collapse; text-align:left; font-size:12px; }
+.template-detail-plan :is(th,td) { padding:12px; line-height:18px; border-bottom:1px solid var(--border-default); color:var(--text-primary); font-weight:400; }
+.template-detail-plan th { background:var(--surface-table-head); color:var(--text-secondary); }
+.task-detail-dialog>footer { flex:none; min-height:68px; }
+@media(max-width:600px) { .template-detail-grid { grid-template-columns:1fr; } }
+
+.task-template-page>.project-content-surface{overflow:hidden}
+
+html[data-clinical-module=research] body>main.page.task-template-page{min-height:100dvh;box-sizing:border-box}
+.task-template-page>.research-topbar,.task-template-page>.page-context{flex:none}
+.task-template-page>.project-content-surface{flex:1;min-height:0}
+
+.task-template-page .project-content-surface>.task-template-workspace{min-height:0}

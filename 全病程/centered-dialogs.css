@@ -1,0 +1,33 @@
+/* Shared centered-dialog appearance. Placement, widths and workflows are unchanged. */
+:root{--dialog-text-primary:rgba(0,5,9,.89);--dialog-text-secondary:rgba(0,7,20,.62);--dialog-text-tertiary:rgba(0,5,29,.45);--dialog-form-surface:#F3F8FF}
+html[data-clinical-module=research] :is(.wb1-reason-modal,.task-modal,.visit-dialog,.task-detail-dialog,.participant-action-dialog,.entry-replacement,.v1-audit){background:white!important;color:var(--dialog-text-primary);border-radius:10px!important;box-shadow:0 12px 36px #17203324}
+.wb1-reason-mask{background:#0f172a55}
+:is(.visit-dialog,.task-detail-dialog,.participant-action-dialog,.entry-replacement,.v1-audit)::backdrop{background:#0f172a55}
+html[data-clinical-module=research] :is(.wb1-reason-head,.task-modal-head){background:white!important;border-bottom:1px solid var(--brand-primary-soft);padding:14px 24px}
+html[data-clinical-module=research] :is(.visit-dialog,.task-detail-dialog,.participant-action-dialog,.entry-replacement)>header,
+html[data-clinical-module=research] .participant-action-dialog>form>header{background:white;border-bottom:1px solid var(--brand-primary-soft);padding:14px 24px}
+html[data-clinical-module=research] :is(.wb1-reason-modal,.task-modal,.visit-dialog,.task-detail-dialog,.participant-action-dialog,.entry-replacement,.v1-audit) :is(h2,.task-modal-head>span){font-size:17px;line-height:26px;font-weight:600;color:var(--dialog-text-primary)}
+html[data-clinical-module=research] :is(.wb1-reason-modal,.task-modal,.visit-dialog,.task-detail-dialog,.participant-action-dialog,.entry-replacement,.v1-audit) h3{font-size:14px;line-height:20px;font-weight:500;color:var(--dialog-text-primary)}
+html[data-clinical-module=research] :is(.wb1-reason-head p,.visit-dialog-subject){font-size:12px;line-height:18px;color:var(--dialog-text-secondary)}
+html[data-clinical-module=research] :is(.wb1-reason-body,.task-modal-body,.visit-dialog-body,.participant-action-body){padding:20px 24px;color:var(--dialog-text-primary)}
+html[data-clinical-module=research] :is(.wb1-reason-modal,.task-modal,.visit-dialog,.task-detail-dialog,.participant-action-dialog,.entry-replacement) label{font-size:12px;line-height:18px;font-weight:400;color:var(--dialog-text-secondary)}
+html[data-clinical-module=research] :is(.wb1-reason-modal,.task-modal,.visit-dialog,.participant-action-dialog,.entry-replacement) :is(input:not([type=checkbox]):not([type=radio]):not([type=file]),select,textarea){border:1px solid var(--border-default);border-radius:5px;background:white;color:var(--dialog-text-primary);font-size:12px;line-height:18px;box-shadow:none}
+html[data-clinical-module=research] :is(.wb1-reason-modal,.task-modal,.visit-dialog,.participant-action-dialog,.entry-replacement) :is(input,select,textarea):focus{border-color:var(--brand-primary);outline:2px solid #2c73f614;outline-offset:0}
+html[data-clinical-module=research] :is(.wb1-reason-modal,.task-modal,.visit-dialog,.participant-action-dialog,.entry-replacement) :is(input,textarea)::placeholder{color:#8996A8;opacity:1}
+html[data-clinical-module=research] :is(.wb1-reason-modal,.task-modal,.visit-dialog,.participant-action-dialog,.entry-replacement) :is(input,select,textarea):disabled{background:var(--surface-disabled);color:var(--text-muted)}
+html[data-clinical-module=research] :is(.wb1-reason-modal textarea[readonly],.visit-dialog-plan){background:var(--dialog-form-surface);color:var(--dialog-text-secondary);border-radius:6px}
+html[data-clinical-module=research] :is(.wb1-reason-foot,.task-modal-foot){background:white;border-top:1px solid var(--brand-primary-soft);padding:16px 24px}
+html[data-clinical-module=research] :is(.visit-dialog,.task-detail-dialog,.participant-action-dialog,.entry-replacement)>footer,
+html[data-clinical-module=research] .participant-action-dialog>form>footer{background:white;border-top:1px solid var(--brand-primary-soft);padding:16px 24px}
+html[data-clinical-module=research] :is(.wb1-reason-foot,.task-modal-foot) button,
+html[data-clinical-module=research] :is(.visit-dialog,.task-detail-dialog,.participant-action-dialog,.entry-replacement) footer button{border-radius:5px;font-size:13px;line-height:18px}
+html[data-clinical-module=research] :is(.wb1-reason-foot,.task-modal-foot) button:not(.is-primary):not(.primary):not(.edu-lib),
+html[data-clinical-module=research] :is(.visit-dialog,.task-detail-dialog,.participant-action-dialog,.entry-replacement) footer button:not(.primary):not(.is-primary):not(.visit-history-link){border:1px solid var(--border-default);background:white;color:var(--dialog-text-primary)}
+html[data-clinical-module=research] :is(.wb1-reason-modal,.task-modal,.visit-dialog,.task-detail-dialog,.participant-action-dialog,.entry-replacement) :is(.primary,.is-primary){background:var(--brand-primary)!important;border-color:var(--brand-primary)!important;color:white!important}
+html[data-clinical-module=research] .visit-dialog footer .primary.danger{background:var(--status-error)!important;border-color:var(--status-error)!important}
+html[data-clinical-module=research] :is(.wb1-reason-modal,.task-modal,.visit-dialog,.task-detail-dialog,.participant-action-dialog,.entry-replacement) :is(.primary,.is-primary):disabled{background:var(--surface-disabled)!important;border-color:var(--border-default)!important;color:var(--text-muted)!important}
+html[data-clinical-module=research] :is(.wb1-reason-modal,.task-modal,.visit-dialog,.task-detail-dialog,.participant-action-dialog,.entry-replacement) dt{color:var(--dialog-text-tertiary);font-weight:400}
+html[data-clinical-module=research] :is(.wb1-reason-modal,.task-modal,.visit-dialog,.task-detail-dialog,.participant-action-dialog,.entry-replacement) dd{color:var(--dialog-text-primary);font-weight:400}
+/* Every dialog required field uses the same leading red marker. */
+:is(dialog,[role="dialog"]) label[data-required-field]{position:relative}
+:is(dialog,[role="dialog"]) label[data-required-field]::before{content:'*';position:absolute;left:-9px;top:0;color:var(--status-error,#E65B65);font-size:14px;line-height:inherit;font-weight:400;pointer-events:none}
