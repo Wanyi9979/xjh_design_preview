@@ -1,0 +1,830 @@
+{
+  "version": 1,
+  "project": {
+    "name": "临研配置中心",
+    "sourceRoot": ".."
+  },
+  "prd": {
+    "title": "临研配置中心访视管理与访视计划模板配置需求说明",
+    "summary": "本说明覆盖项目详情中的访视管理列表，以及从版本行进入的访视计划模板配置二级页面。",
+    "goals": [
+      "在项目详情内查看访视版本列表",
+      "为指定版本和访视周期配置访视计划模板"
+    ],
+    "scope": [
+      "访视管理版本列表",
+      "访视计划模板配置二级页面",
+      "计划模板创建、编辑、保存草稿、发布与确认",
+      "访视计划配置弹窗"
+    ],
+    "users": [],
+    "modules": [
+      {
+        "title": "访视管理列表",
+        "summary": "展示访视版本及版本级操作入口。",
+        "noteIds": [
+          "visit-management-version-list",
+          "visit-management-version-actions"
+        ]
+      },
+      {
+        "title": "访视计划模板配置",
+        "summary": "围绕版本与访视周期管理计划模板、模板卡片和模板编辑。",
+        "noteIds": [
+          "template-config-layout",
+          "template-visit-tree-and-status",
+          "template-empty-and-create",
+          "template-card-list-actions",
+          "template-editor-rules",
+          "template-save-publish-validation",
+          "template-confirm-modal"
+        ]
+      },
+      {
+        "title": "访视计划规则配置弹窗",
+        "summary": "配置访视计划规则中的 CRF、计划详情、采集、填写、自动映射和完成时限。",
+        "noteIds": [
+          "visit-config-modal-required-fields",
+          "visit-config-crf-tags",
+          "visit-config-confirm-state",
+          "visit-completion-limit"
+        ]
+      }
+    ],
+    "globalRules": [
+      "模板配置入口按版本进入并显示对应版本标题",
+      "模板操作涉及发布、复制、删除、停用时使用二次确认",
+      "必填或重复校验不通过时以 toast 和红色状态提示"
+    ],
+    "acceptanceCriteria": [
+      "访视管理列表显示版本号、版本日期、版本说明、计划模板和操作列",
+      "点击访视计划模板配置后显示对应版本的配置计划模板二级页面",
+      "选择不同访视周期后右侧模板列表与左侧模板数量标识同步更新",
+      "发布模板前完成必填校验和重复标题校验",
+      "配置访视计划弹窗中必填项满足前确认按钮保持禁用"
+    ],
+    "pending": [
+      "原型未确认模板数据的后端保存接口、权限控制和异常处理规则",
+      "原型未确认真实日期、版本号、发布状态与治疗组下发的数据来源"
+    ],
+    "evidence": {
+      "sourceRefs": [
+        {
+          "path": "index.html",
+          "line": 1464
+        },
+        {
+          "path": "index.html",
+          "line": 1472
+        },
+        {
+          "path": "index.html",
+          "line": 1508
+        },
+        {
+          "path": "index.html",
+          "line": 1519
+        },
+        {
+          "path": "index.html",
+          "line": 1845
+        }
+      ],
+      "facts": [
+        "访视管理",
+        "版本号",
+        "访视计划模板配置",
+        "创建计划模板",
+        "配置访视计划"
+      ]
+    }
+  },
+  "notes": [
+    {
+      "id": "visit-management-version-actions",
+      "number": 1,
+      "route": "/*",
+      "layer": "page",
+      "layerSelector": null,
+      "layerPriority": 0,
+      "anchor": {
+        "selector": ".configure-template",
+        "occurrence": 0,
+        "placement": "top-right",
+        "offsetX": 0,
+        "offsetY": 0
+      },
+      "title": "列表改造",
+      "bodyHtml": "<p>1、操作新增：访视计划模板配置。点击按钮进入对应版本的计划模板配置二级页面。</p><p>2、新增计划模板列，回显当前模板配置情况。</p>",
+      "evidence": {
+        "sourceRefs": [
+          {
+            "path": "index.html",
+            "line": 1474
+          },
+          {
+            "path": "index.html",
+            "line": 2590
+          },
+          {
+            "path": "index.html",
+            "line": 2591
+          },
+          {
+            "path": "index.html",
+            "line": 2581
+          }
+        ],
+        "facts": [
+          "查看详情",
+          "访视计划模板配置",
+          "showVisitVersionDetail",
+          "showTemplateConfig"
+        ]
+      },
+      "updatedAt": "2026-09-28T02:49:51.460Z"
+    },
+    {
+      "id": "template-config-layout",
+      "number": 2,
+      "route": "/*",
+      "layer": "page",
+      "layerSelector": null,
+      "layerPriority": 0,
+      "anchor": {
+        "selector": "#visit-template-config",
+        "occurrence": 0,
+        "placement": "top-left",
+        "offsetX": 3,
+        "offsetY": 8
+      },
+      "title": "顶部面包屑",
+      "bodyHtml": "<p>1、页面顶部显示“返回”和版本配置标题，点击【返回】回到版本列表页面。</p><p>2、左侧为“访视周期”树与“搜索访视”，右侧展示当前访视周期的计划模板区域。</p>",
+      "evidence": {
+        "sourceRefs": [
+          {
+            "path": "index.html",
+            "line": 1508
+          },
+          {
+            "path": "index.html",
+            "line": 1510
+          },
+          {
+            "path": "index.html",
+            "line": 1511
+          },
+          {
+            "path": "index.html",
+            "line": 1515
+          },
+          {
+            "path": "index.html",
+            "line": 2581
+          },
+          {
+            "path": "index.html",
+            "line": 2586
+          }
+        ],
+        "facts": [
+          "visit-template-config",
+          "返回",
+          "V1.0 配置计划模板",
+          "访视周期",
+          "搜索访视",
+          "配置计划模板"
+        ]
+      },
+      "updatedAt": "2026-09-28T02:13:25.391Z"
+    },
+    {
+      "id": "template-visit-tree-and-status",
+      "number": 3,
+      "route": "/*",
+      "layer": "page",
+      "layerSelector": null,
+      "layerPriority": 0,
+      "anchor": {
+        "selector": "#template-visit-tree",
+        "occurrence": 0,
+        "placement": "top-left",
+        "offsetX": 0,
+        "offsetY": 0
+      },
+      "title": "访视周期树与模板数量标识",
+      "bodyHtml": "<p>1、切换周期，右侧展示对应的模板列表。</p><p>2、若该周期已有模板，会在周期行显示“模板 N”。草稿+发布的都算</p>",
+      "evidence": {
+        "sourceRefs": [
+          {
+            "path": "index.html",
+            "line": 1516
+          },
+          {
+            "path": "index.html",
+            "line": 2550
+          },
+          {
+            "path": "index.html",
+            "line": 2557
+          },
+          {
+            "path": "index.html",
+            "line": 2564
+          },
+          {
+            "path": "index.html",
+            "line": 2576
+          }
+        ],
+        "facts": [
+          "template-visit-tree",
+          "模板 ",
+          "template-cycle-row",
+          "renderTemplateList"
+        ]
+      },
+      "updatedAt": "2026-09-28T02:48:55.363Z"
+    },
+    {
+      "id": "template-empty-and-create",
+      "number": 4,
+      "route": "/*",
+      "layer": "page",
+      "layerSelector": null,
+      "layerPriority": 0,
+      "anchor": {
+        "selector": "#template-add-plan",
+        "occurrence": 0,
+        "placement": "top-right",
+        "offsetX": 0,
+        "offsetY": 0
+      },
+      "title": "空状态与创建模板",
+      "bodyHtml": "<p>1、当前访视周期没有模板时显示空状态。</p><p>2、点击【创建计划模板】进入模板编辑态，模板标题默认取当前访视周期名称。</p>",
+      "evidence": {
+        "sourceRefs": [
+          {
+            "path": "index.html",
+            "line": 1519
+          },
+          {
+            "path": "index.html",
+            "line": 1523
+          },
+          {
+            "path": "index.html",
+            "line": 2494
+          },
+          {
+            "path": "index.html",
+            "line": 2496
+          },
+          {
+            "path": "index.html",
+            "line": 2594
+          }
+        ],
+        "facts": [
+          "创建计划模板",
+          "为当前访视周期添加访视计划模板",
+          "template?.name || activeTemplateVisit",
+          "openTemplateEditor"
+        ]
+      },
+      "updatedAt": "2026-09-28T02:09:13.247Z"
+    },
+    {
+      "id": "template-card-list-actions",
+      "number": 5,
+      "route": "/*",
+      "layer": "page",
+      "layerSelector": null,
+      "layerPriority": 0,
+      "anchor": {
+        "selector": "#template-card-list",
+        "occurrence": 0,
+        "placement": "top-right",
+        "offsetX": 0,
+        "offsetY": 0
+      },
+      "title": "模板卡片列表与操作",
+      "bodyHtml": "<p>1、已有模板以卡片展示，包含模板名称、计划项数量、最近修改时间、发布时间和状态。</p><p>2、卡片支持复制；草稿状态支持删除；已发布状态支持启用或停用。均需二次确认。</p><p>（1）停用：已发布状态的模板支持停用，停用后全病程不能再使用该模板</p>（2）删除/修改：草稿状态的模板支持删除/修改<br>（3）复制：复制成功后自动生成新的模板名称：原模板名称+下划线+递增号。模板状态为草稿状态。",
+      "evidence": {
+        "sourceRefs": [
+          {
+            "path": "index.html",
+            "line": 2082
+          },
+          {
+            "path": "index.html",
+            "line": 2086
+          },
+          {
+            "path": "index.html",
+            "line": 2088
+          },
+          {
+            "path": "index.html",
+            "line": 2090
+          },
+          {
+            "path": "index.html",
+            "line": 2091
+          },
+          {
+            "path": "index.html",
+            "line": 2092
+          }
+        ],
+        "facts": [
+          "template-card-list",
+          "个计划项 · 最近修改",
+          "发布时间",
+          "复制",
+          "启用",
+          "停用",
+          "删除"
+        ]
+      },
+      "updatedAt": "2026-09-28T02:48:28.732Z"
+    },
+    {
+      "id": "template-editor-rules",
+      "number": 6,
+      "route": "/*",
+      "layer": "page",
+      "layerSelector": null,
+      "layerPriority": 0,
+      "anchor": {
+        "selector": "#template-editor-state",
+        "occurrence": 0,
+        "placement": "top-left",
+        "offsetX": 53,
+        "offsetY": 0
+      },
+      "title": "创建/编辑计划模板",
+      "bodyHtml": "<p>1、点击【返回】回到模板列表</p><p>2、名称自动填入当前周期名称，在一个周期下，名称不可重复</p>",
+      "evidence": {
+        "sourceRefs": [
+          {
+            "path": "index.html",
+            "line": 1533
+          },
+          {
+            "path": "index.html",
+            "line": 1537
+          },
+          {
+            "path": "index.html",
+            "line": 2425
+          },
+          {
+            "path": "index.html",
+            "line": 2426
+          },
+          {
+            "path": "index.html",
+            "line": 2428
+          },
+          {
+            "path": "index.html",
+            "line": 2430
+          },
+          {
+            "path": "index.html",
+            "line": 2433
+          }
+        ],
+        "facts": [
+          "计划模板名称",
+          "添加计划",
+          "T+",
+          "提醒计划",
+          "患教计划",
+          "访视计划",
+          "不提前提醒"
+        ]
+      },
+      "updatedAt": "2026-09-28T02:11:02.336Z"
+    },
+    {
+      "id": "template-save-publish-validation",
+      "number": 7,
+      "route": "/*",
+      "layer": "page",
+      "layerSelector": null,
+      "layerPriority": 0,
+      "anchor": {
+        "selector": "#publish-template",
+        "occurrence": 0,
+        "placement": "top-right",
+        "offsetX": 0,
+        "offsetY": 0
+      },
+      "title": "保存草稿与发布校验",
+      "bodyHtml": "<p>1、点击【取消】直接回到创建页面。</p><p>2、点击【保存草稿】：</p><p>（1）校验模板名称的必填以及重复，不做计划的相关校验。</p><p>（2）保存成功后，页面自动返回创建页面，并在最上方新增一条为草稿状态的计划模板。</p><p>3、点击【发布】：</p><p>（1）需进行名称的必填和重复性校验，以及计划的必填校验。</p><p>（2）校验通过后需二次确认。确认后，相关模板下发至对应治疗组。</p><p>（3）发布成功后，页面自动返回创建页面，并在最上方新增一条为发布状态的计划模板。</p>",
+      "evidence": {
+        "sourceRefs": [
+          {
+            "path": "index.html",
+            "line": 1541
+          },
+          {
+            "path": "index.html",
+            "line": 2240
+          },
+          {
+            "path": "index.html",
+            "line": 2255
+          },
+          {
+            "path": "index.html",
+            "line": 2260
+          },
+          {
+            "path": "index.html",
+            "line": 2275
+          },
+          {
+            "path": "index.html",
+            "line": 2277
+          },
+          {
+            "path": "index.html",
+            "line": 2517
+          },
+          {
+            "path": "index.html",
+            "line": 2519
+          },
+          {
+            "path": "index.html",
+            "line": 2524
+          }
+        ],
+        "facts": [
+          "取消",
+          "保存草稿",
+          "发布",
+          "请输入模板标题",
+          "计划模板标题已存在，不可重复",
+          "请将计划模板补充完整"
+        ]
+      },
+      "updatedAt": "2026-09-28T02:20:04.697Z"
+    },
+    {
+      "id": "template-confirm-modal",
+      "number": 1,
+      "route": "/*",
+      "layer": "template-confirm-modal",
+      "layerSelector": "#template-disable-confirm-modal",
+      "layerPriority": 100,
+      "anchor": {
+        "selector": "#template-disable-confirm-title",
+        "occurrence": 0,
+        "placement": "top-left",
+        "offsetX": 0,
+        "offsetY": 0
+      },
+      "title": "模板操作二次确认",
+      "bodyHtml": "<p>复制、删除、发布和停用等模板操作共用确认弹窗。弹窗包含标题、说明文案、“取消”和“确认”按钮；发布确认文案为“发布后下发至对应治疗组”。</p>",
+      "evidence": {
+        "sourceRefs": [
+          {
+            "path": "index.html",
+            "line": 1795
+          },
+          {
+            "path": "index.html",
+            "line": 1797
+          },
+          {
+            "path": "index.html",
+            "line": 1799
+          },
+          {
+            "path": "index.html",
+            "line": 1801
+          },
+          {
+            "path": "index.html",
+            "line": 2105
+          },
+          {
+            "path": "index.html",
+            "line": 2110
+          },
+          {
+            "path": "index.html",
+            "line": 2207
+          },
+          {
+            "path": "index.html",
+            "line": 2525
+          }
+        ],
+        "facts": [
+          "template-disable-confirm-modal",
+          "确认操作?",
+          "请确认是否继续操作。",
+          "取消",
+          "确认",
+          "确认复制计划模板?",
+          "确认删除计划模板?",
+          "确认停用计划模板?",
+          "发布后下发至对应治疗组"
+        ]
+      },
+      "updatedAt": "2026-09-28T00:00:00+08:00"
+    },
+    {
+      "id": "visit-config-crf-tags",
+      "number": 1,
+      "route": "/*",
+      "layer": "visit-config-modal",
+      "layerSelector": "#visit-config-modal",
+      "layerPriority": 100,
+      "anchor": {
+        "selector": "#visit-crf-options",
+        "occurrence": 0,
+        "placement": "top-right",
+        "offsetX": -189,
+        "offsetY": 86
+      },
+      "title": "关联 CRF与计划内容",
+      "bodyHtml": "<p>1、关联 CRF 按当前访视的 CRF 表单渲染。</p><p>2、计划内容手动填写，这个内容作为计划内容回显到外面的计划条</p>",
+      "evidence": {
+        "sourceRefs": [
+          {
+            "path": "index.html",
+            "line": 2293
+          },
+          {
+            "path": "index.html",
+            "line": 2296
+          },
+          {
+            "path": "index.html",
+            "line": 2299
+          },
+          {
+            "path": "index.html",
+            "line": 2301
+          },
+          {
+            "path": "index.html",
+            "line": 2318
+          },
+          {
+            "path": "index.html",
+            "line": 2320
+          },
+          {
+            "path": "index.html",
+            "line": 2327
+          },
+          {
+            "path": "index.html",
+            "line": 2333
+          }
+        ],
+        "facts": [
+          "visit-crf-option",
+          "updateVisitPlanDetail",
+          "visit-plan-tag",
+          "删除 ",
+          "classList.remove(\"active\")"
+        ]
+      },
+      "updatedAt": "2026-09-28T06:29:44.882Z"
+    },
+    {
+      "id": "visit-config-confirm-state",
+      "number": 2,
+      "route": "/*",
+      "layer": "visit-config-modal",
+      "layerSelector": "#visit-config-modal",
+      "layerPriority": 100,
+      "anchor": {
+        "selector": "#confirm-visit-config",
+        "occurrence": 0,
+        "placement": "top-right",
+        "offsetX": -519,
+        "offsetY": -254
+      },
+      "title": "采集方式",
+      "bodyHtml": "<p>1、采集方式默认选中【文件】</p><p>2、切换为表单时，下方显示【选择问卷】配置项，问卷选择项--对应项目问卷库回显即可。</p>",
+      "evidence": {
+        "sourceRefs": [
+          {
+            "path": "index.html",
+            "line": 1903
+          },
+          {
+            "path": "index.html",
+            "line": 2341
+          },
+          {
+            "path": "index.html",
+            "line": 2342
+          },
+          {
+            "path": "index.html",
+            "line": 2343
+          },
+          {
+            "path": "index.html",
+            "line": 2344
+          },
+          {
+            "path": "index.html",
+            "line": 2346
+          },
+          {
+            "path": "index.html",
+            "line": 2347
+          },
+          {
+            "path": "index.html",
+            "line": 2348
+          },
+          {
+            "path": "index.html",
+            "line": 2349
+          },
+          {
+            "path": "index.html",
+            "line": 2362
+          }
+        ],
+        "facts": [
+          "confirm-visit-config",
+          "disabled",
+          "hasCrf",
+          "hasDetail",
+          "hasCollectType",
+          "hasQuestionnaire",
+          "hasFillMode",
+          "hasAutoMap",
+          "hidden"
+        ]
+      },
+      "updatedAt": "2026-09-28T06:29:46.766Z"
+    },
+    {
+      "id": "visit-completion-limit",
+      "number": 3,
+      "route": "/*",
+      "layer": "visit-config-modal",
+      "layerSelector": "#visit-config-modal",
+      "layerPriority": 100,
+      "anchor": {
+        "selector": ".completion-panel",
+        "occurrence": 0,
+        "placement": "bottom-left",
+        "offsetX": 200,
+        "offsetY": -164
+      },
+      "title": "填写方式",
+      "bodyHtml": "<p>1、个案填写：仅个案账号。</p><p>2、仅患者填写：患者/个案均可，患者端显示对应计划任务。</p>",
+      "evidence": {
+        "sourceRefs": [
+          {
+            "path": "index.html",
+            "line": 1891
+          },
+          {
+            "path": "index.html",
+            "line": 1892
+          },
+          {
+            "path": "index.html",
+            "line": 1895
+          },
+          {
+            "path": "index.html",
+            "line": 1896
+          },
+          {
+            "path": "index.html",
+            "line": 1898
+          },
+          {
+            "path": "index.html",
+            "line": 2384
+          },
+          {
+            "path": "index.html",
+            "line": 2388
+          }
+        ],
+        "facts": [
+          "计划完成时限配置",
+          "支持设置计划完成时限，计划在规定时限内完成不视为逾期，超出时限未完成则标记为逾期。",
+          "在计划日期延后",
+          "天后，未完成计划将被标记为逾期。",
+          "setCompletionPanelDisabled"
+        ]
+      },
+      "updatedAt": "2026-09-28T06:29:53.682Z"
+    },
+    {
+      "id": "manual-f9002441d2e6",
+      "number": 8,
+      "route": "/*",
+      "layer": "page",
+      "layerSelector": null,
+      "layerPriority": 0,
+      "anchor": {
+        "selector": "div.rule-card.template-rule-card",
+        "occurrence": 0,
+        "placement": "top-right",
+        "offsetX": 0,
+        "offsetY": 0
+      },
+      "title": "计划模板",
+      "bodyHtml": "<p>1、默认创建一条类型为访视计划的计划。</p><p>2、计划不可全部删除，至少保留一条。</p><p>3、计划类型包括：访视计划、提醒计划、患教计划，切换时，对应的配置项不同。默认绑定当前访视，禁用只读。</p><p>4、提醒和患教配置项与原全病程一致，不做赘述。</p>",
+      "evidence": {
+        "sourceRefs": [],
+        "facts": [],
+        "userCreated": true,
+        "observedText": "1T+天提醒计划患教计划访视计划筛选期"
+      },
+      "updatedAt": "2026-09-28T02:43:57.283Z"
+    },
+    {
+      "id": "manual-8475eafaa8eb",
+      "number": 4,
+      "route": "/*",
+      "layer": "visit-config-modal",
+      "layerSelector": "#visit-config-modal",
+      "layerPriority": 100,
+      "anchor": {
+        "selector": "div.visit-radio-group",
+        "occurrence": 0,
+        "placement": "top-right",
+        "offsetX": -544,
+        "offsetY": 101
+      },
+      "title": "自动映射",
+      "bodyHtml": "<p>1、默认选择【是】，上传对应文件/填写问卷后自动ai识别映射至对应访视周期。</p><p>2、选择【否】，不自动映射</p>",
+      "evidence": {
+        "sourceRefs": [],
+        "facts": [],
+        "userCreated": true,
+        "observedText": "文件 表单"
+      },
+      "updatedAt": "2026-09-28T06:29:55.449Z"
+    },
+    {
+      "id": "manual-f2062d507aef",
+      "number": 5,
+      "route": "/*",
+      "layer": "visit-config-modal",
+      "layerSelector": "#visit-config-modal",
+      "layerPriority": 100,
+      "anchor": {
+        "selector": "div.completion-panel",
+        "occurrence": 0,
+        "placement": "top-right",
+        "offsetX": -311,
+        "offsetY": 29
+      },
+      "title": "计划完成时限",
+      "bodyHtml": "<p>1、支持设置计划完成时限，计划在规定时限内完成不视为逾期，超过时限未完成则标记为逾期。</p>2、计划完成时限配置<br>（1）支持根据当前访视窗口期结束日期与计划日期自动计算可完成天数，自动填入，可修改。<br>（2）完成时限天数=当前访视窗口期结束日期-计划日期。<br>3、默认打开，关闭后，下方输入框禁用。视为无逾期范围，超过计划日期即逾期。",
+      "evidence": {
+        "sourceRefs": [],
+        "facts": [],
+        "userCreated": true,
+        "observedText": "? 在计划日期延后 天后，未完成计划将被标记为逾期。"
+      },
+      "updatedAt": "2026-09-28T06:30:01.053Z"
+    },
+    {
+      "id": "manual-c0eff1a17564",
+      "number": 6,
+      "route": "/*",
+      "layer": "visit-config-modal",
+      "layerSelector": "#visit-config-modal",
+      "layerPriority": 100,
+      "anchor": {
+        "selector": "div.modal-footer",
+        "occurrence": 0,
+        "placement": "top-right",
+        "offsetX": 0,
+        "offsetY": 0
+      },
+      "title": "确认",
+      "bodyHtml": "<p>1、必填未填写时，按钮禁用。填写后恢复可用。</p><p>2、确认后在计划列表上回显：计划详情</p>",
+      "evidence": {
+        "sourceRefs": [],
+        "facts": [],
+        "userCreated": true,
+        "observedText": "取消确认"
+      },
+      "updatedAt": "2026-09-28T02:38:45.106Z"
+    }
+  ]
+}

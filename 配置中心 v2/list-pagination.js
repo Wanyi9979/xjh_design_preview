@@ -3,7 +3,7 @@
     {body: '#vt-version-body', footer: '#vt-version-panel .vt-pagination', unit: '个版本'},
     {body: '#vt-task-body', footer: '#vt-task-panel .vt-pagination', unit: '个任务'},
     {body: '#vt-question-body', footer: '#vt-question-total', unit: '个表单'},
-    {body: '#visit-group-body', footer: '#visit-group-panel .visit-group-pagination', unit: '个分组'},
+    {body: '#visit-group-body', footer: '#tab-groups .visit-group-pagination', unit: '个分组'},
     {body: '#ds-mapping-body', footer: '#ds-mapping-total', unit: '条映射'},
     {body: '#center-link-body', footer: '#tab-centers .center-pagination', unit: '个中心'},
     {body: '#account-mapping-body', footer: '#tab-accounts .pagination', unit: '个映射'},

@@ -31,7 +31,7 @@
 .ai-annotation-dialog .ai-object { margin-bottom: 24px; padding: 10px 12px; color: #5F6F85; background: #f7f9fc; border: 1px solid #e8e8ec; border-radius: 5px; font-size: 14px; }
 .ai-annotation-dialog .ai-required { color: #ff4d4f; }
 .ai-annotation-dialog textarea { width: 100%; min-height: 96px; padding: 10px 12px; resize: vertical; color: #26364B; border: 1px solid #d9e2ef; border-radius: 5px; font-family: inherit; font-size: 14px; line-height: 1.5; box-sizing: border-box; }
-.ai-annotation-dialog textarea:focus { outline: 2px solid #91caff; border-color: #2C73F6; }
+.ai-annotation-dialog textarea:focus { outline: 2px solid #91CAFF; border-color: #2C73F6; }
 .ai-annotation-dialog .ai-error { margin: 8px 0 0; color: #ff4d4f; font-size: 12px; }
 .ai-annotation-dialog footer { min-height: 70px; padding: 16px 24px; display: flex; align-items: center; justify-content: flex-end; gap: 8px; border-top: 1px solid #e8e8ec; }
 .ai-annotation-dialog footer .ai-delete { margin-right: auto; color: #ff4d4f; }

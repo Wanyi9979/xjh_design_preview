@@ -34,7 +34,7 @@
   const modeNames = {single: '单次采集', continuous: '连续天数', specified: '指定天数'};
   const cycleNames = {single: '单次采集', continuous: '连续采集', specified: '指定天数'};
   const windowUnits = {days: {label: '天', max: 365}, hours: {label: '时', max: 8760}, minutes: {label: '分', max: 525600}};
-  const anchorNames = {visit_date: '指定访视日期', enrollment_date: '入组日期', randomization_date: '随机日期', first_dose_date: '首次给药日期'};
+  const anchorNames = {visit_date: '访视日期', enrollment_date: '入组日期', randomization_date: '随机日期', first_dose_date: '首次给药日期'};
 
   let project = 'SYX-ML46252';
   let mappingVisitVersion = 'V2.0';
@@ -53,21 +53,62 @@
   const legacyStorageKey = (projectId, visitVersion) => `ai-edc:visit-tasks:v1:${encodeURIComponent(projectId)}:${encodeURIComponent(visitVersion)}`;
   const projectCatalog = (projectId = project) => projectId === 'SYX-ML46252' ? [...catalog, ...availableForms] : [];
   const groupName = id => groups.find(group => group.id === id)?.name || id;
-  const visitGroupStorageKey = (projectId, visitVersion) => `config-center:visit-groups:${encodeURIComponent(projectId)}:${encodeURIComponent(visitVersion)}`;
-  function configuredVisitGroups(projectId, visitVersion) {
+  const visitGroupStorageKey = projectId => `config-center:visit-groups:${encodeURIComponent(projectId)}:shared`;
+  function configuredVisitGroups(projectId) {
     try {
-      const stored = JSON.parse(localStorage.getItem(visitGroupStorageKey(projectId, visitVersion)) || '[]');
-      return Array.isArray(stored) ? stored.map(item => typeof item === 'string' ? item.trim() : typeof item?.name === 'string' ? item.name.trim() : '').filter(Boolean) : [];
+      const saved = localStorage.getItem(visitGroupStorageKey(projectId));
+      const stored = saved === null
+        ? ['V2.0', 'V1.1', 'V1.0'].flatMap(version => {
+            const key = `config-center:visit-groups:${encodeURIComponent(projectId)}:${encodeURIComponent(version)}`;
+            try { const groups = JSON.parse(localStorage.getItem(key) || '[]'); return Array.isArray(groups) ? groups : []; }
+            catch (_) { return []; }
+          })
+        : JSON.parse(saved);
+      return Array.isArray(stored) ? [...new Set(stored.map(item => typeof item === 'string' ? item.trim() : typeof item?.name === 'string' ? item.name.trim() : '').filter(Boolean))] : [];
     } catch (_) { return []; }
   }
   function isGroupReferencedByPublishedTasks(projectId, visitVersion, name) {
     try {
       const data = projectId === project && state ? state : readState(projectId);
-      return data.versions.some(version => version.visitVersion === visitVersion && version.status === 'published' && version.tasks.length > 0 && (
+      return data.versions.some(version => version.status === 'published' && (
         (version.groupMode === 'selected' && version.groups.some(id => groupName(id) === name)) ||
         version.tasks.some(task => task.groupMode === 'selected' && task.groups.some(id => groupName(id) === name))
       ));
     } catch (_) { return true; }
+  }
+  function getGroupReferences(projectId, name) {
+    try {
+      const data = projectId === project && state ? state : readState(projectId);
+      return data.versions.filter(version =>
+        version.groups.some(id => groupName(id) === name) ||
+        version.tasks.some(task => task.groups.some(id => groupName(id) === name))
+      ).map(version => `${version.name}（${version.version}）`);
+    } catch (_) { return null; }
+  }
+  function renameGroup(oldName, newName) {
+    if (oldName === newName) return true;
+    const projectId = document.getElementById('view-detail')?.dataset.projectId || project;
+    if (isGroupReferencedByPublishedTasks(projectId, null, oldName)) return false;
+    let next;
+    try { next = copy(projectId === project && state ? state : readState(projectId)); }
+    catch (_) { return false; }
+    let changed = false;
+    const rename = ids => ids.map(id => {
+      if (groupName(id) !== oldName) return id;
+      changed = true;
+      return newName;
+    });
+    next.versions.forEach(version => {
+      version.groups = rename(version.groups);
+      version.tasks.forEach(task => { task.groups = rename(task.groups); });
+    });
+    if (!changed) return true;
+    try {
+      validateState(next, projectId);
+      localStorage.setItem(storageKey(projectId), JSON.stringify(next));
+      if (projectId === project) state = next;
+      return true;
+    } catch (_) { return false; }
   }
   const activeVersion = () => state?.versions.find(item => item.id === activeVersionId) || null;
   const questionsFromState = (data, projectId = project) => data.questions.map(link => {
@@ -102,7 +143,7 @@
     id: crypto.randomUUID(), name: '', questionId: '', questionRevision: '', groupMode: 'all', groups: [],
     description: '', visits: [], collectionMethod: 'questionnaire', collectionDateMode: 'single', mode: 'single',
     timeAnchor: 'visit_date', continuousStartDay: 1, continuousEndDay: 5, specifiedDays: [],
-    collectionTimes: [{type: 'unspecified', time: ''}], windowBefore: 0, windowAfter: 0,
+    dailyFrequency: 'once', collectionTimes: [{type: 'unspecified', time: ''}], windowBefore: 0, windowAfter: 0,
     windowUnit: 'days', patientOnly: true, allowOverdue: false, autoMapCrf: true
   });
 
@@ -119,7 +160,8 @@
     const collectionTimes = Array.isArray(task.collectionTimes) && task.collectionTimes.length
       ? task.collectionTimes.map(item => ({type: item.type === 'fixed' ? 'fixed' : 'unspecified', time: item.time || ''}))
       : legacyTimes.map(time => ({type: time ? 'fixed' : 'unspecified', time: time || ''}));
-    const normalized = {...blankTask(), ...copy(task), collectionMethod, collectionDateMode, mode: collectionDateMode, collectionTimes};
+    const dailyFrequency = task.dailyFrequency === 'multiple' || collectionTimes.length > 1 ? 'multiple' : 'once';
+    const normalized = {...blankTask(), ...copy(task), collectionMethod, collectionDateMode, mode: collectionDateMode, dailyFrequency, collectionTimes};
     normalized.id = task.id || crypto.randomUUID();
     normalized.description = task.description ?? task.instructions ?? '';
     normalized.visits = Array.isArray(task.visits) ? copy(task.visits) : [];
@@ -235,6 +277,7 @@
       if (item.description === '由原采集任务配置迁移') item.description = '由原任务配置迁移';
       if (!item.id || ids.has(item.id) || !item.name || !/^V\d+\.\d+$/.test(item.version) || !visitVersions.includes(item.visitVersion)) throw Error('Invalid version');
       if (!['draft', 'published'].includes(item.status) || !Array.isArray(item.groups) || !Array.isArray(item.tasks)) throw Error('Invalid version state');
+      item.enabled = item.status === 'published' && item.enabled !== false;
       ids.add(item.id);
       item.tasks = item.tasks.map(normalizeTask);
       const taskIds = new Set();
@@ -285,12 +328,12 @@
         <div class="vt-toolbar vt-version-filters">
           <div class="search vt-clearable-filter"><span class="vt-search-icon">${icons.search}</span><input id="vt-version-search" type="text" placeholder="搜索版本名称" aria-label="搜索版本名称" /><button type="button" class="vt-clear-filter" data-clear-filter="vt-version-search" aria-label="清空版本名称搜索" hidden>${icons.clear}</button></div>
           <div class="vt-clearable-filter vt-select-filter"><select id="vt-version-visit-filter" aria-label="筛选项目访视版本"><option value="all">全部访视版本</option>${visitVersions.map(item => `<option value="${esc(item)}">${esc(item)}</option>`).join('')}</select><button type="button" class="vt-clear-filter" data-clear-filter="vt-version-visit-filter" aria-label="清空访视版本筛选" hidden>${icons.clear}</button></div>
-          <div class="vt-clearable-filter vt-select-filter"><select id="vt-version-status-filter" aria-label="筛选状态"><option value="all">全部状态</option><option value="draft">草稿</option><option value="published">已发布</option></select><button type="button" class="vt-clear-filter" data-clear-filter="vt-version-status-filter" aria-label="清空状态筛选" hidden>${icons.clear}</button></div>
+          <div class="vt-clearable-filter vt-select-filter"><select id="vt-version-status-filter" aria-label="筛选状态"><option value="all">全部状态</option><option value="draft">草稿</option><option value="published">已发布</option><option value="disabled">已停用</option></select><button type="button" class="vt-clear-filter" data-clear-filter="vt-version-status-filter" aria-label="清空状态筛选" hidden>${icons.clear}</button></div>
           <button type="button" class="btn vt-filter-reset" id="vt-version-reset">重置</button>
           <button type="button" class="btn primary" id="vt-add-version">＋ 新增模板</button>
         </div>
         <div class="vt-card">
-          <div class="vt-scroll"><table class="vt-table vt-version-table sticky-action-table" aria-label="任务模板列表"><thead><tr>${['版本名称', '版本号', '版本说明', '访视版本', '适用分组', '任务数量', '状态', '发布时间', '操作'].map(item => `<th>${item}</th>`).join('')}</tr></thead><tbody id="vt-version-body"></tbody></table></div>
+          <div class="vt-scroll"><table class="vt-table vt-version-table sticky-action-table" aria-label="任务模板列表"><thead><tr>${['版本名称', '版本说明', '访视版本', '适用分组', '任务数量', '状态', '发布时间', '操作'].map(item => `<th>${item}</th>`).join('')}</tr></thead><tbody id="vt-version-body"></tbody></table></div>
           <div class="vt-empty" id="vt-version-empty" hidden><strong id="vt-version-empty-title">暂无任务模板</strong><span id="vt-version-empty-copy">点击「新增」创建第一套任务模板</span></div>
           <div class="vt-pagination"><span id="vt-version-total">共 0 个版本</span></div>
         </div>
@@ -341,9 +384,9 @@
   const versionDialog = createDialog('vt-version-dialog', '新增', `
     <form id="vt-version-form" novalidate><div class="vt-dialog-body"><p class="vt-error" id="vt-version-error" hidden></p><div class="vt-grid">
       <div class="vt-field full"><label class="vt-required" for="vt-version-visit">项目访视版本</label><select id="vt-version-visit" required><option value="">请选择项目访视版本</option>${visitVersions.map(item => `<option value="${item}">${item}</option>`).join('')}</select></div>
-      <div class="vt-field full"><label class="vt-required" for="vt-version-name">版本名称</label><input id="vt-version-name" maxlength="50" placeholder="请输入版本名称" /></div>
+      <div class="vt-field full"><label class="vt-required" for="vt-version-name">版本名称</label><div class="vt-version-name-input"><input id="vt-version-name" maxlength="50" placeholder="请输入版本名称" /><span class="vt-input-limit" id="vt-version-name-count" aria-hidden="true">0/50</span></div></div>
       <div class="vt-field full"><label for="vt-version-description">版本说明</label><textarea id="vt-version-description" maxlength="300" placeholder="选填，说明本版本的配置目的或主要变化"></textarea></div>
-      <div class="vt-field full"><span class="vt-label">适用分组</span><details class="vt-multi-select" id="vt-version-groups-select"><summary><span id="vt-version-groups-text">请选择适用分组</span></summary><div class="vt-multi-options"></div></details></div>
+      <div class="vt-field full" id="vt-version-groups-field"><span class="vt-label vt-required">适用分组</span><details class="vt-multi-select" id="vt-version-groups-select"><summary><span id="vt-version-groups-text">请选择适用分组</span></summary><div class="vt-multi-options"></div></details></div>
     </div></div></form>`, '<button class="btn" data-close-dialog>取消</button><button class="btn primary" id="vt-create-version">确定</button>');
 
   const taskDialog = createDialog('vt-task-dialog', '新增任务', `
@@ -364,17 +407,17 @@
         <label><input type="radio" name="vt-task-date-mode" value="continuous" />连续天数</label>
         <label><input type="radio" name="vt-task-date-mode" value="specified" />指定天数</label>
       </div></div>
-        <div class="vt-rule" id="vt-time-anchor-rule" hidden><div class="vt-field"><label class="vt-required" for="vt-task-time-anchor">时间基准</label><select id="vt-task-time-anchor">${Object.entries(anchorNames).map(([value, label]) => `<option value="${value}">${label}</option>`).join('')}</select><small>基准日当天按第1天计算。</small></div></div>
+        <div class="vt-rule" id="vt-time-anchor-rule" hidden><div class="vt-field"><label class="vt-required" for="vt-task-time-anchor">时间基准</label><select id="vt-task-time-anchor">${Object.entries(anchorNames).map(([value, label]) => `<option value="${value}">${label}</option>`).join('')}</select></div></div>
         <div class="vt-rule" id="vt-continuous-rule" hidden><div class="vt-field"><span class="vt-label vt-required">连续采集范围</span><div class="vt-day-range"><span>从第</span><input id="vt-task-continuous-start" type="number" min="1" max="365" value="1" aria-label="连续采集开始天数" /><span>天开始，连续</span><input id="vt-task-continuous-duration" type="number" min="1" max="365" value="5" aria-label="连续采集天数" /><span>天</span></div><small id="vt-task-continuous-summary">采集范围：第1天至第5天</small></div></div>
         <div class="vt-rule" id="vt-specified-rule" hidden><div class="vt-field"><span class="vt-label vt-required">指定天数</span><div class="vt-day-adder"><span>第</span><input id="vt-task-specified-day" type="number" min="1" max="365" value="1" aria-label="指定采集天数" /><span>天</span><button type="button" class="btn" id="vt-add-specified-day">添加</button></div><div class="vt-selected-tags" id="vt-task-specified-days"></div><small>可添加多个指定天数，点击标签中的 × 可删除。</small></div></div>
-        <div class="vt-subsection" id="vt-daily-schedule" hidden><div class="vt-field full"><div class="vt-field-head"><span class="vt-label vt-required" id="vt-schedule-label">每日采集安排</span><button type="button" class="btn vt-add-row" id="vt-add-collection-time">＋ 添加采集时段</button></div><div class="vt-collection-times" id="vt-task-collection-times"></div><small id="vt-task-schedule-hint">每日1次时，可以选择当天任意时间或指定时间。</small></div></div>
+        <div class="vt-subsection" id="vt-daily-schedule" hidden><div class="vt-field full"><span class="vt-label vt-required">采集安排</span><div class="vt-schedule-modes"><label><input type="radio" name="vt-task-daily-frequency" value="once" checked />每日一次</label><label><input type="radio" name="vt-task-daily-frequency" value="multiple" />每日多次</label></div><div class="vt-daily-count" id="vt-daily-count-field" hidden><label for="vt-daily-times-count">每日采集次数</label><input id="vt-daily-times-count" type="number" min="2" max="8" value="2" /><span>次</span></div><div class="vt-collection-times" id="vt-task-collection-times"></div></div></div>
       </div>
       <div class="vt-section"><h3>3. 执行配置</h3><div class="vt-field full" id="vt-task-window-field"><span class="vt-label vt-required">时间窗口</span><div class="vt-window-row">
         <label><span>允许提前</span><input id="vt-task-window-before" type="number" min="0" max="365" value="0" /></label>
         <label><span>允许延后</span><input id="vt-task-window-after" type="number" min="0" max="365" value="0" /></label>
         <label class="vt-window-unit"><span>单位</span><select id="vt-task-window-unit"><option value="days">天</option><option value="hours">时</option><option value="minutes">分</option></select></label>
-      </div><small id="vt-task-window-hint">以任务对应的采集日期为基准计算时间窗口。</small></div>
-        <div class="vt-switch-list vt-single-switch"><label class="vt-switch-row" for="vt-task-allow-overdue"><span><strong>逾期执行</strong><small>开启后，超过时间窗口仍允许补充执行。</small></span><span class="vt-switch"><input id="vt-task-allow-overdue" type="checkbox" /><i></i></span></label><label class="vt-switch-row" for="vt-task-auto-map-crf"><span><strong>自动映射CRF</strong><small>开启后，采集数据将按照字段映射配置自动写入CRF。</small></span><span class="vt-switch"><input id="vt-task-auto-map-crf" type="checkbox" checked /><i></i></span></label></div>
+      </div></div>
+        <div class="vt-switch-list vt-single-switch"><label class="vt-switch-row" for="vt-task-allow-overdue"><span><strong>逾期执行</strong><small>开启后，超过时间窗口仍允许补充执行。</small></span><span class="vt-switch"><input id="vt-task-allow-overdue" type="checkbox" /><i></i></span></label><label class="vt-switch-row" for="vt-task-auto-map-crf"><span><strong>自动预填CRF</strong><small>开启后，采集数据将按照字段映射配置自动写入CRF。</small></span><span class="vt-switch"><input id="vt-task-auto-map-crf" type="checkbox" checked /><i></i></span></label></div>
       </div>
     </div></form>`, '<button class="btn" data-close-dialog>取消</button><button class="btn primary" id="vt-save-task">保存任务</button>', 'vt-task-config-dialog');
 
@@ -426,20 +469,24 @@
   }
   function readCollectionTimes() {
     return [...$('vt-task-collection-times').querySelectorAll('.vt-time-row')].map(row => ({
-      type: row.querySelector('select').value,
+      type: row.querySelector('select')?.value || 'fixed',
       time: row.querySelector('input[type=time]').value
     }));
   }
   function renderCollectionTimes(values) {
     const defaults = ['08:00', '12:00', '16:00', '20:00', '22:00', '06:00', '10:00', '18:00'];
+    const multiple = radioValue('vt-task-daily-frequency') === 'multiple';
     const source = values?.length ? values.slice(0, 8) : [{type: 'unspecified', time: ''}];
-    const multiple = source.length > 1;
-    const items = source.map((item, index) => ({type: multiple ? 'fixed' : item.type, time: item.time || defaults[index]}));
+    const requested = Number($('vt-daily-times-count').value);
+    const count = multiple ? Math.max(2, Math.min(8, Number.isInteger(requested) ? requested : 2)) : 1;
+    const items = Array.from({length: count}, (_, index) => ({
+      type: multiple ? 'fixed' : source[0]?.type === 'fixed' ? 'fixed' : 'unspecified',
+      time: source[index]?.time ?? defaults[index]
+    }));
     $('vt-task-collection-times').innerHTML = items.map((item, index) => `<div class="vt-time-row">
-      <span class="vt-time-index">第${index + 1}次</span><select aria-label="第${index + 1}次采集时间类型" ${multiple ? 'disabled' : ''}><option value="fixed" ${item.type === 'fixed' ? 'selected' : ''}>指定时间</option><option value="unspecified" ${item.type !== 'fixed' ? 'selected' : ''}>当天任意时间</option></select>
-      <input type="time" value="${esc(item.time)}" aria-label="第${index + 1}次采集时间" ${item.type === 'fixed' ? '' : 'hidden'} /><button type="button" class="vt-remove-row" data-remove-time="${index}" aria-label="删除第${index + 1}次采集时间" ${items.length === 1 ? 'hidden' : ''}>删除</button>
+      <span class="vt-time-index">第${index + 1}次</span>${multiple ? '' : `<select aria-label="采集时间类型"><option value="fixed" ${item.type === 'fixed' ? 'selected' : ''}>指定时间</option><option value="unspecified" ${item.type !== 'fixed' ? 'selected' : ''}>当天任意时间</option></select>`}
+      <input type="time" value="${esc(item.time)}" aria-label="第${index + 1}次采集时间" ${item.type === 'fixed' ? '' : 'hidden'} />
     </div>`).join('');
-    $('vt-add-collection-time').disabled = items.length >= 8;
   }
   function executionWindowUnit() {
     return $('vt-task-window-unit').value;
@@ -447,7 +494,6 @@
   function updateExecutionWindowUnit() {
     const unit = windowUnits[executionWindowUnit()] || windowUnits.days;
     ['vt-task-window-before', 'vt-task-window-after'].forEach(id => { $(id).max = String(unit.max); });
-    $('vt-task-window-hint').textContent = `以任务对应的采集日期为基准，时间窗口单位为${unit.label}。`;
   }
   function taskDateText(task) {
     const anchor = anchorNames[task.timeAnchor] || anchorNames.visit_date;
@@ -478,12 +524,14 @@
     const statusFilter = $('vt-version-status-filter').value;
     const versions = state.versions.filter(item => (!nameQuery || item.name.toLocaleLowerCase().includes(nameQuery))
       && (visitFilter === 'all' || item.visitVersion === visitFilter)
-      && (statusFilter === 'all' || item.status === statusFilter));
+      && (statusFilter === 'all' || (statusFilter === 'draft' && item.status === 'draft')
+        || (statusFilter === 'published' && item.status === 'published' && item.enabled !== false)
+        || (statusFilter === 'disabled' && item.status === 'published' && item.enabled === false)));
     $('vt-version-body').innerHTML = versions.map(item => `<tr data-version-id="${esc(item.id)}">
-      <td><strong>${esc(item.name)}</strong></td><td><span class="vt-pill version">${esc(item.version)}</span></td><td>${item.description ? esc(item.description) : '<span class="vt-muted">—</span>'}</td>
+      <td><span class="vt-version-name"><strong>${esc(item.name)}</strong><span class="vt-pill version">${esc(item.version)}</span></span></td><td>${item.description ? esc(item.description) : '<span class="vt-muted">—</span>'}</td>
       <td><span class="vt-pill visit-version">${esc(item.visitVersion)}</span></td><td>${esc(versionGroups(item))}</td><td>${item.tasks.length}</td>
-      <td><span class="vt-state ${item.status === 'draft' ? 'draft' : ''}">${item.status === 'draft' ? '草稿' : '已发布'}</span></td><td>${formatDate(item.publishedAt)}</td>
-      <td><div class="vt-actions"><button data-version-action="open">${item.status === 'draft' ? '配置任务' : '查看任务'}</button>${item.status === 'draft' ? '<button data-version-action="publish">发布</button><button data-version-action="copy">复制</button><button data-version-action="edit">编辑</button><button data-version-action="delete">删除</button>' : '<button data-version-action="copy">复制</button>'}</div></td>
+      <td><span class="vt-state ${item.status === 'draft' ? 'draft' : item.enabled === false ? 'disabled' : ''}">${item.status === 'draft' ? '草稿' : item.enabled === false ? '已停用' : '已发布'}</span></td><td>${formatDate(item.publishedAt)}</td>
+      <td><div class="vt-actions"><button data-version-action="open">${item.status === 'draft' ? '配置任务' : '查看任务'}</button>${item.status === 'draft' ? '<button data-version-action="publish">发布</button><button data-version-action="copy">复制</button><button data-version-action="edit">编辑</button><button data-version-action="delete">删除</button>' : `${item.enabled === false ? '' : '<button data-version-action="stop">停用</button>'}<button data-version-action="copy">复制</button>`}</div></td>
     </tr>`).join('');
     $('vt-version-empty').hidden = versions.length > 0;
     $('vt-version-empty-title').textContent = state.versions.length ? '暂无符合条件的任务模板' : '暂无任务模板';
@@ -521,9 +569,10 @@
       && (visitFilter === 'all' || task.visits.includes(visitFilter)));
     $('vt-detail-name').textContent = item.name;
     $('vt-detail-version').textContent = item.version;
-    $('vt-detail-status').textContent = item.status === 'draft' ? '草稿' : '已发布';
+    $('vt-detail-status').textContent = item.status === 'draft' ? '草稿' : item.enabled === false ? '已停用' : '已发布';
     $('vt-detail-status').classList.toggle('is-draft', item.status === 'draft');
-    $('vt-detail-status').classList.toggle('is-published', item.status !== 'draft');
+    $('vt-detail-status').classList.toggle('is-disabled', item.status === 'published' && item.enabled === false);
+    $('vt-detail-status').classList.toggle('is-published', item.status === 'published' && item.enabled !== false);
     $('vt-detail-meta').innerHTML = `<span>访视版本：${esc(item.visitVersion)}</span><span>适用分组：${esc(versionGroups(item))}</span>`;
     $('vt-add-task').hidden = item.status !== 'draft';
     $('vt-publish-version').hidden = item.status !== 'draft';
@@ -670,11 +719,12 @@
     updateVersionGroupSelect();
   });
   function renderVersionGroupOptions(visitVersion, selected = []) {
-    const names = configuredVisitGroups(project, visitVersion);
+    const names = configuredVisitGroups(project);
+    $('vt-version-groups-field').hidden = names.length === 0;
     const options = $('vt-version-groups-select').querySelector('.vt-multi-options');
     options.innerHTML = names.length
       ? `<label class="vt-select-all"><input type="checkbox" id="vt-version-groups-all" aria-label="全选适用分组" />全选</label>${names.map(name => `<label><input type="checkbox" name="vt-version-groups" value="${esc(name)}" ${selected.includes(name) ? 'checked' : ''} />${esc(name)}</label>`).join('')}`
-      : `<div class="vt-multi-empty">${visitVersion ? '该访视版本暂无分组' : '请先选择访视版本'}</div>`;
+      : '';
     $('vt-version-groups-select').open = false;
     updateVersionGroupSelect();
   }
@@ -686,6 +736,7 @@
     $('vt-version-visit').value = item?.visitVersion || '';
     renderVersionGroupOptions($('vt-version-visit').value, item?.groups || []);
     $('vt-version-name').value = item?.name || '';
+    updateVersionNameCount();
     $('vt-version-description').value = item?.description || '';
     $('vt-version-groups-select').open = false;
     updateVersionGroupSelect();
@@ -694,6 +745,10 @@
     versionDialog.showModal();
     $('vt-version-name').focus();
   }
+  function updateVersionNameCount() {
+    $('vt-version-name-count').textContent = `${$('vt-version-name').value.length}/50`;
+  }
+  $('vt-version-name').addEventListener('input', updateVersionNameCount);
   $('vt-add-version').addEventListener('click', () => openVersionDialog());
   $('vt-create-version').addEventListener('click', () => {
     const name = $('vt-version-name').value.trim();
@@ -701,19 +756,21 @@
     const description = $('vt-version-description').value.trim();
     const selectedGroups = [...document.querySelectorAll('[name=vt-version-groups]:checked')].map(input => input.value);
     if (!visitVersion) {
-      $('vt-version-error').textContent = '请选择项目访视版本';
-      $('vt-version-error').hidden = false;
+      showToast('请选择项目访视版本', 'error');
       $('vt-version-visit').focus();
       return;
     }
     if (!name) {
-      $('vt-version-error').textContent = '请输入版本名称';
-      $('vt-version-error').hidden = false;
+      showToast('请输入版本名称', 'error');
+      return;
+    }
+    if (!$('vt-version-groups-field').hidden && !selectedGroups.length) {
+      showToast('请选择适用分组', 'error');
+      $('vt-version-groups-select').open = true;
       return;
     }
     if (state.versions.some(item => item.id !== editingVersionId && item.name === name)) {
-      $('vt-version-error').textContent = '版本名称已存在，请修改后重试';
-      $('vt-version-error').hidden = false;
+      showToast('版本名称已存在，请修改后重试', 'error');
       return;
     }
     const next = copy(state);
@@ -745,21 +802,31 @@
     if (button.dataset.versionAction === 'open') showTaskDetail(item.id);
     if (button.dataset.versionAction === 'edit') openVersionDialog(item);
     if (button.dataset.versionAction === 'publish') publishVersion(item);
+    if (button.dataset.versionAction === 'stop' && item.status === 'published' && item.enabled !== false) {
+      ask('停用任务模板？', `确定停用「${item.name} · ${item.version}」？`, () => {
+        const next = copy(state);
+        const target = next.versions.find(version => version.id === item.id);
+        if (!target || target.status !== 'published' || target.enabled === false) return;
+        target.enabled = false;
+        if (commit(next)) { renderVersions(); showToast('任务模板已停用'); }
+      }, '停用');
+    }
     if (button.dataset.versionAction === 'delete') ask('删除版本草稿？', `确定删除「${item.name} · ${item.version}」？`, () => {
       const next = copy(state);
       next.versions = next.versions.filter(version => version.id !== item.id);
       if (commit(next)) { renderVersions(); showToast('版本草稿已删除'); }
     }, '删除');
-    if (button.dataset.versionAction === 'copy') {
+    if (button.dataset.versionAction === 'copy') ask('复制任务模板？', `确定复制「${item.name} · ${item.version}」？`, () => {
       const next = copy(state);
-      const duplicated = {...copy(item), id: crypto.randomUUID(), version: nextVersionNumber(), name: nextCopyName(item.name), description: `基于 ${item.version} 创建`, status: 'draft', publishedAt: null};
+      const duplicated = {...copy(item), id: crypto.randomUUID(), version: nextVersionNumber(), name: nextCopyName(item.name), description: `基于 ${item.version} 创建`, status: 'draft', enabled: false, publishedAt: null};
       duplicated.tasks.forEach(task => { task.id = crypto.randomUUID(); });
       next.versions.unshift(duplicated);
       if (commit(next)) { showTaskDetail(duplicated.id); showToast('已复制为新版本草稿'); }
-    }
+    }, '复制');
   });
 
   function publishVersion(item) {
+    if (!item || item.status !== 'draft') return;
     if (!item.tasks.length) {
       showToast('请先添加至少一个任务');
       return;
@@ -772,7 +839,9 @@
     ask('发布任务模板？', `将发布「${item.name} · ${item.version}」，包含 ${item.tasks.length} 个任务，项目访视版本为 ${item.visitVersion}。`, () => {
       const next = copy(state);
       const target = next.versions.find(version => version.id === item.id);
+      if (!target || target.status !== 'draft') return;
       target.status = 'published';
+      target.enabled = true;
       target.publishedAt = new Date().toISOString();
       if (commit(next)) {
         activeVersionId ? renderTasks() : renderVersions();
@@ -799,7 +868,7 @@
       visits: [...document.querySelectorAll('[name=vt-task-visits]:checked')].map(input => input.value),
       collectionMethod, collectionDateMode, mode: collectionDateMode,
       timeAnchor: $('vt-task-time-anchor').value, continuousStartDay, continuousEndDay: continuousStartDay + continuousDuration - 1,
-      specifiedDays: specifiedDays(), collectionTimes,
+      specifiedDays: specifiedDays(), dailyFrequency: radioValue('vt-task-daily-frequency') || 'once', collectionTimes,
       windowBefore: Number($('vt-task-window-before').value), windowAfter: Number($('vt-task-window-after').value),
       windowUnit: executionWindowUnit(), patientOnly: $('vt-task-patient-only').checked,
       allowOverdue: $('vt-task-allow-overdue').checked, autoMapCrf: $('vt-task-auto-map-crf').checked
@@ -808,17 +877,11 @@
 
   function updateTaskForm() {
     syncVisitSelection();
-    const singleMode = radioValue('vt-task-date-mode') === 'single';
-    if (singleMode && $('vt-task-collection-times').querySelectorAll('.vt-time-row').length > 1) {
-      renderCollectionTimes(readCollectionTimes().slice(0, 1));
-    }
+    const multiple = radioValue('vt-task-daily-frequency') === 'multiple';
     const rows = [...$('vt-task-collection-times').querySelectorAll('.vt-time-row')];
-    const multiple = rows.length > 1;
     rows.forEach(row => {
       const select = row.querySelector('select');
-      if (multiple) select.value = 'fixed';
-      select.disabled = multiple;
-      row.querySelector('input[type=time]').hidden = select.value !== 'fixed';
+      row.querySelector('input[type=time]').hidden = !multiple && select?.value !== 'fixed';
     });
     const task = readTaskForm();
     $('vt-task-question-field').hidden = task.collectionMethod !== 'questionnaire';
@@ -826,14 +889,8 @@
     $('vt-continuous-rule').hidden = task.collectionDateMode !== 'continuous';
     $('vt-specified-rule').hidden = task.collectionDateMode !== 'specified';
     $('vt-daily-schedule').hidden = false;
-    $('vt-daily-schedule').classList.toggle('is-single', singleMode);
-    $('vt-schedule-label').textContent = singleMode ? '采集时间' : '每日采集安排';
-    $('vt-add-collection-time').hidden = singleMode;
-    $('vt-task-schedule-hint').textContent = singleMode
-      ? '每个适用访视完成1次采集，可选择当天任意时间或指定时间。'
-      : multiple
-      ? '每日多次采集需分别指定时间，每个时间点独立生成执行任务。'
-      : '每日1次时，可以选择当天任意时间或指定时间。';
+    $('vt-daily-schedule').classList.toggle('is-single', !multiple);
+    $('vt-daily-count-field').hidden = !multiple;
     const duration = Number($('vt-task-continuous-duration').value);
     const continuousEnd = task.continuousStartDay + duration - 1;
     $('vt-task-continuous-summary').textContent = Number.isInteger(task.continuousStartDay) && Number.isInteger(duration) && duration > 0
@@ -861,6 +918,8 @@
     $('vt-task-continuous-start').value = current.continuousStartDay;
     $('vt-task-continuous-duration').value = Math.max(1, current.continuousEndDay - current.continuousStartDay + 1);
     renderSpecifiedDays(current.specifiedDays);
+    setRadioValue('vt-task-daily-frequency', current.dailyFrequency);
+    $('vt-daily-times-count').value = Math.max(2, Math.min(8, current.collectionTimes.length));
     renderCollectionTimes(current.collectionTimes);
     $('vt-task-window-before').value = current.windowBefore;
     $('vt-task-window-after').value = current.windowAfter;
@@ -872,7 +931,6 @@
     updateExecutionWindowUnit();
     $('vt-task-form').classList.toggle('is-readonly', readonly);
     if (readonly) $('vt-task-form').querySelectorAll('input, select, textarea, button').forEach(input => { input.disabled = true; });
-    $('vt-add-collection-time').disabled = readonly || readCollectionTimes().length >= 8;
     $('vt-save-task').hidden = readonly;
     $('vt-task-dialog-title').textContent = readonly ? '查看任务' : task ? '编辑任务' : '新增任务';
     $('vt-task-error').hidden = true;
@@ -885,6 +943,16 @@
   $('vt-add-task').addEventListener('click', () => openTaskEditor());
   $('vt-task-form').addEventListener('input', updateTaskForm);
   $('vt-task-form').addEventListener('change', updateTaskForm);
+  document.querySelectorAll('[name=vt-task-daily-frequency]').forEach(input => input.addEventListener('change', () => {
+    renderCollectionTimes(readCollectionTimes());
+    updateTaskForm();
+  }));
+  $('vt-daily-times-count').addEventListener('change', () => {
+    const count = Math.max(2, Math.min(8, Number($('vt-daily-times-count').value) || 2));
+    $('vt-daily-times-count').value = count;
+    renderCollectionTimes(readCollectionTimes());
+    updateTaskForm();
+  });
   $('vt-task-window-unit').addEventListener('change', updateExecutionWindowUnit);
   $('vt-task-visit-tags').addEventListener('click', event => {
     const button = event.target.closest('[data-remove-visit]');
@@ -896,8 +964,7 @@
   $('vt-add-specified-day').addEventListener('click', () => {
     const day = Number($('vt-task-specified-day').value);
     if (!Number.isInteger(day) || day < 1 || day > 365) {
-      $('vt-task-error').textContent = '指定天数需为1至365天的整数';
-      $('vt-task-error').hidden = false;
+      showToast('指定天数需为1至365天的整数', 'error');
       return;
     }
     renderSpecifiedDays([...specifiedDays(), day]);
@@ -907,24 +974,6 @@
     const button = event.target.closest('[data-remove-day]');
     if (!button) return;
     renderSpecifiedDays(specifiedDays().filter(day => day !== Number(button.dataset.removeDay)));
-    updateTaskForm();
-  });
-  $('vt-add-collection-time').addEventListener('click', () => {
-    const items = readCollectionTimes();
-    if (items.length >= 8) return;
-    if (items.length === 1 && items[0].type === 'unspecified') items[0] = {type: 'fixed', time: '08:00'};
-    const defaults = ['08:00', '12:00', '16:00', '20:00', '22:00', '06:00', '10:00', '18:00'];
-    const used = new Set(items.map(item => item.time));
-    const nextTime = defaults.find(time => !used.has(time)) || '08:00';
-    renderCollectionTimes([...items, {type: 'fixed', time: nextTime}]);
-    updateTaskForm();
-  });
-  $('vt-task-collection-times').addEventListener('click', event => {
-    const button = event.target.closest('[data-remove-time]');
-    if (!button) return;
-    const items = readCollectionTimes();
-    items.splice(Number(button.dataset.removeTime), 1);
-    renderCollectionTimes(items);
     updateTaskForm();
   });
   $('vt-save-task').addEventListener('click', () => {
@@ -937,16 +986,15 @@
     else if (task.collectionDateMode === 'continuous' && (!Number.isInteger(task.continuousStartDay) || !Number.isInteger(task.continuousEndDay) || task.continuousStartDay < 1 || task.continuousEndDay > 365)) error = '连续采集范围需在第1天至第365天内';
     else if (task.collectionDateMode === 'specified' && !task.specifiedDays.length) error = '请至少添加一个指定天数';
     else if (!task.collectionTimes.length) error = '请配置采集时间';
-    else if (task.collectionDateMode === 'single' && task.collectionTimes.length !== 1) error = '单次采集只能配置一个采集时间';
-    else if (task.collectionDateMode !== 'single' && task.collectionTimes.length > 1 && task.collectionTimes.some(item => item.type !== 'fixed')) error = '每日多次采集需分别指定时间';
+    else if (task.dailyFrequency === 'once' && task.collectionTimes.length !== 1) error = '每日一次只能配置一个采集时间';
+    else if (task.dailyFrequency === 'multiple' && (task.collectionTimes.length < 2 || task.collectionTimes.length > 8 || task.collectionTimes.some(item => item.type !== 'fixed'))) error = '每日多次采集需设置2至8个指定时间';
     else if (task.collectionTimes.some(item => item.type === 'fixed' && !/^([01]\d|2[0-3]):[0-5]\d$/.test(item.time))) error = '请完整填写固定采集时间';
     else if (new Set(task.collectionTimes.filter(item => item.type === 'fixed').map(item => item.time)).size !== task.collectionTimes.filter(item => item.type === 'fixed').length) error = '固定采集时间不能重复';
     else if (!windowUnits[task.windowUnit]) error = '请选择时间窗口单位';
     else if (![task.windowBefore, task.windowAfter].every(value => Number.isInteger(value) && value >= 0 && value <= windowUnits[task.windowUnit].max)) error = `时间窗口需为0至${windowUnits[task.windowUnit].max}${windowUnits[task.windowUnit].label}的整数`;
     else if (activeVersion().tasks.some(item => item.id !== editingTaskId && item.name === task.name)) error = '当前版本已存在同名任务';
     if (error) {
-      $('vt-task-error').textContent = error;
-      $('vt-task-error').hidden = false;
+      showToast(error, 'error');
       return;
     }
     const next = copy(state);
@@ -1043,13 +1091,11 @@
     const name = $('vt-question-title').value.trim();
     const description = $('vt-question-description').value.trim();
     if (!name) {
-      $('vt-question-error').textContent = '请输入标题';
-      $('vt-question-error').hidden = false;
+      showToast('请输入标题', 'error');
       return;
     }
     if (linkedQuestions().some(question => question.name === name)) {
-      $('vt-question-error').textContent = '表单标题已存在，请修改后重试';
-      $('vt-question-error').hidden = false;
+      showToast('表单标题已存在，请修改后重试', 'error');
       return;
     }
     const next = copy(state);
@@ -1080,6 +1126,8 @@
     open,
     getQuestions,
     isGroupReferencedByPublishedTasks,
+    getGroupReferences,
+    renameGroup,
     updateSummary() {},
     onMappingOpen(visitVersion) {
       loadProject();

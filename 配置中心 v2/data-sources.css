@@ -55,7 +55,7 @@
 .ds-picker-filters { flex-wrap: wrap; }
 .ds-picker-filters .search { flex: 0 1 280px; width: 280px; }
 .ds-picker-filters .search input { height: 38px; }
-.ds-picker-filters select { flex: 0 0 180px; width: 180px; height: 38px; padding: 0 12px; color: var(--ink); background: #fff; border: 1px solid #dbe5f1; border-radius: 5px; font-size: 13px; }
+.ds-picker-filters select { flex: 0 0 180px; width: 180px; height: 38px; padding: 0 12px; color: var(--ink); background: #fff; border: 1px solid #E6E6ED; border-radius: 5px; font-size: 13px; }
 @media (max-width: 620px) {
   .ds-picker-filters .search, .ds-picker-filters select { flex: 1 1 100%; width: 100%; }
 }

@@ -295,7 +295,7 @@
     const targetFieldId = el('ds-target-field').value, sourceQuestionId = el('ds-source-form').value, sourceFieldId = el('ds-source-field').value;
     let error = !targetFieldId ? '请选择 CRF 字段' : !sourceQuestionId ? '请选择数据来源表单' : !sourceFieldId ? '请选择数据来源字段' : '';
     if (!error && draft.mappings.some(mapping => mapping.id !== editingMappingId && mapping.crfId === activeId && mapping.targetFieldId === targetFieldId)) error = '该 CRF 字段已配置映射';
-    if (error) { el('ds-mapping-error').textContent = error; el('ds-mapping-error').hidden = false; return; }
+    if (error) { showToast(error, 'error'); return; }
     const item = {id: editingMappingId || crypto.randomUUID(), crfId: activeId, targetFieldId, sourceQuestionId, sourceFieldId};
     const index = draft.mappings.findIndex(mapping => mapping.id === editingMappingId);
     if (index >= 0) draft.mappings[index] = item; else draft.mappings.push(item);

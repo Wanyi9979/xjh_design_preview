@@ -82,7 +82,7 @@
   }, true);
   editor.querySelector('.ai-save').addEventListener('click', () => {
     const value = content.value.trim();
-    if (!value) { error.hidden = false; content.focus(); return; }
+    if (!value) { showToast('请输入标注内容', 'error'); content.focus(); return; }
     const values = read();
     values[activeKey] = value;
     write(values);
