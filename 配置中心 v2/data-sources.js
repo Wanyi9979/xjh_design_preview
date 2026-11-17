@@ -138,16 +138,14 @@
 
   function renderScope() {
     if (!draft.crfIds.includes(activeId)) activeId = draft.crfIds[0] || null;
-    const term = el('ds-crf-search').value.trim().toLocaleLowerCase();
     const added = forms.filter(form => draft.crfIds.includes(form.id));
-    const visible = added.filter(form => form.name.toLocaleLowerCase().includes(term));
-    el('ds-crf-list').innerHTML = visible.map(form => `<div class="ds-crf-item${form.id === activeId ? ' active' : ''}">
+    el('ds-crf-list').innerHTML = added.map(form => `<div class="ds-crf-item${form.id === activeId ? ' active' : ''}">
       <button class="ds-crf-select" data-select-crf="${escape(form.id)}"><strong>${escape(form.name)}</strong><span>${mappingsFor(form.id).length} 条字段映射</span></button>
       <button class="ds-crf-remove" data-remove-crf="${escape(form.id)}" aria-label="移出${escape(form.name)}">移出</button>
     </div>`).join('');
-    el('ds-crf-empty').hidden = visible.length > 0;
-    el('ds-crf-empty-title').textContent = added.length ? '未找到相关 CRF' : '暂无需要映射的 CRF';
-    el('ds-crf-empty-description').textContent = added.length ? '请调整搜索内容' : '点击「添加 CRF」建立映射范围';
+    el('ds-crf-empty').hidden = added.length > 0;
+    el('ds-crf-empty-title').textContent = '暂无需要映射的 CRF';
+    el('ds-crf-empty-description').textContent = '点击「添加 CRF」建立映射范围';
   }
 
   function renderMappings() {
@@ -233,7 +231,6 @@
     saved = readConfiguration();
     draft = clone(saved);
     activeId = draft.crfIds[0] || null;
-    el('ds-crf-search').value = '';
     ['visit-version-list', 'visit-version-detail', 'visit-template-config'].forEach(id => el(id).hidden = true);
     el('ds-version-title').textContent = `${version} 数据来源配置`;
     page.hidden = false;
@@ -242,7 +239,6 @@
   }
 
   document.querySelectorAll('.configure-data-sources').forEach(button => button.addEventListener('click', () => openSources(button.dataset.version)));
-  el('ds-crf-search').addEventListener('input', renderScope);
   el('ds-crf-list').addEventListener('click', event => {
     const remove = event.target.closest('[data-remove-crf]');
     if (remove) {

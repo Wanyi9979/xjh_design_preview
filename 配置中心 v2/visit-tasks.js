@@ -531,7 +531,7 @@
       <td><span class="vt-version-name"><strong>${esc(item.name)}</strong><span class="vt-pill version">${esc(item.version)}</span></span></td><td>${item.description ? esc(item.description) : '<span class="vt-muted">—</span>'}</td>
       <td><span class="vt-pill visit-version">${esc(item.visitVersion)}</span></td><td>${esc(versionGroups(item))}</td><td>${item.tasks.length}</td>
       <td><span class="vt-state ${item.status === 'draft' ? 'draft' : item.enabled === false ? 'disabled' : ''}">${item.status === 'draft' ? '草稿' : item.enabled === false ? '已停用' : '已发布'}</span></td><td>${formatDate(item.publishedAt)}</td>
-      <td><div class="vt-actions"><button data-version-action="open">${item.status === 'draft' ? '配置任务' : '查看任务'}</button>${item.status === 'draft' ? '<button data-version-action="publish">发布</button><button data-version-action="copy">复制</button><button data-version-action="edit">编辑</button><button data-version-action="delete">删除</button>' : `${item.enabled === false ? '' : '<button data-version-action="stop">停用</button>'}<button data-version-action="copy">复制</button>`}</div></td>
+      <td><div class="vt-actions"><button data-version-action="open">${item.status === 'draft' ? '配置任务' : '查看任务'}</button>${item.status === 'draft' ? `<button data-version-action="new-task">新增任务</button><button data-version-action="publish">发布</button><button type="button" class="vt-more-trigger" data-version-more="vt-version-more-${esc(item.id)}" aria-label="更多操作" aria-haspopup="menu">⋯</button><div class="vt-version-more-popover" id="vt-version-more-${esc(item.id)}" popover="auto" role="menu"><button type="button" role="menuitem" data-version-action="copy">复制</button><button type="button" role="menuitem" data-version-action="edit">编辑</button><button type="button" role="menuitem" data-version-action="delete" class="danger">删除</button></div>` : `${item.enabled === false ? '' : '<button data-version-action="stop">停用</button>'}<button data-version-action="copy">复制</button>`}</div></td>
     </tr>`).join('');
     $('vt-version-empty').hidden = versions.length > 0;
     $('vt-version-empty-title').textContent = state.versions.length ? '暂无符合条件的任务模板' : '暂无任务模板';
@@ -794,12 +794,27 @@
   });
 
   $('vt-version-body').addEventListener('click', event => {
+    const moreButton = event.target.closest('[data-version-more]');
+    if (moreButton) {
+      const menu = $(moreButton.dataset.versionMore);
+      menu.showPopover();
+      const triggerRect = moreButton.getBoundingClientRect();
+      const menuRect = menu.getBoundingClientRect();
+      menu.style.left = `${Math.max(8, Math.min(triggerRect.right - menuRect.width, innerWidth - menuRect.width - 8))}px`;
+      menu.style.top = `${triggerRect.bottom + menuRect.height + 8 <= innerHeight ? triggerRect.bottom + 4 : triggerRect.top - menuRect.height - 4}px`;
+      return;
+    }
     const button = event.target.closest('[data-version-action]');
     const row = event.target.closest('[data-version-id]');
     if (!button || !row) return;
     const item = state.versions.find(version => version.id === row.dataset.versionId);
     if (!item) return;
+    button.closest('.vt-version-more-popover')?.hidePopover();
     if (button.dataset.versionAction === 'open') showTaskDetail(item.id);
+    if (button.dataset.versionAction === 'new-task' && item.status === 'draft') {
+      activeVersionId = item.id;
+      openTaskEditor();
+    }
     if (button.dataset.versionAction === 'edit') openVersionDialog(item);
     if (button.dataset.versionAction === 'publish') publishVersion(item);
     if (button.dataset.versionAction === 'stop' && item.status === 'published' && item.enabled !== false) {
@@ -939,6 +954,9 @@
     if (!readonly) $('vt-task-name').focus();
     if (item.status !== 'draft') $('vt-save-task').hidden = true;
   }
+  taskDialog.addEventListener('close', () => {
+    if (!$('vt-version-panel').hidden) activeVersionId = null;
+  });
 
   $('vt-add-task').addEventListener('click', () => openTaskEditor());
   $('vt-task-form').addEventListener('input', updateTaskForm);
@@ -1002,8 +1020,12 @@
     const index = item.tasks.findIndex(existing => existing.id === editingTaskId);
     if (index >= 0) item.tasks[index] = task; else item.tasks.unshift(task);
     if (commit(next)) {
+      const fromVersionList = !$('vt-version-panel').hidden;
       taskDialog.close();
-      renderTasks();
+      if (fromVersionList) {
+        renderVersions();
+        activeVersionId = null;
+      } else renderTasks();
       showToast(index >= 0 ? '任务已更新' : '任务已添加');
     }
   });
