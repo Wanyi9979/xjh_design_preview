@@ -202,10 +202,10 @@
         : [['view-task', '查看任务'], ...(activeSet === 'sent' && P.canAdjustIssued(task) ? [['adjust', '调整日期']] : []), ['contact', '联系参与者']];
     }
     else if(kind==='appointment') entries=[...(task.appointmentDate?[['execute','访视执行'],['book','调整预约']]:[['book','访视预约']]),['terminate','访视终止'],['contact','联系参与者']];
-    else if (kind === 'execution') entries = task.scope === 'none' ? [['view', '查看任务'], ['contact', '联系参与者']] : task.scope === 'completed' ? [['view', '查看任务'], ['contact', '联系参与者']] : [...(task.canCaseExecute ? [['execute', '去处理']] : []), ['no-process', '无需处理'], ['adjust', '调整日期'], ['contact', '联系参与者']];
+    else if (kind === 'execution') entries = task.scope === 'none' ? [['view', '查看任务'], ['contact', '联系参与者']] : task.scope === 'completed' ? [['view', '查看任务'], ['result', '查看执行结果'], ['contact', '联系参与者']] : [...(task.canCaseExecute ? [['execute', '去处理']] : []), ['no-process', '无需处理'], ['adjust', '调整日期'], ['contact', '联系参与者']];
     else if (kind === 'followup') entries = task.scope === 'pending' ? [['complete', '标记已完成'], ['no-process', '无需处理'], ['contact', '联系参与者']] : [['view-record', '操作记录']];
     else entries = [['process', '去处理'], ['no-process', '无需处理'], ['contact', '联系参与者']];
-    return [...entries.map(([action, label]) => button(action, label)), ...(kind === 'followup' ? [] : [`<button type="button" data-wb1-add-followup="${kind}" data-task-index="${index}">添加跟进</button>`])];
+    return [...entries.map(([action, label]) => button(action, label)), ...(['followup','execution','issue'].includes(kind) ? [] : [`<button type="button" data-wb1-add-followup="${kind}" data-task-index="${index}">添加跟进</button>`])];
   }
 
   function taskActions(kind, index) {
@@ -986,6 +986,7 @@
     if (button.dataset.wb1ExecutionAction === 'adjust') D.adjust(task);
     if (button.dataset.wb1ExecutionAction === 'history') D.history(task);
     if (button.dataset.wb1ExecutionAction === 'view') openExecutionModal(task, 'view');
+    if (button.dataset.wb1ExecutionAction === 'result' && task.scope === 'completed') openExecutionModal(task, 'result');
     if (button.dataset.wb1ExecutionAction === 'no-process') openReasonModal(executionTaskToRow(task), false, 'execution', task);
     if (button.dataset.wb1ExecutionAction === 'view-record') openReasonModal(executionTaskToRow(task), true, 'execution', task);
     if (button.dataset.wb1ExecutionAction === 'contact') showToast(`正在联系${task.participant}`);

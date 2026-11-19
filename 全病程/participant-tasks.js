@@ -189,7 +189,7 @@ window.createParticipantTasks = ({ container, participantId, participantName, pa
   function taskActionEntries(task) {
     let entries;
     if(task.kind==='draft')entries=task.state==='draft'?[['issue','发放'],['ignore','无需处理'],['contact','联系参与者']]:[['view','查看任务'],...(task.state==='issued'&&!packageChildren(task).some(child=>child.state==='done')&&(!packageChildren(task).length||packageChildren(task).some(child=>child.state==='pending'))?[['adjust','调整日期']]:[]),['contact','联系参与者']];
-    else if(task.kind==='execute')entries=['none','done'].includes(task.state)?[['view','查看任务'],['contact','联系参与者']]:[...(task.canCaseExecute!==false?[['execute','去处理']]:[]),['ignore','无需处理'],['adjust','调整日期'],['contact','联系参与者']];
+    else if(task.kind==='execute')entries=task.state==='done'?[['view','查看任务'],['result','查看执行结果'],['contact','联系参与者']]:task.state==='none'?[['view','查看任务'],['contact','联系参与者']]:[...(task.canCaseExecute!==false?[['execute','去处理']]:[]),['ignore','无需处理'],['adjust','调整日期'],['contact','联系参与者']];
     else entries=task.state==='pending'?[['complete','标记已完成'],['ignore','无需处理'],['contact','联系参与者']]:[['follow-record','操作记录']];
     return entries;
   }
@@ -521,6 +521,7 @@ window.createParticipantTasks = ({ container, participantId, participantName, pa
     else if (action === 'execute' && task.kind === 'execute' && actionable(task) && task.canCaseExecute !== false) open(task, trigger, 'execute');
     else if (action === 'ignore' && actionable(task)) open(task, trigger, 'ignore');
     else if (action === 'record' && task.state === 'none') open(task, trigger, 'record');
+    else if (action === 'result' && task.kind==='execute' && task.state==='done') open(task, trigger, 'result');
     else if (action === 'view') open(task, trigger, 'view');
   }
   menu.addEventListener('click', event => { const button = event.target.closest('[data-task-action]'); if (button) handleAction(button); });
