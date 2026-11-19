@@ -1,0 +1,286 @@
+/* Same quiet surfaces and blue actions as existing workbench dialogs. */
+html[data-workbench-style=figma] .wb1-task-card[data-wb1-summary=processing] .wb1-stat-art>img{left:-188.4px}
+html[data-workbench-style=figma] .wb1-task-card[data-wb1-summary=appointment] .wb1-stat-art>img{left:-46.6px}
+html[data-workbench-style=figma] .wb1-layout .wb1-task-workspace .wb1-task-card{height:82px!important;min-height:82px!important}
+.wb-task-rule-caption{margin:0;padding:10px 18px;color:var(--text-muted);font-size:11px;line-height:18px;background:#f8faff;border-bottom:1px solid var(--border-default)}
+.wb-task-operation{width:min(640px,calc(100vw - 32px));max-height:calc(100vh - 40px);padding:0;border:1px solid var(--border-default);border-radius:10px;box-shadow:0 18px 60px #243b5b26;color:var(--text-primary);font-size:13px}
+.wb-task-operation::backdrop{background:#25334966}
+.wb-task-operation form{display:flex;flex-direction:column;max-height:calc(100vh - 42px)}
+.wb-task-operation header{display:flex;justify-content:space-between;align-items:center;padding:18px 22px;border-bottom:1px solid var(--border-default);flex:none}
+.wb-task-operation h2{margin:0;font-size:17px;font-weight:600;outline:none}.wb-task-operation header button{border:0;background:none;color:var(--text-muted);font-size:25px;padding:0 4px;cursor:pointer}
+.wb-task-operation-body{padding:20px 22px;overflow:auto}.wb-task-operation label{display:flex;flex-direction:column;gap:8px;margin:16px 0;color:var(--text-secondary)}.wb-task-operation em{color:#ff4d4f;font-style:normal}
+.wb-task-operation input,.wb-task-operation textarea{font:inherit;min-height:34px;width:100%;border:1px solid var(--border-default);border-radius:4px;padding:8px 10px;box-sizing:border-box;color:var(--text-primary);background:#fff}.wb-task-operation textarea{height:90px;resize:vertical}
+.wb-task-operation input:focus,.wb-task-operation textarea:focus{outline:2px solid #2e73ff30;border-color:#8ab0ff}
+.wb-task-subject{margin:0 0 16px;font-weight:500}.wb-task-context{background:#f4f7fb;border-radius:6px;padding:12px;line-height:24px;color:var(--text-secondary)}.wb-task-help{font-size:12px;line-height:20px;color:var(--text-muted)}.wb-task-error{color:#ec5264;font-size:12px}.wb-task-error:empty{display:none}
+.wb-task-operation footer{display:flex;justify-content:flex-end;gap:10px;padding:15px 22px;border-top:1px solid var(--border-default);flex:none}.wb-task-operation footer button{height:34px;padding:0 22px;border:1px solid var(--border-default);border-radius:4px;background:white;color:var(--text-primary);cursor:pointer}.wb-task-operation footer .primary{background:#2e73ff;color:white;border-color:#2e73ff}
+.wb-task-adjust-row{display:flex;flex-wrap:wrap;gap:12px;border-bottom:1px solid var(--border-default);padding:12px 0}.wb-task-adjust-row strong{width:100%;font-size:12px}.wb-task-adjust-row label{flex:1;min-width:150px;margin:0}.wb-task-adjust-row small{color:var(--text-muted)}
+.wb-task-crfs article{display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--border-default)}.wb-task-crfs article div{display:flex;flex-direction:column;gap:6px}.wb-task-crfs strong{font-weight:500}.wb-task-crfs span{font-size:12px;color:var(--text-muted)}.wb-task-crfs a,.wb-task-crfs button{color:#2e73ff;border:0;background:none;font:inherit;cursor:pointer;text-decoration:none}.wb-task-crfs .wb-task-done{color:#00b88b}.wb-task-operation details{margin-top:18px;color:var(--text-secondary)}.wb-task-operation li{line-height:22px;margin-bottom:10px}.wb-task-operation li p{margin:3px 0}.wb-task-operation li small{color:var(--text-muted)}
+/* Two title zones: tasks above, scheduling workspace below. */
+html[data-workbench-style=figma] .workbench-one>.wb1-layout{display:flex!important;flex-direction:column!important;gap:20px!important}
+html[data-workbench-style=figma] .wb1-layout>.wb1-task-workspace{display:flex!important;flex-direction:column;flex:none;overflow:visible!important;gap:10px!important;padding:0!important}
+.wb-overview-task-title{font-size:15px;padding:0;line-height:22px}
+html[data-workbench-style=figma] .wb1-layout .wb1-task-workspace>.wb1-task-summary{display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:12px!important}
+html[data-workbench-style=figma] .wb1-layout .wb1-task-workspace .wb1-task-card{height:86px!important;min-height:86px!important;padding:14px 18px!important;gap:12px!important}
+html[data-workbench-style=figma] .wb1-layout .wb1-task-workspace .wb1-task-card::after{display:none}
+html[data-workbench-style=figma] .wb1-layout>.wb1-visit-panel{flex:1;min-height:340px!important;display:flex!important;flex-direction:column;overflow:hidden}
+.wb-calendar-body{display:grid;grid-template-columns:minmax(0,1fr) 276px;flex:1;min-height:0}
+.wb-calendar-body>[data-visit-overview]{display:flex!important;flex-direction:column;min-height:0;min-width:0}
+.wb-calendar-body .appointment-calendar-scroll{margin-right:16px;margin-left:18px}
+.wb-calendar-body .appointment-calendar{min-width:560px}
+.wb-pending-appointments{border-left:1px solid var(--border-default);display:flex;flex-direction:column;min-height:0;min-width:0;background:#fbfcfe}
+.wb-pending-appointments>header{display:flex;align-items:center;justify-content:space-between;padding:0 16px 12px;height:28px;flex:none}
+.wb-pending-appointments h3{margin:0;font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px}.wb-pending-appointments h3 span{font-size:11px;padding:1px 6px;border-radius:8px;color:#2e73ff;background:#eaf1ff;font-weight:500}.wb-pending-appointments>header>span{font-size:10px;color:var(--text-muted)}
+.wb-pending-tabs{display:flex;gap:16px;margin:0 16px;border-bottom:1px solid var(--border-default);flex:none}.wb-pending-tabs button{font:inherit;font-size:11px;padding:5px 0 9px;border:0;border-bottom:2px solid transparent;color:var(--text-muted);background:transparent;cursor:pointer}.wb-pending-tabs button[aria-selected=true]{color:#2e73ff;border-bottom-color:#2e73ff}
+.wb-pending-list{padding:12px 14px 16px;overflow:auto;flex:1;min-height:0;scrollbar-width:thin}.wb-pending-list article{border:1px solid #e7ecf4;border-radius:6px;background:white;margin-bottom:10px;padding:12px;box-shadow:0 1px 3px #23395b03}.wb-pending-person{display:flex;gap:7px;align-items:center}.wb-pending-person strong{font-size:12px;font-weight:600;color:var(--text-primary)}.wb-pending-person>span{font-size:10px;color:var(--text-muted)}.wb-pending-person em{margin-left:auto;font-size:9px;font-style:normal;border-radius:3px;padding:1px 4px;background:#fff2e7;color:#bb852d}
+.wb-pending-list h4{font-weight:500;font-size:11px;line-height:18px;margin:8px 0 3px}.wb-pending-project{font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--text-muted);margin:0 0 10px}.wb-pending-list dl{margin:0;font-size:10px;line-height:20px}.wb-pending-list dl>div{display:flex;justify-content:space-between;gap:8px}.wb-pending-list dt{color:var(--text-muted)}.wb-pending-list dd{margin:0;color:var(--text-secondary)}.wb-pending-list footer{display:flex;align-items:center;justify-content:flex-end;gap:12px;margin-top:9px;padding-top:8px;border-top:1px solid #f0f3f8}.wb-pending-list footer button{border:0;background:transparent;color:#2e73ff;font-size:11px;padding:0;cursor:pointer}.wb-pending-list details{position:relative;font-size:11px;color:var(--text-secondary)}.wb-pending-list summary{cursor:pointer;list-style:none}.wb-pending-list summary::after{content:'⌄';margin-left:4px}.wb-pending-list details>div{position:absolute;right:0;top:23px;z-index:5;background:white;box-shadow:0 3px 14px #293d5e20;border:1px solid var(--border-default);border-radius:5px;min-width:100px;padding:5px}.wb-pending-list details button{display:block;width:100%;padding:8px!important;text-align:left}.wb-pending-empty{text-align:center;padding:40px 0;color:var(--text-muted);font-size:12px}
+@media(max-width:1100px){.wb-calendar-body{grid-template-columns:minmax(0,1fr) 240px}html[data-workbench-style=figma] .wb1-layout .wb1-task-workspace .wb1-task-card{padding:12px!important;gap:7px!important}html[data-workbench-style=figma] .wb1-layout .wb1-task-workspace .wb1-stat-art{zoom:.65}.wb-pending-list{padding:10px}.wb-pending-appointments>header{padding:0 12px 12px}}
+@media(max-width:800px){html[data-workbench-style=figma] .wb1-layout .wb1-task-workspace>.wb1-task-summary{grid-template-columns:repeat(5,minmax(135px,1fr))!important;overflow:auto}.wb-calendar-body{grid-template-columns:minmax(0,1fr) 230px}.wb1-visit-panel .wb1-panel-head{flex-wrap:wrap!important}.wb1-visit-panel .wb1-panel-head .appointment-calendar-toolbar{overflow:auto}.wb-calendar-body .appointment-calendar{min-width:500px}}
+.wb-calendar-body .appointment-calendar{min-width:0}
+/* Calendar title outside the card; controls belong only to its left column. */
+.wb-calendar-zone{display:flex;flex-direction:column;gap:10px;flex:1;min-height:0;min-width:0}
+.wb-calendar-zone-head{flex:none;padding:0;background:transparent}
+.wb-calendar-zone-head h2{margin:0;font-size:15px;font-weight:600;line-height:22px;color:var(--text-primary)}
+html[data-workbench-style=figma] .wb-calendar-zone>.wb1-visit-panel{display:flex;flex-direction:column;flex:1;min-height:320px!important;min-width:0;overflow:hidden}
+.wb-calendar-zone .wb-calendar-body{padding-top:16px}
+.wb-calendar-zone .appointment-calendar-toolbar{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:0 16px 14px 18px;margin:0;flex:none;flex-wrap:wrap;min-width:0}
+.wb-calendar-zone .appointment-date-controls{gap:6px!important;align-items:center!important;flex-wrap:wrap}
+.wb-calendar-zone .appointment-date-controls input{width:125px}
+.wb-calendar-zone .appointment-date-controls select{width:96px}
+.wb-calendar-zone .appointment-month-actions{margin-left:auto;gap:4px}
+.wb-calendar-zone .appointment-month-actions button{height:30px;min-width:26px;padding:0 8px}
+.wb-calendar-zone .wb-pending-appointments>header{height:32px;padding-top:0;padding-bottom:10px}
+@media(max-width:1000px){.wb-calendar-zone .appointment-date-controls input{width:115px}.wb-calendar-zone .appointment-date-controls select{width:86px}.wb-calendar-zone .appointment-calendar-toolbar{gap:8px}.wb-calendar-zone .appointment-month-actions button{padding:0 6px;min-width:24px}}
+/* Filter scope is visible in its own module. */
+html[data-workbench-style=figma] .wb1-context-filters{justify-content:flex-end}
+.wb-list-filters{display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:16px 18px;border-bottom:1px solid var(--border-default);flex:none}
+.wb1-execution-switch {
+  display: flex;
+  flex: 0 0 auto;
+  max-width: 100%;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.wb1-execution-switch[hidden] { display: none; }
+.wb1-execution-switch button {
+  min-height: 32px;
+  padding: 0 12px;
+  border: 1px solid var(--border-default);
+  border-radius: 5px;
+  color: var(--text-secondary);
+  background: white;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+.wb1-execution-switch button:hover,
+.wb1-execution-switch button[aria-pressed=true] {
+  color: var(--brand-primary);
+  border-color: var(--brand-primary);
+}
+.wb1-execution-switch button[aria-pressed=true] { background: var(--brand-primary-soft); }
+.wb-list-filters>select,.wb-list-filters>input,.wb-list-date-range input,.wb-list-filters>button{height:32px;border:1px solid var(--border-default);border-radius:4px;background:white;color:var(--text-secondary);font:inherit;font-size:12px;padding:0 10px;min-width:0}
+.wb-list-filters>select{width:165px}.wb-list-filters>input[type=search]{width:175px}.wb-list-filters input[type=date]{width:130px}.wb-list-filters>button{cursor:pointer}
+.wb-list-filters > [hidden] { display: none !important; }
+.wb-list-filters .wb1-filter { flex: none !important; width: min(216px, 100%) !important; min-width: 0 !important; height: 32px !important; }
+html[data-workbench-style=figma] .wb-list-filters .wb1-filter input:placeholder-shown { padding-right: 10px !important; }
+.wb-list-date-range { display: flex; align-items: center; gap: 8px; max-width: 100%; font-size: 11px; color: var(--text-muted); }
+.wb-list-date-range > span { white-space: nowrap; }
+.wb-list-filters.has-visit-filters .wb-list-date-range {
+  gap: 6px; min-height: 32px; padding: 0 9px;
+  border: 1px solid var(--border-default); border-radius: 4px;
+  background: white; color: var(--text-secondary); font-size: 12px;
+}
+.wb-list-filters.has-visit-filters .wb-list-date-range input {
+  width: 108px; max-width: 32%; height: 28px; border: 0; padding: 0 3px;
+}
+.wb-list-filters.has-visit-filters select[name=visitCycle] { width: 135px; }
+.wb-list-filters.has-visit-filters select[name=participantStatus] { width: 108px; }
+.wb-list-filters.is-issue select[name=executionState] { width: 108px; }
+.wb-list-filters > select {
+  appearance: none;
+  padding-right: 29px;
+  background: #fff url('figma-clinical-assets/caret-down.svg') no-repeat right 10px center / 12px 12px;
+}
+.wb1-issue-adjustment {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 14px;
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+.wb1-issue-adjustment[hidden],
+.wb1-issue-adjustment small:empty { display: none; }
+.wb1-issue-adjustment small { color: var(--status-error, #e65b65); }
+.wb1-issue-adjustment textarea {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 70px;
+  padding: 8px 10px;
+  border: 1px solid var(--border-default);
+  border-radius: 5px;
+  color: var(--text-primary);
+  background: white;
+  font: inherit;
+  resize: vertical;
+}
+.wb1-issue-adjustment textarea[aria-invalid=true] { border-color: var(--status-error, #e65b65); }
+html[data-workbench-style=figma] .wb-task-drill .wb1-table th:is(:nth-child(-n+2), .wb1-participant-status),
+html[data-workbench-style=figma] .wb-task-drill .wb1-table td:is(:nth-child(-n+2), .wb1-participant-status):not(.wb1-empty) {
+  padding-inline: 8px !important;
+  white-space: nowrap !important;
+}
+.wb-pending-search{padding:0 14px 10px;flex:none}.wb-pending-search input{height:30px;width:100%;box-sizing:border-box;border:1px solid var(--border-default);border-radius:4px;padding:0 9px;color:var(--text-primary);background:white;font:inherit;font-size:11px}
+.wb-visit-checklist{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}.wb-visit-checklist label{display:flex;flex-direction:row;align-items:center;margin:0;font-size:13px}.wb-visit-checklist input{width:15px;height:15px;min-height:0;accent-color:#2e73ff;padding:0}
+.wb-visit-summary{display:grid;grid-template-columns:1fr 1fr;gap:16px;background:#f7f9fc;border-radius:6px;padding:16px}.wb-visit-summary div{min-width:0}.wb-visit-summary dt{font-size:11px;color:var(--text-muted);margin-bottom:6px}.wb-visit-summary dd{margin:0;font-size:12px}.wb-visit-operations{display:flex;gap:10px;flex-wrap:wrap;margin:20px 0}.wb-visit-operations button{padding:7px 12px;border:1px solid var(--border-default);background:white;color:#2e73ff;font:inherit;border-radius:4px;cursor:pointer}.wb-visit-operations button.danger{color:#ed5b65}.visit-progress.partial{background:#fff5e6;color:#be872c}
+.visit-timeline-history{font-size:12px;line-height:20px;color:var(--text-secondary);margin:12px 0 0;padding-top:10px;border-top:1px solid var(--border-default)}
+html[data-workbench-style=figma] .wb1-toolbar{width:500px!important;max-width:75%!important}
+.wb-calendar-zone .appointment-day > header { padding: 0; }
+.wb-calendar-zone .wb-pending-list article{border:0;border-bottom:1px solid var(--border-default);border-radius:0;box-shadow:none;margin:0;padding:13px 3px;background:transparent}.wb-calendar-zone .wb-pending-list article:first-child{padding-top:4px}.wb-calendar-zone .wb-pending-list footer{border:0;padding-top:2px;margin-top:6px}.wb-calendar-zone .wb-pending-project{margin-bottom:7px}.wb-calendar-zone .wb-pending-list h4{margin-top:6px}.wb-calendar-zone .wb-pending-appointments{background:white}
+.wb-calendar-action-menu{position:fixed;z-index:2000;width:120px;padding:5px;background:white;border:1px solid var(--border-default);border-radius:6px;box-shadow:0 5px 20px #253b5b24}.wb-calendar-action-menu[hidden]{display:none}.wb-calendar-action-menu button{display:block;width:100%;padding:8px 10px;border:0;background:transparent;font-family:inherit;font-size:12px;text-align:left;color:var(--text-secondary);cursor:pointer;border-radius:3px}.wb-calendar-action-menu button:hover{background:#f2f6ff;color:#2e73ff}.wb-calendar-action-menu button.danger{color:#e85b67}
+.wb-calendar-zone .appointment-day{padding:8px 7px 10px}
+.wb-visit-more summary:hover{background:#edf3ff}
+.wb-visit-more summary{display:flex;align-items:center;justify-content:center;min-width:22px;height:20px;color:var(--brand-primary,#2e73ff);border-radius:3px}
+.wb-pending-list .wb-visit-more summary::after{display:none}
+.wb-visit-more summary::-webkit-details-marker{display:none}
+/* Calendar left, six task summaries stacked on the right. */
+html[data-workbench-style=figma] .workbench-one>.wb1-layout{display:flex!important;flex-direction:row!important;align-items:stretch!important;gap:20px!important}
+html[data-workbench-style=figma] .wb1-layout>.wb-calendar-zone{order:0;flex:1;min-width:0}
+html[data-workbench-style=figma] .wb1-layout>.wb1-task-workspace{order:1;flex:0 0 250px;min-width:0;overflow:auto!important}
+html[data-workbench-style=figma] .wb1-layout .wb1-task-workspace>.wb1-task-summary{grid-template-columns:minmax(0,1fr)!important;gap:10px!important;overflow:visible}
+.wb-calendar-zone .wb-calendar-body{grid-template-columns:minmax(0,1fr)}
+.appointment-calendar-legend>.is-partial::before{background:#8e79cb!important}.appointment-calendar-legend>.is-terminated::before{background:#9ba6b5!important}
+@media(max-width:1000px) and (min-width:700px){html[data-workbench-style=figma] .wb1-layout>.wb1-task-workspace{flex-basis:210px}html[data-workbench-style=figma] .workbench-one>.wb1-layout{gap:16px!important}}
+@media(max-width:699px){html[data-workbench-style=figma] .workbench-one>.wb1-layout{flex-direction:column!important}html[data-workbench-style=figma] .wb1-layout>.wb1-task-workspace{flex-basis:auto}.wb-calendar-zone{min-height:500px}}
+/* One containing surface per workspace region, including its title. */
+html[data-workbench-style=figma] .wb1-layout>.wb-calendar-zone,
+html[data-workbench-style=figma] .wb1-layout>.wb1-task-workspace{background:#fff;border:1px solid var(--border-default);border-radius:10px;box-shadow:0 3px 12px #243b5b04;overflow:hidden!important;gap:0!important}
+.wb-calendar-zone-head{padding:17px 18px 14px;border-bottom:1px solid #edf1f6}
+html[data-workbench-style=figma] .wb-calendar-zone>.wb1-visit-panel{border:0!important;border-radius:0!important;box-shadow:none!important;background:transparent!important;min-height:0!important}
+html[data-workbench-style=figma] .wb1-layout>.wb1-task-workspace>.wb-overview-task-title{padding:17px 18px 14px;margin:0;border-bottom:1px solid #edf1f6;line-height:22px;font-size:15px}
+html[data-workbench-style=figma] .wb1-layout .wb1-task-workspace>.wb1-task-summary{display:flex!important;flex-direction:column!important;gap:0!important;padding:8px 12px!important;min-height:0;overflow:auto!important;flex:1}
+html[data-workbench-style=figma] .wb1-layout .wb1-task-workspace .wb1-task-card{flex:none;width:100%;height:81px!important;min-height:81px!important;padding:14px 10px!important;border:0!important;border-bottom:1px solid #edf1f6!important;border-radius:0!important;box-shadow:none!important;background:transparent!important;gap:12px!important}
+html[data-workbench-style=figma] .wb1-layout .wb1-task-workspace .wb1-task-card:last-child{border-bottom:0!important}
+html[data-workbench-style=figma] .wb1-layout .wb1-task-workspace .wb1-task-card:hover{background:#f5f8fe!important;border-radius:5px!important}
+.wb-calendar-zone .appointment-date-controls :is(input,select):focus{outline:none!important;border-color:#8bb1f7;box-shadow:0 0 0 2px #2e73ff14}
+.wb-calendar-zone .appointment-calendar-toolbar{padding-top:2px}
+/* Shared region headings, with calendar controls on the same row. */
+html[data-workbench-style=figma] .wb-calendar-zone-head,
+html[data-workbench-style=figma] .wb1-layout>.wb1-task-workspace>.wb-overview-task-title{box-sizing:border-box;min-height:64px;padding:15px 18px;display:flex;align-items:center;flex:none}
+html[data-workbench-style=figma] .wb-calendar-zone-head{justify-content:space-between;gap:12px;min-width:0}
+html[data-workbench-style=figma] .wb-calendar-zone-head h2,
+html[data-workbench-style=figma] .wb1-layout>.wb1-task-workspace>.wb-overview-task-title{font-family:inherit;font-size:15px!important;font-weight:600!important;line-height:22px!important;letter-spacing:0;color:var(--text-primary);margin:0}
+.wb-calendar-zone-head h2{flex:none;white-space:nowrap}
+.wb-calendar-zone .wb-calendar-zone-head .appointment-calendar-toolbar{display:flex;align-items:center;justify-content:flex-end;flex:0 1 auto;gap:8px;margin:0 0 0 auto;padding:0;flex-wrap:wrap;min-width:0}
+.wb-calendar-zone-head .appointment-date-controls{flex:none;flex-wrap:nowrap!important;gap:6px!important}
+.wb-calendar-zone-head .appointment-month-actions{flex:none;margin:0}
+.wb-calendar-zone-head .appointment-date-controls input{width:115px}
+.wb-calendar-zone-head .appointment-date-controls select{width:88px}
+@media(max-width:1000px){.wb-calendar-zone-head .appointment-date-controls input{width:108px}.wb-calendar-zone-head .appointment-date-controls select{width:82px}.wb-calendar-zone-head .appointment-date-controls :is(input,select){font-size:11px;padding:0 6px}.wb-calendar-zone-head .appointment-month-actions button{padding:0 6px}}
+/* Calendar grid is embedded directly in the region, without an inner frame. */
+.wb-calendar-zone .wb-calendar-body{padding-top:0}
+.wb-calendar-zone .appointment-calendar-scroll{margin:0;border:0;border-radius:0;box-shadow:none}
+.wb-calendar-zone .appointment-day{border-bottom:0}
+/* Task overview above a full-width calendar. */
+html[data-workbench-style=figma] .workbench-one>.wb1-layout{flex-direction:column!important;gap:16px!important}
+html[data-workbench-style=figma] .wb1-layout>.wb1-task-workspace{order:0;flex:0 0 auto;overflow:visible!important}
+html[data-workbench-style=figma] .wb1-layout>.wb-calendar-zone{order:1;flex:1;min-height:0}
+html[data-workbench-style=figma] .wb1-layout .wb1-task-workspace>.wb1-task-summary{display:grid!important;grid-template-columns:repeat(6,minmax(0,1fr))!important;gap:0!important;padding:10px 12px!important;overflow:visible!important;flex:none}
+html[data-workbench-style=figma] .wb1-layout .wb1-task-workspace .wb1-task-card{height:74px!important;min-height:74px!important;padding:8px 12px!important;border:0!important;border-right:1px solid #edf1f6!important;gap:10px!important;min-width:0}
+html[data-workbench-style=figma] .wb1-layout .wb1-task-workspace .wb1-task-card:last-child{border-right:0!important}
+html[data-workbench-style=figma] .wb1-layout .wb1-task-workspace .wb1-stat-label{font-size:11px!important;line-height:17px!important}
+html[data-workbench-style=figma] .wb1-layout .wb1-task-workspace .wb1-stat-art{zoom:.65}
+html[data-workbench-style=figma] .wb1-layout .wb1-task-workspace .wb1-task-card strong{font-size:24px!important;line-height:26px!important}
+html[data-workbench-style=figma] .wb1-layout>.wb1-task-workspace>.wb-overview-task-title{min-height:48px;padding:12px 18px}
+@media(max-width:1000px){html[data-workbench-style=figma] .wb1-layout .wb1-task-workspace .wb1-task-card{padding:6px 8px!important;gap:5px!important}html[data-workbench-style=figma] .wb1-layout .wb1-task-workspace .wb1-stat-art{zoom:.5}}
+@media(max-width:699px){html[data-workbench-style=figma] .wb1-layout .wb1-task-workspace>.wb1-task-summary{grid-template-columns:repeat(6,minmax(125px,1fr))!important;overflow-x:auto!important}html[data-workbench-style=figma] .wb1-layout>.wb1-task-workspace{overflow:hidden!important}}
+html[data-workbench-style=figma] .wb1-layout .wb1-task-workspace .wb1-task-card{height:82px!important;min-height:82px!important}
+html[data-workbench-style=figma] .wb1-layout .wb1-task-workspace .wb1-stat-copy{gap:2px!important}
+html[data-workbench-style=figma] .wb1-layout .wb1-task-workspace .wb1-stat-label{display:flex!important;align-items:center;min-height:34px;box-sizing:border-box}
+/* Each summary has its own quiet outline rather than shared dividers. */
+html[data-workbench-style=figma] .wb1-layout>.wb1-task-workspace>.wb-overview-task-title{border-bottom:0}
+html[data-workbench-style=figma] .wb1-layout .wb1-task-workspace>.wb1-task-summary{gap:10px!important;padding:0 18px 16px!important}
+html[data-workbench-style=figma] .wb1-layout .wb1-task-workspace .wb1-task-card,
+html[data-workbench-style=figma] .wb1-layout .wb1-task-workspace .wb1-task-card:last-child{border:1px solid #e4e8ef!important;border-radius:8px!important;background:#fff!important;box-shadow:none!important}
+html[data-workbench-style=figma] .wb1-layout .wb1-task-workspace .wb1-task-card:hover{border-color:#bed0ef!important;border-radius:8px!important;background:#f8faff!important}
+html[data-workbench-style=figma] .wb-calendar-zone-head{height:48px;min-height:48px;padding:8px 18px}
+html[data-workbench-style=figma] .wb1-layout .wb1-task-workspace .wb1-stat-label{font-size:13px!important;font-weight:500;line-height:20px!important;min-height:40px}
+html[data-workbench-style=figma] .wb1-layout .wb1-task-workspace .wb1-stat-label{line-height:17px!important;min-height:34px}
+html[data-workbench-style=figma] .wb1-layout .wb1-task-workspace .wb1-stat-art{zoom:.8}
+html[data-workbench-style=figma] .wb1-layout .wb1-task-workspace .wb1-task-card,
+html[data-workbench-style=figma] .wb1-layout .wb1-task-workspace .wb1-task-card:last-child{background:rgb(240 242 255 / 20%)!important}
+html[data-workbench-style=figma] .wb1-layout .wb1-task-workspace .wb1-task-card:hover{background:rgb(233 237 255 / 20%)!important}
+html[data-workbench-style=figma] .wb1-layout .wb1-task-workspace .wb1-stat-art{zoom:1}
+@media(max-width:1100px){
+ html[data-workbench-style=figma] .wb1-layout .wb1-task-workspace .wb1-task-card{display:grid!important;grid-template-columns:56px minmax(0,1fr);grid-template-rows:34px 56px;gap:4px!important;height:112px!important;min-height:112px!important;padding:8px!important;align-content:center;align-items:center!important}
+ html[data-workbench-style=figma] .wb1-layout .wb1-task-workspace .wb1-stat-copy{display:contents!important}
+ html[data-workbench-style=figma] .wb1-layout .wb1-task-workspace .wb1-stat-label{grid-column:1/-1;grid-row:1;min-height:34px;width:100%;align-self:center}
+ html[data-workbench-style=figma] .wb1-layout .wb1-task-workspace .wb1-stat-art{grid-column:1;grid-row:2;zoom:1;justify-self:start}
+ html[data-workbench-style=figma] .wb1-layout .wb1-task-workspace .wb1-task-card strong{grid-column:2;grid-row:2;justify-self:start;align-self:center}
+}
+
+/* Match participant search to adjacent list filters. */
+html[data-workbench-style=figma] .wb-list-filters .wb1-filter input{box-sizing:border-box;height:32px!important;border:1px solid var(--border-default);border-radius:4px;background:#fff;color:var(--text-secondary);font-family:inherit;font-size:12px!important;box-shadow:none}
+html[data-workbench-style=figma] .wb-list-filters input::placeholder{color:var(--text-muted)}
+
+/* Visit execution: clear result choice and conditional follow-up fields. */
+.wb-execution-project { display:flex; flex-wrap:wrap; align-items:baseline; gap:4px 8px; margin:8px 0 18px; padding:10px 12px; border-radius:5px; background:#f8fafc; color:var(--text-secondary); font-size:12px; line-height:20px; }
+.wb-execution-project > span:first-child { color:var(--text-muted); }
+.wb-execution-project strong { font-weight:500; }
+.wb-execution-choice { display:flex; align-items:center; gap:24px; margin:0 0 18px; padding:0; border:0; }
+.wb-execution-choice legend { margin-bottom:10px; color:var(--text-secondary); }
+.wb-task-operation .wb-execution-choice label { display:flex; flex-direction:row; align-items:center; gap:7px; margin:0; }
+.wb-task-operation .wb-execution-choice input { width:15px; height:15px; min-height:0; padding:0; accent-color:var(--brand-primary); }
+.wb-task-operation select { width:100%; height:36px; padding:0 10px; border:1px solid var(--border-default); border-radius:4px; background:white; color:var(--text-primary); font:inherit; }
+.wb-execution-label { color:var(--text-secondary); font-size:13px; }
+.wb-visit-items > span { display:flex; align-items:center; gap:8px; color:var(--text-secondary); }
+.wb-visit-items i { color:var(--brand-primary); font-style:normal; }
+.wb-visit-checklist small { color:var(--text-muted); font-size:11px; }
+.wb-task-operation [hidden] { display:none!important; }
+
+.wb-execution-steps { display:flex; gap:24px; list-style:none; padding:0; margin:0 0 22px; }
+.wb-task-operation .wb-execution-steps li { display:flex; align-items:center; gap:8px; margin:0; color:var(--text-muted); font-size:12px; }
+.wb-execution-steps b { display:grid; place-items:center; width:22px; height:22px; border-radius:50%; background:#f0f3f7; font-size:11px; font-weight:500; }
+.wb-task-operation .wb-execution-steps [aria-current=step] { color:var(--brand-primary); }
+.wb-execution-steps [aria-current=step] b { background:var(--brand-primary); color:white; }
+.wb-execution-progress { padding:10px 12px; border-radius:5px; background:#f8fafc; color:var(--text-secondary); font-size:12px; }
+.wb-execution-result-summary { display:flex; align-items:center; flex-wrap:wrap; gap:6px 12px; padding:12px; border-radius:5px; background:#f8fafc; font-size:12px; }
+.wb-execution-result-summary strong { color:var(--text-primary); font-size:13px; font-weight:500; }
+.wb-execution-result-summary > span { color:var(--text-secondary); }
+.wb-execution-result-summary p { flex-basis:100%; margin:4px 0 0; color:var(--text-secondary); line-height:20px; }
+
+/* Follow-up context is supporting copy, matching the dialog form type scale. */
+.wb1-reason-modal [data-reason-context] .wb-task-context { padding:10px 12px; font-size:13px; font-weight:400; line-height:20px; }
+.wb1-reason-modal [data-reason-context] .wb-task-context > span { font-size:12px; font-weight:400; line-height:18px; color:var(--text-muted); }
+.wb1-reason-modal [data-reason-context] .wb-task-context > p { margin:6px 0 0; font-size:13px; font-weight:400; line-height:20px; }
+
+.wb1-reason-modal [data-reason-context] + label { margin-top:16px; }
+
+.wb-execution-checklist-heading { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+.wb-execution-checklist-heading button { border:0; background:transparent; padding:2px 0; color:var(--brand-primary); font-size:12px; cursor:pointer; }
+.wb-execution-checklist-heading button:disabled { color:var(--text-muted); cursor:default; }
+
+.wb1-visit-completeness { min-width:110px; gap:8px; }
+.wb1-visit-completeness span { min-width:32px; white-space:nowrap; }
+
+.wb-visit-quick-filters { display:flex; align-items:center; gap:8px; }
+.wb-visit-quick-filters[hidden] { display:none!important; }
+.wb-visit-quick-filters button { height:32px; padding:0 10px; border:1px solid var(--border-default); border-radius:4px; background:var(--surface-content); color:var(--text-secondary); font:inherit; font-size:12px; white-space:nowrap; cursor:pointer; }
+.wb-visit-quick-filters button[aria-pressed="true"] { color:var(--brand-primary); border-color:var(--brand-primary); background:var(--brand-primary-soft); }
+
+.wb-missed-visit-notice { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px 16px; padding:10px 12px; margin:12px 0 0; border-radius:6px; background:var(--status-warning-soft); color:var(--text-secondary); font-size:12px; line-height:1.6; }
+.wb-missed-visit-notice[hidden] { display:none; }
+.wb-missed-visit-notice strong { color:var(--status-warning); }
+.wb-missed-visit-notice a { color:var(--brand-primary); white-space:nowrap; text-decoration:none; }
+
+.wb-appointment-reference { margin-top:20px; border:1px solid var(--border-default); border-radius:6px; overflow:hidden; }
+.wb-appointment-reference h3 { display:flex; align-items:center; justify-content:space-between; gap:12px; font-size:13px; font-weight:500; margin:0; padding:12px; background:var(--surface-table-head); }
+.wb-appointment-reference h3 small { font-size:11px; font-weight:400; color:var(--text-secondary); }
+.wb-appointment-items { list-style:none; padding:4px 12px; margin:0; }
+.wb-task-operation .wb-appointment-items li { display:flex; justify-content:space-between; gap:12px; margin:0; padding:7px 0; }
+.wb-appointment-items li>span:last-child { color:var(--text-secondary); font-size:12px; }
+.wb-appointment-items li>span.is-done { color:var(--status-success); }
+.wb-appointment-task-scroll { max-height:230px; overflow:auto; }
+.wb-appointment-reference table { width:100%; border-collapse:collapse; font-size:12px; text-align:left; }
+.wb-appointment-reference th { position:sticky; top:0; background:var(--surface-content); color:var(--text-secondary); font-weight:400; }
+.wb-appointment-reference th,.wb-appointment-reference td { padding:9px 10px; border-bottom:1px solid var(--border-default); vertical-align:top; }
+.wb-appointment-reference td small { display:block; margin-top:3px; color:var(--text-muted); font-size:11px; }

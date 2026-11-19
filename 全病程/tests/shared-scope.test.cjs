@@ -1,0 +1,11 @@
+const {test}=require('node:test');
+const assert=require('node:assert/strict');
+const fs=require('node:fs'),vm=require('node:vm');
+function scopeAt(path,saved){const location={href:'http://localhost/'+path};const window={};const history={replaceState(a,b,url){location.href=String(url);}};vm.runInNewContext(fs.readFileSync(__dirname+'/../shared-scope.js','utf8'),{window,location,history,URL,sessionStorage:{getItem:()=>JSON.stringify(saved)}});return {scope:window.sharedResearchScope,url:new URL(location.href)};}
+test('module navigation inherits selected project and center',()=>{const {scope,url}=scopeAt('participants.html?view=visits',{project:'CT-2026-001',center:'第一医院'});assert.equal(scope.project,'CT-2026-001');assert.equal(url.searchParams.get('hospital'),'第一医院');assert.equal(url.searchParams.get('view'),'visits');});
+test('an explicit module project takes precedence over the saved scope',()=>{const {scope}=scopeAt('templates.html?project=HX-LC-II-06',{project:'CT-2026-001'});assert.equal(scope.project,'HX-LC-II-06');});
+test('opening a participant preserves the shared navigation scope separately from their project',()=>{const {scope,url}=scopeAt('participant.html?project=HX-LC-II-06&id=S006',{project:'',center:''});assert.equal(scope.project,'');assert.equal(url.searchParams.get('project'),'HX-LC-II-06');});
+test('all-project selection remains all projects when switching modules',()=>{const {scope,url}=scopeAt('templates.html',{project:'',center:''});assert.equal(scope.project,'');assert.equal(url.searchParams.has('project'),false);});
+test('an explicit different project does not inherit the previous center',()=>{const {scope,url}=scopeAt('participants.html?project=HX-LC-II-06',{project:'CT-2026-001',center:'第一医院'});assert.equal(scope.center,'');assert.equal(url.searchParams.has('hospital'),false);});
+test('the same project continues to inherit its saved center',()=>{const {scope,url}=scopeAt('index.html?project=HX-LC-II-06',{project:'HX-LC-II-06',center:'第二医院'});assert.equal(scope.center,'第二医院');assert.equal(url.searchParams.get('hospital'),'第二医院');});
+test('explicit all-project scope resets the previous project center',()=>{const {scope}=scopeAt('templates.html?project=',{project:'CT-2026-001',center:'第一医院'});assert.equal(scope.project,'');assert.equal(scope.center,'');});

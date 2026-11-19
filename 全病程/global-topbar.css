@@ -119,3 +119,5 @@ html[data-clinical-module=research][data-rail-collapsed=true] .rail-toggle>img{t
 .project-title-control::after{content:'';position:absolute;right:10px;top:10px;width:6px;height:6px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(45deg);pointer-events:none}
 .project-title-control:hover{color:var(--brand-primary);border-color:#B9D0FB}
 .project-title-control:focus-within{outline:2px solid #B9D0FB;outline-offset:2px}
+
+.global-scope-bar select:disabled { cursor:not-allowed; background-color:var(--surface-disabled); color:var(--text-muted); }

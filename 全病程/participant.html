@@ -36,16 +36,41 @@
 <link rel="stylesheet" href="participant-detail.css?v=8">
 <link rel="stylesheet" href="app-shell.css">
 <script src="dialog-focus.js"></script><script src="required-fields.js?v=1"></script>
-<script src="visit-protocols.js"></script>
-<script src="app-shell.js?v=standalone-participant-14"></script>
-<link rel="stylesheet" href="redesign.css"><link rel="stylesheet" href="colors.css?v=restore-medical-blue-4"><link rel="stylesheet" href="navigation.css?v=square-collapsed-6"><style>.workbench-return{display:inline-flex;margin-bottom:12px;color:var(--brand-primary);font-size:12px;text-decoration:none}</style><link rel="stylesheet" href="centered-dialogs.css?v=required-markers-2"><style>[data-quiet-dialog]:focus,[data-quiet-dialog]:focus-visible{outline:none!important}</style><link rel="stylesheet" href="global-topbar.css?v=title-switch-button-14"><link rel="stylesheet" href="participant-actions.css?v=1"><link rel="stylesheet" href="participant-profile.css?v=soft-tab-shadow-16"><link rel="stylesheet" href="task-drawers.css?v=participant-unified-3"><link rel="stylesheet" href="participant-task-dialogs.css?v=1"></head>
+<script src="demo-participant-identity.js?v=1"></script><script src="visit-protocols.js?v=demo-identity-1"></script>
+<script src="shared-scope.js?v=project-resets-center-4"></script><script src="app-shell.js?v=clean-module-routes-1"></script><link rel="stylesheet" href="aggregate-navigation.css?v=scope-transition-3">
+<link rel="stylesheet" href="redesign.css"><link rel="stylesheet" href="colors.css?v=restore-medical-blue-4"><link rel="stylesheet" href="navigation.css?v=square-collapsed-6"><style>.workbench-return{display:inline-flex;margin-bottom:12px;color:var(--brand-primary);font-size:12px;text-decoration:none}</style><link rel="stylesheet" href="centered-dialogs.css?v=required-markers-2"><style>[data-quiet-dialog]:focus,[data-quiet-dialog]:focus-visible{outline:none!important}</style><link rel="stylesheet" href="global-topbar.css?v=detail-scope-disabled-15"><link rel="stylesheet" href="participant-actions.css?v=enrollment-group-3"><link rel="stylesheet" href="participant-profile.css?v=soft-tab-shadow-16"><link rel="stylesheet" href="task-drawers.css?v=participant-unified-3"><link rel="stylesheet" href="participant-task-dialogs.css?v=1"><link rel="stylesheet" href="workbench-task-rules.css?v=appointment-reference-12"><link rel="stylesheet" href="table-actions.css?v=soft-shadow-2"><link rel="stylesheet" href="participant-overview.css?v=empty-controls-visible-2"><link rel="stylesheet" href="participant-data-layout.css?v=source-preview-no-heading-3"><link rel="stylesheet" href="directory-pagination.css?v=surface-fill-3"><link rel="stylesheet" href="participant-figma.css?v=collection-handling-details-27"><link rel="stylesheet" href="task-status-tags.css?v=1"><link rel="stylesheet" href="form-preview.css?v=direct-task-content-2"><script src="form-preview.js?v=secondary-form-preview-3" defer></script><link rel="stylesheet" href="task-details.css?v=1"><script src="task-details.js?v=1" defer></script></head>
 <body>
   
-  <main class="page"><div class="topbar"><div class="title-wrap"><a class="back" href="participants.html"><img src="figma-clinical-assets/prev.svg" alt="">返回</a></div><div class="top-actions"><button class="top-btn">激活访视</button><button class="top-btn">参与者状态</button><button class="top-btn primary" id="open-plan">访视计划</button></div></div><section class="summary"><div><div class="person-main"><span class="person-name" id="person-name">张**（S001）</span><span class="status" id="person-status">已入组</span><span class="sex-age">女 / 31岁</span></div><div class="meta"><span>知情同意书签署时间 <b>2026-04-24</b></span><span>入组时间 <b>2026-04-24</b></span><span>参与试验 <b>这是临床研究的名称这是临床研究的名称～</b></span></div></div></section><section class="panel"><div class="tabs"><button class="tab">访视管理</button></div><section class="data-entry-workspace" id="data-entry-workspace" hidden aria-label="访视管理"><aside class="data-entry-nav"><h3>访视与 CRF</h3><input class="data-search" placeholder="搜索访视 / CRF" aria-label="搜索访视或CRF"><div class="data-state-filter"><span>当前状态</span><b>全部</b></div><div class="data-crf-tree" id="data-cycle-list"></div><button class="data-add-visit" type="button">+ 添加访视</button></aside><div class="data-entry-main"><section class="data-form-panel"><div class="data-form-head"><h3 id="data-entry-title">CRF：CT检查</h3><span class="data-form-status"><i></i>待录入</span></div><div class="data-form-row"><label>检查日期 <span class="required">*</span></label><input type="text"></div><div class="data-form-row"><label>肿瘤大小 <span class="required">*</span></label><input type="text"></div><div class="data-form-row"><label>结节数目 <span class="required">*</span></label><input type="text"></div><div class="data-form-row"><label>影像结论 <span class="required">*</span></label><input type="text"></div><div class="data-form-row"><label>是否伴淋巴结肿大 <span class="required">*</span></label><div class="data-radio-row"><label><input type="radio" name="lymph">是</label><label><input type="radio" name="lymph">否</label></div></div><div class="data-form-actions"><button type="button">保存草稿</button><button class="primary" type="button">提交并同步</button></div></section><section class="data-upload-panel"><div class="upload-box"><img src="figma-clinical-assets/upload-cloud.png" alt="" width="56" height="56"><strong>上传访视资料</strong><span>支持格式：jpg/png/pdf，单张大小&lt;5MB</span></div></section></div></section></section></main>
+  <main class="page"><div class="topbar"><div class="title-wrap"><a class="back" href="participants.html"><img src="figma-clinical-assets/prev.svg" alt="">返回</a></div><div class="top-actions"><button class="top-btn">激活访视</button><button class="top-btn">参与者状态</button><button class="top-btn primary" id="open-plan">访视计划</button></div></div><section class="summary"><div><div class="person-main"><span class="person-name" id="person-name">ZXX（S001）</span><span class="status" id="person-status">已入组</span><span class="sex-age">女 / 31岁</span></div><div class="meta"><span>知情同意书签署时间 <b>2026-04-24</b></span><span>入组时间 <b>2026-04-24</b></span><span>参与试验 <b>这是临床研究的名称这是临床研究的名称～</b></span></div></div></section><section class="panel"><div class="tabs"><button class="tab">访视管理</button></div><section class="data-entry-workspace" id="data-entry-workspace" hidden aria-label="访视管理"><aside class="data-entry-nav"><h3>访视与 CRF</h3><input class="data-search" placeholder="搜索访视 / CRF" aria-label="搜索访视或CRF"><div class="data-state-filter"><span>当前状态</span><b>全部</b></div><div class="data-crf-tree" id="data-cycle-list"></div><button class="data-add-visit" type="button">+ 添加访视</button></aside><div class="data-entry-main"><section class="data-form-panel"><div class="data-form-head"><h3 id="data-entry-title">CRF：CT检查</h3><span class="data-form-status"><i></i>待录入</span></div><div class="data-form-row"><label>检查日期 <span class="required">*</span></label><input type="text"></div><div class="data-form-row"><label>肿瘤大小 <span class="required">*</span></label><input type="text"></div><div class="data-form-row"><label>结节数目 <span class="required">*</span></label><input type="text"></div><div class="data-form-row"><label>影像结论 <span class="required">*</span></label><input type="text"></div><div class="data-form-row"><label>是否伴淋巴结肿大 <span class="required">*</span></label><div class="data-radio-row"><label><input type="radio" name="lymph">是</label><label><input type="radio" name="lymph">否</label></div></div><div class="data-form-actions"><button type="button">保存草稿</button><button class="primary" type="button">提交并同步</button></div></section><section class="data-upload-panel"><div class="upload-box"><img src="figma-clinical-assets/upload-cloud.png" alt="" width="56" height="56"><strong>上传访视资料</strong><span>支持格式：jpg/png/pdf，单张大小&lt;5MB</span></div></section></div></section></section></main>
   
   
+
+
+
+
+<script src="research-data.js?v=followup-history-1"></script>
+<script src="clinical-visit-store.js?v=screening-enrollment-window-7"></script>
+<script src="participant-directory-data.js?v=enrollment-date-3"></script>
   <script>
-const params=new URLSearchParams(location.search), name=params.get('name')||'张**', id=params.get('id')||'S001', status=params.get('status')||'已入组';
+const params = new URLSearchParams(location.search);
+const demoIdentity = window.demoParticipantIdentity;
+const requestedId = params.get('id') || 'S001';
+const id = demoIdentity.canonicalId(requestedId);
+if (!params.get('project')) {
+ const study = window.clinicalParticipantDirectory.create().participants.find(person => person.id === id)?.study || 'CT-2026-001';
+ params.set('project', study);
+ const contextURL = new URL(location.href);contextURL.searchParams.set('project', study);history.replaceState(null,'',contextURL);
+}
+const name = demoIdentity.name(id, params.get('name')) || 'ZXX';
+const status = params.get('status') || '已入组';
+if (requestedId !== id) {
+  const url = new URL(location.href);
+  url.searchParams.set('id', id);
+  url.searchParams.set('name', name);
+  params.set('id', id);
+  params.set('name', name);
+  history.replaceState(null, '', url);
+}
 document.getElementById('person-name').textContent=name+'（'+id+'）';document.getElementById('person-status').textContent=status;
 const visitData=[['筛选期'],['第1周期第1天（C1D1）'],['第1周期第15天（C1D15）']];
 function setActiveMainTab(){document.querySelector('[data-participant-detail-tab="crf"]')?.click();}
@@ -53,10 +78,25 @@ function setActiveMainTab(){document.querySelector('[data-participant-detail-tab
     const entryGroups=[['筛选期',[['生命体征','done'],['血常规','warn'],['实验室检查','warn'],['心电图','']]],['第1周期第1天（C1D1）',[['生命体征','radio'],['不良事件','warn'],['用药记录','']]],['第1周期第15天（C1D15）',[['CT检查',''],['实验室检查',''],['体格检查','error']]]];
     const boundProtocol=window.visitProtocols.get(new URLSearchParams(location.search).get('project')||'CT-2026-001',window.visitProtocols.bind(new URLSearchParams(location.search).get('project')||'CT-2026-001',new URLSearchParams(location.search).get('id')||'S001'));
     boundProtocol?.visits.forEach((name,index)=>{if(entryGroups[index])entryGroups[index][0]=name;if(visitData[index])visitData[index][0]=name;});
-    const crfSaved=(cycle,name)=>{try{return JSON.parse(localStorage.getItem('journey-v2-clinical-entry-draft-'+params.get('project')+':'+params.get('id')+':'+cycle+':'+name))||{};}catch{return {};}};
+    const overviewVisitNames=window.clinicalVisitStore.overviewNames(params.get('project'),id);
+    if(overviewVisitNames)overviewVisitNames.forEach(cycle=>{
+      if(entryGroups.some(group=>group[0]===cycle))return;
+      const forms=window.clinicalVisitStore.executionItems({name:cycle,visitIndex:3});
+      entryGroups.push([cycle,forms.map(name=>[name,''])]);
+      visitData.push([cycle]);
+    });
+    const crfSaved=(cycle,name)=>{try{
+      const record=JSON.parse(localStorage.getItem('journey-v2-clinical-entry-draft-'+params.get('project')+':'+params.get('id')+':'+cycle+':'+name)||(params.get('project')==='CT-2026-001'?localStorage.getItem('journey-v2-clinical-entry-draft-null:'+params.get('id')+':'+cycle+':'+name):null))||{};
+      // Older manual collection marks must not imply that data entry was submitted.
+      if(record.state==='已完成'&&(record.history||[]).some(item=>item.action==='手动标记完成')){
+        const entryAction=[...(record.history||[])].reverse().find(item=>['完成同步','提交数据','保存草稿'].includes(item.action));
+        return {...record,state:entryAction?{'完成同步':'已完成','提交数据':'待同步','保存草稿':'草稿'}[entryAction.action]:(record.values||[]).some(Boolean)?'草稿':''};
+      }
+      return record;
+    }catch{return {};}};
     function renderDataEntry(){
       const list=document.getElementById('data-cycle-list');if(!list)return;
-      list.innerHTML=entryGroups.map((g,gi)=>'<div class="data-cycle-group"><button class="data-cycle-head" type="button" aria-expanded="true"><span class="data-caret"></span>'+g[0]+'<span class="count">'+g[1].filter(item=>crfSaved(gi,item[0]).state==='已完成').length+'/'+g[1].length+'</span></button>'+g[1].map(item=>{const record=crfSaved(gi,item[0]);const state=record.state||((record.values||[]).some(Boolean)?'待提交':'待录入');return '<button class="data-crf-card" type="button" aria-selected="'+(gi===selectedDataEntry&&item[0]===selectedCrfName)+'" data-data-visit="'+gi+'" data-crf="'+item[0]+'" data-state="'+state+'"><span>'+item[0]+'</span><i class="dot '+(state==='已完成'?'done':state==='待录入'?'':'warn')+'" title="'+state+'"></i></button>';}).join('')+'</div>').join('');
+      list.innerHTML=entryGroups.map((g,gi)=>({g,gi})).sort((a,b)=>overviewVisitNames?overviewVisitNames.indexOf(a.g[0])-overviewVisitNames.indexOf(b.g[0]):a.gi-b.gi).map(({g,gi})=>'<div class="data-cycle-group"><button class="data-cycle-head" type="button" aria-expanded="true"><span class="data-caret"></span>'+g[0]+'<span class="count">'+g[1].filter(item=>crfSaved(gi,item[0]).state==='已完成').length+'/'+g[1].length+'</span></button>'+g[1].map(item=>{const record=crfSaved(gi,item[0]);const state=record.state||((record.values||[]).some(Boolean)?'待提交':'待录入');return '<button class="data-crf-card" type="button" aria-selected="'+(gi===selectedDataEntry&&item[0]===selectedCrfName)+'" data-data-visit="'+gi+'" data-crf="'+item[0]+'" data-state="'+state+'"><span>'+item[0]+'</span><i class="dot '+(state==='已完成'?'done':state==='待录入'?'':'warn')+'" title="'+state+'"></i></button>';}).join('')+'</div>').join('');
       document.getElementById('data-entry-title').textContent='CRF：'+selectedCrfName;
       window.dispatchEvent(new CustomEvent('journey-v2-clinical-crf-select',{detail:{cycle:selectedDataEntry,name:selectedCrfName}}));
     }
@@ -64,16 +104,15 @@ function setActiveMainTab(){document.querySelector('[data-participant-detail-tab
     function openDataEntry(index=2,crf){selectedDataEntry=entryGroups[index]?index:2;selectedCrfName=crf||entryGroups[selectedDataEntry][1][0][0];renderDataEntry();setActiveMainTab('访视管理');document.querySelector('.data-crf-card[aria-selected="true"]')?.scrollIntoView({block:'nearest'});}
     window.openLinkedCrf=(cycle,name)=>{if(!['血常规','生命体征'].includes(name))return;if(!entryGroups[cycle])entryGroups[cycle]=[visitData[cycle]?.[0]||'筛选期',[]];if(!entryGroups[cycle][1].some(item=>item[0]===name))entryGroups[cycle][1].push([name,'']);openDataEntry(cycle,name);};
     document.getElementById('data-cycle-list')?.addEventListener('click',e=>{const button=e.target.closest('[data-data-visit]');if(!button)return;selectedDataEntry=Number(button.dataset.dataVisit);selectedCrfName=button.dataset.crf;renderDataEntry();});
+    window.participantCrfCatalog = {visits:entryGroups, read:crfSaved, open:openDataEntry};
     renderDataEntry();
 </script>
-<script src="data-entry.js?v=legacy-ai-preview-2"></script>
+<script src="data-entry.js?v=crf-history-1"></script>
 <script src="source-data.js?v=quiet-open-1"></script>
-
-<script src="research-data.js?v=visit-example-3"></script>
-<script src="clinical-visit-store.js?v=activation-history-3"></script>
-<script src="participant-directory-data.js?v=restore-actions-4"></script>
-<script src="participant-tasks.js?v=shared-dialogs-14"></script>
-<script src="participant-detail.js?v=remove-source-module-15"></script>
-<script src="participant-actions.js?v=required-markers-3"></script><script src="global-participant-search.js?v=single-clear-4"></script>
-</body>
+<link rel="stylesheet" href="participant-task-create.css?v=1"><script src="task-template-catalog.js?v=1"></script><script src="participant-task-schedule.js?v=1"></script><script src="participant-task-create.js?v=direct-issue-2"></script><script src="participant-tasks.js?v=direct-issue-16"></script>
+<script src="workbench-task-policy.js?v=issued-execution-1"></script><script src="workbench-task-dialogs.js?v=appointment-reference-10"></script>
+<script src="participant-detail.js?v=screening-window-28"></script>
+<script src="participant-data-layout.js?v=structured-entry-1"></script>
+<script src="participant-actions.js?v=enrollment-date-5"></script><script src="global-participant-search.js?v=scope-reconciliation-3"></script>
+<script src="aggregate-navigation.js?v=detail-scope-disabled-6"></script><script src="table-actions.js?v=1"></script></body>
 </html>

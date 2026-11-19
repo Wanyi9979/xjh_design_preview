@@ -26,7 +26,7 @@
  fields.forEach((input,i)=>{input.id='entry-field-'+i;const label=input.previousElementSibling;label.htmlFor=input.id;const b=document.createElement('button');b.type='button';b.className='entry-source';b.textContent='溯源';b.hidden=true;b.dataset.field=i;label.append(b);input.addEventListener('input',()=>{markFilled();});});
  let activeCrf='CT检查',activeCycle=2;const crfStates=new Map();
  const lymphRow=workspace.querySelector('input[name=lymph]').closest('.data-form-row');
- function selectCrf({cycle,name}){if(activeCrf===name&&activeCycle===cycle)return;crfStates.set(activeCycle+':'+activeCrf,{values:fields.map(f=>f.value),radios:[...workspace.querySelectorAll('input[name=lymph]')].map(r=>r.checked),files,selected,origins:new Map(origins)});activeCrf=name;activeCycle=cycle;let saved=crfStates.get(cycle+':'+name);try{saved=saved||JSON.parse(localStorage.getItem(key+':'+cycle+':'+name));}catch{}const titles=name==='血常规'?['检查日期','白细胞计数（×10⁹/L）','血红蛋白（g/L）','血小板计数（×10⁹/L）']:name==='生命体征'?['测量日期','体温（℃）','脉搏（次/分）','血压（mmHg）']:name==='CT检查'?['检查日期','肿瘤大小','结节数目','影像结论']:['记录日期','检查结果','补充记录','备注'];labels.splice(0,4,...titles);fields.forEach((f,i)=>{f.previousElementSibling.firstChild.textContent=titles[i]+' ';f.value=saved?.values?.[i]||'';});workspace.querySelectorAll('input[name=lymph]').forEach((r,i)=>r.checked=saved?.radios?.[i]||false);lymphRow.hidden=name!=='CT检查';files=saved?.files||[];selected=saved?.selected||null;origins.clear();saved?.origins?.forEach((v,k)=>origins.set(k,v));source=null;zoom=1;rotation=0;status.innerHTML='<i></i>待录入';status.classList.remove('is-filled');if(fields.some(f=>f.value))markFilled();if(saved?.state){status.textContent=saved.state;buttons[1].textContent=saved.state==='待同步'?'同步数据':saved.state==='已完成'?'重新提交':'提交数据';buttons[1].dataset.phase=saved.state==='待同步'?'sync':'submit';}else{buttons[1].textContent='提交数据';buttons[1].dataset.phase='submit';}render(); }
+ function selectCrf({cycle,name}){if(activeCrf===name&&activeCycle===cycle)return;crfStates.set(activeCycle+':'+activeCrf,{values:fields.map(f=>f.value),radios:[...workspace.querySelectorAll('input[name=lymph]')].map(r=>r.checked),files,selected,origins:new Map(origins)});activeCrf=name;activeCycle=cycle;let saved=crfStates.get(cycle+':'+name);try{saved=saved||window.participantCrfCatalog?.read(cycle,name)||JSON.parse(localStorage.getItem(key+':'+cycle+':'+name));}catch{}const titles=name==='血常规'?['检查日期','白细胞计数（×10⁹/L）','血红蛋白（g/L）','血小板计数（×10⁹/L）']:name==='生命体征'?['测量日期','体温（℃）','脉搏（次/分）','血压（mmHg）']:name==='CT检查'?['检查日期','肿瘤大小','结节数目','影像结论']:['记录日期','检查结果','补充记录','备注'];labels.splice(0,4,...titles);fields.forEach((f,i)=>{f.previousElementSibling.firstChild.textContent=titles[i]+' ';f.value=saved?.values?.[i]||'';});workspace.querySelectorAll('input[name=lymph]').forEach((r,i)=>r.checked=saved?.radios?.[i]||false);lymphRow.hidden=name!=='CT检查';files=saved?.files||[];selected=saved?.selected||null;origins.clear();saved?.origins?.forEach((v,k)=>origins.set(k,v));source=null;zoom=1;rotation=0;status.innerHTML='<i></i>待录入';status.classList.remove('is-filled');if(fields.some(f=>f.value))markFilled();if(saved?.state){status.textContent=saved.state;buttons[1].textContent=saved.state==='待同步'?'同步数据':saved.state==='已完成'?'重新提交':'提交数据';buttons[1].dataset.phase=saved.state==='待同步'?'sync':'submit';}else{buttons[1].textContent='提交数据';buttons[1].dataset.phase='submit';}render(); }
  window.addEventListener('journey-v2-clinical-crf-select',e=>selectCrf(e.detail));
  function markFilled(){status.innerHTML='<i></i>待提交';status.classList.add('is-filled');}
  function refreshSources(){workspace.querySelectorAll('.entry-source').forEach(b=>{b.hidden=!origins.has(+b.dataset.field);b.setAttribute('aria-pressed',String(source===+b.dataset.field));});}
@@ -90,14 +90,21 @@
  replacement.close();select(current.id);panel.querySelector('[data-action="replace"]')?.focus();message('文件已替换，变更原因已记录');});
 
  const buttons=workspace.querySelectorAll('.data-form-actions button');const key='journey-v2-clinical-entry-draft-'+new URLSearchParams(location.search).get('project')+':'+new URLSearchParams(location.search).get('id');
- buttons[0].addEventListener('click',()=>{try{localStorage.setItem(key+':'+activeCycle+':'+activeCrf,JSON.stringify({values:fields.map(f=>f.value),lymph:[...workspace.querySelectorAll('input[name=lymph]')].findIndex(r=>r.checked)}));window.dispatchEvent(new Event('crf-state-change'));message('草稿已保存在当前浏览器');}catch{message('当前浏览器无法保存草稿');}});
+ function saveCrfRecord(record,action){
+  const recordKey=key+':'+activeCycle+':'+activeCrf;
+  let previous={};try{previous=JSON.parse(localStorage.getItem(recordKey))||{};}catch{}
+  record.updatedAt=new Date().toISOString();
+  record.history=[...(previous.history||[]),{action,at:new Date().toLocaleString('sv-SE'),operator:'当前个案'}];
+  localStorage.setItem(recordKey,JSON.stringify(record));
+ }
+ buttons[0].addEventListener('click',()=>{try{saveCrfRecord({values:fields.map(f=>f.value),radios:[...workspace.querySelectorAll('input[name=lymph]')].map(r=>r.checked)},'保存草稿');window.dispatchEvent(new Event('crf-state-change'));message('草稿已保存在当前浏览器');}catch{message('当前浏览器无法保存草稿');}});
  buttons[1].textContent='提交数据';
  buttons[1].addEventListener('click',()=>{
   const missing=fields.find(f=>!f.value.trim());if(missing){missing.focus();message('请填写完整的必填字段');return;}
   if(activeCrf==='CT检查'&&!workspace.querySelector('input[name=lymph]:checked')){message('请选择是否伴淋巴结肿大');return;}
   const completed=buttons[1].dataset.phase==='sync';
   const record={values:fields.map(f=>f.value),radios:[...workspace.querySelectorAll('input[name=lymph]')].map(r=>r.checked),state:completed?'已完成':'待同步'};
-  try{localStorage.setItem(key+':'+activeCycle+':'+activeCrf,JSON.stringify(record));}catch{}
+  try{saveCrfRecord(record,completed?'完成同步':'提交数据');}catch{}
   status.textContent=record.state;buttons[1].textContent=completed?'重新提交':'同步数据';buttons[1].dataset.phase=completed?'submit':'sync';window.dispatchEvent(new Event('crf-state-change'));message(completed?'演示数据已同步完成':'数据已提交，待同步');
  });
  fields.forEach(f=>f.addEventListener('input',()=>{buttons[1].dataset.phase='submit';buttons[1].textContent='提交数据';}));

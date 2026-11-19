@@ -1,0 +1,45 @@
+.global-scope-bar{position:sticky;top:0;z-index:15;display:flex;align-items:center;gap:10px;flex:none;padding:12px 16px;margin:0 0 18px;border:1px solid var(--border-default);border-radius:8px;background:var(--surface-content);box-shadow:0 3px 12px #253b5b05}
+.global-scope-label{font-size:12px;color:var(--text-secondary);margin-right:6px;white-space:nowrap}
+.global-scope-bar select{appearance:auto!important;width:250px!important;min-width:0!important;height:34px!important;border:1px solid var(--border-default)!important;border-radius:4px!important;padding:0 10px!important;background:#fff!important;color:var(--text-secondary)!important;font:inherit!important;font-size:12px!important;box-shadow:none!important}
+.global-scope-bar select[aria-label="公共中心筛选"]{width:180px!important}
+.global-scope-bar button{height:34px;padding:0 12px;border:1px solid var(--border-default);border-radius:4px;background:#fff;color:var(--text-secondary);font-size:12px;cursor:pointer}
+html[data-aggregate-modules=true] .page-context .context-row{justify-content:flex-start}
+html[data-aggregate-modules=true] .page-context h1{margin:0;font-size:21px;line-height:32px}
+html[data-aggregate-modules=true] .page-context{margin-bottom:16px}
+html[data-aggregate-modules=true] .wb-list-filters>select[name=project],html[data-aggregate-modules=true] .wb-list-filters>select[name=center]{display:none}
+html[data-aggregate-modules=true] .project-content-surface{margin-top:0}
+html[data-aggregate-modules=true] .template-project-label{display:block;margin:4px 0 8px;font-size:11px;line-height:18px;color:var(--text-secondary)}
+@media(max-width:1000px){.global-scope-bar select{width:230px!important}.global-scope-bar{padding:10px 12px;gap:8px}}
+
+/* Shared scope lives in the top bar beside Return. */
+.research-topbar.has-global-scope{position:sticky;top:0;z-index:20;gap:8px;min-height:34px;height:auto;background:transparent}
+.research-topbar.has-global-scope .research-location{flex:1;overflow:hidden;white-space:nowrap}
+.research-topbar .global-scope-bar{position:static;display:flex;gap:6px;padding:0;margin:0;border:0;border-radius:0;background:transparent;box-shadow:none}
+.research-topbar .global-scope-bar select{width:180px!important;height:28px!important;font-size:11px!important;padding:0 6px!important}
+.research-topbar .global-scope-bar select[aria-label="公共中心筛选"]{width:125px!important}
+.research-topbar .global-scope-bar button{display:none}
+.research-topbar .global-scope-bar select[hidden]{display:none!important}
+@media(max-width:1100px){.research-topbar .global-scope-bar select{width:136px!important}.research-topbar .global-scope-bar select[aria-label="公共中心筛选"]{width:100px!important}.research-topbar.has-global-scope{gap:6px}}
+
+/* Shared header controls: a roomier lookup and inset caret. */
+.research-topbar.has-global-scope .global-people-search:not(.is-expanded){width:140px;flex:0 0 140px}
+.research-topbar .global-scope-bar select{appearance:none!important;-webkit-appearance:none!important;padding-right:28px!important;background-image:url('figma-clinical-assets/caret-down.svg')!important;background-repeat:no-repeat!important;background-size:12px 12px!important;background-position:right 10px center!important}
+/* Leave breathing room above filters in both directory modules. */
+html[data-aggregate-modules=true] .participant-directory-page>.project-content-surface{padding-top:18px}
+/* Constrain the template workspace; each pane owns its scrolling. */
+html[data-aggregate-modules=true] body:has(>main.task-template-page){height:100dvh;min-height:0;min-width:850px;overflow:hidden}
+html[data-aggregate-modules=true] body>main.page.task-template-page{height:100dvh;min-height:0!important;overflow:hidden;display:flex;flex-direction:column}
+html[data-aggregate-modules=true] .task-template-page>.project-content-surface{flex:1;min-height:0!important;overflow:hidden}
+html[data-aggregate-modules=true] .task-template-page .project-content-surface>.task-template-workspace{height:100%;min-height:0!important;margin:0;flex:1;grid-template-rows:minmax(0,1fr);overflow:hidden}
+html[data-aggregate-modules=true] .template-version-panel,html[data-aggregate-modules=true] .template-task-panel{min-height:0;overflow:hidden}
+html[data-aggregate-modules=true] .template-version-panel>header,html[data-aggregate-modules=true] .template-version-filters,html[data-aggregate-modules=true] .template-task-head,html[data-aggregate-modules=true] .template-task-filters{flex-shrink:0}
+html[data-aggregate-modules=true] .template-version-list{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain}
+html[data-aggregate-modules=true] .template-task-table-wrap{flex:1;min-height:0;overflow:auto;overscroll-behavior:contain}
+
+/* Participants and visits are sibling views of the same management module. */
+html[data-aggregate-modules=true] .participant-directory-page > .project-content-surface { padding-top: 0; }
+.participant-view-tabs { display: flex; flex: none; gap: 28px; margin: 0 0 16px; padding: 0 16px; border-bottom: 1px solid var(--border-default); }
+.participant-view-tabs button { height: 48px; padding: 0 4px; border: 0; border-bottom: 2px solid transparent; background: transparent; color: var(--text-secondary); font: inherit; font-size: 14px; cursor: pointer; }
+.participant-view-tabs button[aria-pressed=true] { color: var(--brand-primary); border-bottom-color: var(--brand-primary); font-weight: 600; }
+
+.global-scope-notice{position:fixed;top:68px;left:50%;transform:translateX(-50%);z-index:2200;max-width:calc(100vw - 40px);padding:10px 16px;border:1px solid var(--border-default);border-radius:6px;background:var(--surface-content);box-shadow:0 4px 18px #26364b1a;color:var(--text-secondary);font-size:13px;line-height:20px}

@@ -1,0 +1,9 @@
+/* Only columns explicitly labelled 操作 participate. */
+html[data-clinical-module=research] table.managed-action-table{border-collapse:separate!important;border-spacing:0!important;min-width:var(--action-table-min-width)!important}
+html[data-clinical-module=research] table.managed-action-table col.managed-action-col{width:var(--action-column-width)!important}
+html[data-clinical-module=research] table.managed-action-table .managed-action-cell{position:sticky!important;right:0!important;z-index:3!important;width:var(--action-column-width)!important;min-width:var(--action-column-width)!important;max-width:none!important;overflow:visible!important;white-space:nowrap!important;text-overflow:clip!important;background:var(--surface-content,#fff)!important;box-shadow:none!important;border-left:0!important}
+html[data-clinical-module=research] table.managed-action-table thead .managed-action-cell{z-index:5!important;background:var(--surface-table-head,#f5f7fb)!important}
+html[data-clinical-module=research] table.managed-action-table .managed-action-cell>div{display:flex;flex-wrap:nowrap!important;align-items:center;gap:10px;white-space:nowrap}
+html[data-clinical-module=research] table.managed-action-table .managed-action-cell :is(button,a,summary){flex:0 0 auto;white-space:nowrap!important;max-width:none;text-overflow:clip;overflow:visible}
+html[data-clinical-module=research] table.managed-action-table .managed-action-cell::before{content:none!important}
+html[data-clinical-module=research] table.managed-action-table.has-action-overflow .managed-action-cell::before{content:''!important;position:absolute;left:-20px;top:0;bottom:0;width:20px;background:linear-gradient(to right,rgba(38,54,75,0) 0%,rgba(38,54,75,.006) 35%,rgba(38,54,75,.02) 70%,rgba(38,54,75,.045) 100%);pointer-events:none}

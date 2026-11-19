@@ -7,3 +7,4 @@ html[data-project-scope=single] .participants col:nth-child(7){width:250px}
 
 .participants a.name.participant-link{color:var(--brand-primary)!important;text-decoration:none}
 .participants a.name.participant-link:hover{text-decoration:underline}
+.participant-action-dialog [data-status-group][hidden]{display:none!important}

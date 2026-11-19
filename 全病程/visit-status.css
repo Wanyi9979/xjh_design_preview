@@ -1,0 +1,16 @@
+/* Shared visit state badges for management and workbench lists. */
+.visit-progress { display: inline-flex; align-items: center; white-space: nowrap; padding: 1px 7px; border-radius: 3px; background: var(--surface-page); color: var(--text-secondary); font-size: 12px; line-height: 20px; font-weight: 400; }
+.visit-progress.activated { color: var(--status-pending); background: var(--status-pending-soft); }
+.visit-progress.completed { color: var(--status-success); background: var(--status-success-soft); }
+.visit-progress.terminated { color: var(--status-inactive); background: var(--status-inactive-soft); }
+.visit-progress.partial, .visit-progress.partial:hover, .visit-progress.partial:focus { color: var(--status-warning)!important; background: var(--status-warning-soft); }
+
+.visit-completion-trigger { border:0; font:inherit; cursor:pointer; }
+.visit-completion-trigger:focus-visible { outline:2px solid var(--brand-primary); outline-offset:2px; }
+.visit-completion-popover { position:fixed; inset:auto; margin:0; width:248px; max-width:calc(100vw - 24px); box-sizing:border-box; padding:16px; border:1px solid var(--border-default); border-radius:8px; background:var(--surface-content); color:var(--text-primary); box-shadow:0 6px 24px rgb(38 54 75 / 14%); font-size:12px; }
+.visit-completion-popover h3 { display:flex; justify-content:space-between; margin:0 0 12px; font-size:14px; }
+.visit-completion-popover h3 small { font-size:12px; font-weight:400; color:var(--text-secondary); }
+.visit-completion-popover ul { list-style:none; padding:0; margin:0; }
+.visit-completion-popover li { display:flex; justify-content:space-between; gap:16px; padding:6px 0; }
+.visit-completion-popover .is-done { color:var(--status-success); }
+.visit-completion-popover .is-pending { color:var(--text-secondary); }

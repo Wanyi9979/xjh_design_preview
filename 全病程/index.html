@@ -5,40 +5,45 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>工作台 · 临床研究</title>
   <link rel="stylesheet" href="app-shell.css">
-  <link rel="stylesheet" href="workbench.css?v=25">
-  <link rel="stylesheet" href="workbench-visits.css?v=figma-drawer-3">
+  <link rel="stylesheet" href="workbench.css?v=26">
 <script src="dialog-focus.js"></script><script src="required-fields.js?v=1"></script>
-<script src="visit-protocols.js"></script>
-<script src="app-shell.js?v=title-switch-button-13"></script>
-<link rel="stylesheet" href="redesign.css"><link rel="stylesheet" href="colors.css?v=restore-medical-blue-4"><link rel="stylesheet" href="navigation.css?v=square-collapsed-6"><link rel="stylesheet" href="workbench-focus.css?v=project-first-1"><link rel="stylesheet" href="workbench-layout.css?v=focus-tabs-6"><link rel="stylesheet" href="workbench-figma.css?v=participant-links-25"><link rel="stylesheet" href="task-drawers.css?v=content-width-2"><link rel="stylesheet" href="centered-dialogs.css?v=required-markers-2"><style>[data-quiet-dialog]:focus,[data-quiet-dialog]:focus-visible{outline:none!important}</style><link rel="stylesheet" href="global-topbar.css?v=title-switch-button-14"><link rel="stylesheet" href="form-preview.css?v=1"><script src="form-preview.js?v=1" defer></script></head>
+<script src="demo-participant-identity.js?v=1"></script><script src="visit-protocols.js?v=demo-identity-1"></script>
+<script src="shared-scope.js?v=project-resets-center-4"></script><script src="app-shell.js?v=clean-module-routes-1"></script><link rel="stylesheet" href="aggregate-navigation.css?v=scope-transition-3">
+<link rel="stylesheet" href="redesign.css"><link rel="stylesheet" href="colors.css?v=restore-medical-blue-4"><link rel="stylesheet" href="navigation.css?v=square-collapsed-6"><link rel="stylesheet" href="workbench-focus.css?v=project-first-1"><link rel="stylesheet" href="workbench-layout.css?v=focus-tabs-6"><link rel="stylesheet" href="workbench-figma.css?v=collection-method-1"><link rel="stylesheet" href="task-drawers.css?v=adjustment-preview-1"><link rel="stylesheet" href="centered-dialogs.css?v=required-markers-2"><style>[data-quiet-dialog]:focus,[data-quiet-dialog]:focus-visible{outline:none!important}</style><link rel="stylesheet" href="global-topbar.css?v=detail-scope-disabled-15"><link rel="stylesheet" href="form-preview.css?v=direct-task-content-2"><script src="form-preview.js?v=secondary-form-preview-3" defer></script><link rel="stylesheet" href="workbench-overview.css?v=figma-workbench-4972-1"><link rel="stylesheet" href="workbench-task-rules.css?v=appointment-reference-12"><link rel="stylesheet" href="table-actions.css?v=soft-shadow-2"><link rel="stylesheet" href="visit-status.css?v=partial-yellow-3"><link rel="stylesheet" href="workbench-figma-layout.css?v=six-summary-cards-9"><link rel="stylesheet" href="task-status-tags.css?v=1"><link rel="stylesheet" href="task-details.css?v=1"><script src="task-details.js?v=1" defer></script></head>
 <body>
   <main class="page">
     <section class="workbench-one" aria-label="工作台">
       <header class="wb1-toolbar">
         <div class="wb1-toolbar-title"><strong>任务与访视概览</strong><span>查看当前研究项目的任务和近期访视</span></div>
-        <div class="wb1-filter is-select"><select data-wb1-project aria-label="项目筛选"><option value="">全部项目</option><option>HER2 阳性晚期乳腺癌真实世界研究</option><option>非小细胞肺癌 II 期研究</option><option>消化道肿瘤 III 期研究</option></select><button class="wb1-filter-clear" type="button" data-wb1-clear aria-label="清空项目筛选" hidden>×</button></div>
+        <div class="wb1-filter is-select"><select data-wb1-project aria-label="项目筛选"><option value="">全部项目</option><option>HER2 阳性晚期乳腺癌真实世界研究</option><option>非小细胞肺癌 II 期研究</option><option>乳腺癌 III 期临床研究</option><option>消化道肿瘤 III 期研究</option></select><button class="wb1-filter-clear" type="button" data-wb1-clear aria-label="清空项目筛选" hidden>×</button></div>
         <div class="wb1-filter is-select"><select data-wb1-center aria-label="研究中心筛选"><option value="">全部中心</option><option>第一医院</option><option>第二医院</option></select><button class="wb1-filter-clear" type="button" data-wb1-clear aria-label="清空研究中心筛选" hidden>×</button></div>
         <div class="wb1-filter is-search is-wide"><svg class="wb1-search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></svg><input data-wb1-participant type="search" aria-label="搜索参与者姓名缩写或编号" placeholder="参与者姓名缩写/编号"><button class="wb1-filter-clear" type="button" data-wb1-clear aria-label="清空参与者搜索" hidden>×</button></div>
         <button class="wb1-filter-reset" type="button" data-wb1-reset>重置</button>
       </header>
 
-      <div class="wb1-layout">
+      <div class="wb1-layout wb-overview-layout" data-wb-overview>
         <div class="wb1-task-workspace">
           <div class="wb1-task-summary" aria-label="待办任务统计">
             <button class="wb1-task-card is-active" data-wb1-summary="issue" type="button" aria-pressed="true" title="待发放访视任务"><span class="wb1-stat-art" aria-hidden="true"><img src="figma-workbench-assets/task-icons.png" alt=""></span><span class="wb1-stat-copy"><span class="wb1-stat-label">待发放访视任务</span><strong>7</strong></span></button>
-            <button class="wb1-task-card" data-wb1-summary="execution" type="button" aria-pressed="false" title="待执行访视任务"><span class="wb1-stat-art" aria-hidden="true"><img src="figma-workbench-assets/task-icons.png" alt=""></span><span class="wb1-stat-copy"><span class="wb1-stat-label">待执行访视任务</span><strong>6</strong></span></button>
-            <button class="wb1-task-card" data-wb1-summary="execution-overdue" type="button" aria-pressed="false" title="逾期待执行访视任务"><span class="wb1-stat-art" aria-hidden="true"><img src="figma-workbench-assets/task-icons.png" alt=""></span><span class="wb1-stat-copy"><span class="wb1-stat-label">逾期待执行访视任务</span><strong>1</strong></span></button>
+            <button class="wb1-task-card" data-wb1-summary="execution" type="button" aria-pressed="false" title="待处理访视任务"><span class="wb1-stat-art" aria-hidden="true"><img src="figma-workbench-assets/task-icons.png" alt=""></span><span class="wb1-stat-copy"><span class="wb1-stat-label">待处理访视任务</span><strong>6</strong></span></button>
+            <button class="wb1-task-card" data-wb1-summary="execution-overdue" type="button" aria-pressed="false" title="逾期待处理访视任务"><span class="wb1-stat-art" aria-hidden="true"><img src="figma-workbench-assets/task-icons.png" alt=""></span><span class="wb1-stat-copy"><span class="wb1-stat-label">逾期待处理访视任务</span><strong>1</strong></span></button>
             <button class="wb1-task-card" data-wb1-summary="followup" type="button" aria-pressed="false" title="待跟进参与者"><span class="wb1-stat-art" aria-hidden="true"><img src="figma-workbench-assets/task-icons.png" alt=""></span><span class="wb1-stat-copy"><span class="wb1-stat-label">待跟进参与者</span><strong>4</strong></span></button>
+            <button class="wb1-task-card" data-wb1-summary="appointment" type="button" aria-pressed="false"><span class="wb1-stat-art" aria-hidden="true"><img src="figma-workbench-assets/task-icons.png" alt=""></span><span class="wb1-stat-copy"><span class="wb1-stat-label">待访视预约</span><strong>0</strong></span></button>
             <button class="wb1-task-card" data-wb1-summary="processing" type="button" aria-pressed="false" title="待数据处理"><span class="wb1-stat-art" aria-hidden="true"><img src="figma-workbench-assets/task-icons.png" alt=""></span><span class="wb1-stat-copy"><span class="wb1-stat-label">待数据处理</span><strong>4</strong></span></button>
           </div>
 
-          <section class="wb1-panel wb1-task-panel" aria-label="任务处理">
+          <section class="wb1-panel wb1-task-panel" aria-label="任务处理" hidden>
           <div class="wb1-task-tools" role="tablist" aria-label="任务状态">
             <button class="wb1-task-tab" data-wb1-tab="draft" role="tab" aria-selected="true" type="button">待发放（7）</button>
             <button class="wb1-task-tab" data-wb1-tab="sent" role="tab" aria-selected="false" type="button">已发放（5）</button>
             <button class="wb1-task-tab" data-wb1-tab="none" role="tab" aria-selected="false" type="button">无需处理（5）</button>
             <button class="wb1-task-tab" data-wb1-tab="completed" role="tab" aria-selected="false" type="button" hidden>已完成（0）</button>
             <button class="wb1-task-tab" data-wb1-tab="execution-none" role="tab" aria-selected="false" type="button" hidden>无需处理（0）</button>
+          </div>
+          <div class="wb1-execution-switch" role="group" aria-label="待执行范围" hidden>
+            <button type="button" data-execution-range="all" aria-pressed="true">全部</button>
+            <button type="button" data-execution-range="today" aria-pressed="false">今日</button>
+            <button type="button" data-execution-range="overdue" aria-pressed="false">逾期</button>
           </div>
           <div class="wb1-table-wrap">
             <table class="wb1-table">
@@ -51,10 +56,31 @@
           </section>
         </div>
 
-        <aside class="wb1-panel wb1-visit-panel" aria-labelledby="wb1-visit-title">
-          <header class="wb1-panel-head"><h2 id="wb1-visit-title">访视关注</h2></header>
-          <div class="wb1-visit-groups" data-visit-overview></div>
-        </aside>
+        <section class="wb1-panel wb-overview-list wb-overview-today" aria-labelledby="wb-today-title">
+          <h2 id="wb-today-title">今日待办</h2>
+          <div class="wb-today-toolbar">
+            <div class="wb-overview-tabs" role="tablist" aria-label="今日待办类型">
+              <button type="button" id="wb-today-visits" role="tab" aria-controls="wb-today-panel" aria-selected="false" tabindex="-1" data-today-tab="visits">今日访视<span></span></button>
+              <button type="button" id="wb-today-execution" role="tab" aria-controls="wb-today-panel" aria-selected="true" data-today-tab="execution">任务待处理<span></span></button>
+              <button type="button" id="wb-today-followup" role="tab" aria-controls="wb-today-panel" aria-selected="false" tabindex="-1" data-today-tab="followup">待跟进<span></span></button>
+              <button type="button" id="wb-today-appointment" role="tab" aria-controls="wb-today-panel" aria-selected="false" tabindex="-1" data-today-tab="appointment">访视未预约<span></span></button>
+            </div>
+          </div>
+          <div id="wb-today-panel" data-wb-today role="tabpanel" aria-labelledby="wb-today-execution" tabindex="0">
+            <div class="wb-today-table-wrap">
+              <table class="wb-today-table">
+                <colgroup></colgroup>
+                <thead></thead>
+                <tbody data-wb-today-rows></tbody>
+              </table>
+            </div>
+            <nav class="wb1-pagination wb-today-pagination" data-wb-today-pagination aria-label="今日待办分页"></nav>
+          </div>
+        </section>
+        <section class="wb1-panel wb-overview-list wb-overview-attention" aria-labelledby="wb-attention-title">
+          <div class="wb-attention-heading"><h2 id="wb-attention-title">重点关注</h2><a data-wb-all-visits href="participants.html?view=visits">全部访视 <span aria-hidden="true">›</span></a></div>
+          <div data-wb-attention></div>
+        </section>
       </div>
     </section>
   </main>
@@ -64,11 +90,12 @@
         <div>
           <h2 id="wb1-issue-title" data-wb1-issue-title>发放任务</h2>
           <div class="wb1-issue-subject"><strong data-wb1-issue-participant></strong><span data-wb1-issue-id></span><em data-wb1-issue-status>已入组</em></div>
+          <p class="wb1-adjustment-task" data-wb1-adjustment-task hidden></p>
         </div>
         <button type="button" data-wb1-issue-close aria-label="关闭">×</button>
       </header>
       <div class="wb1-issue-body">
-        <section class="wb1-issue-card">
+        <section class="wb1-issue-card" data-wb1-issue-details>
           <h3><span>1</span>任务信息</h3>
           <dl class="wb1-issue-info">
             <div><dt>任务名称</dt><dd data-wb1-issue-task></dd></div>
@@ -79,7 +106,7 @@
           </dl>
         </section>
 
-        <section class="wb1-issue-card">
+        <section class="wb1-issue-card" data-wb1-issue-details>
           <div class="wb1-issue-section-head"><h3><span>2</span>采集配置</h3><em>配置来源：任务模板</em></div>
           <dl class="wb1-issue-config">
             <div><dt>采集周期</dt><dd data-wb1-issue-cycle></dd></div>
@@ -92,15 +119,32 @@
         </section>
 
         <section class="wb1-issue-card">
-          <div class="wb1-issue-section-head"><h3><span>3</span>基准日期及生成结果</h3><em data-wb1-issue-count></em></div>
+          <div class="wb1-issue-section-head" data-wb1-issue-details><h3><span>3</span>基准日期及生成结果</h3><em data-wb1-issue-count></em></div>
           <div class="wb1-date-anchor">
-            <div><strong>访视日期（基准日期）</strong><span data-wb1-issue-date-help>修改后，系统将立即重新计算下方尚未执行的任务。</span></div>
-            <input data-wb1-issue-date type="date" aria-label="访视日期" required>
+            <div><label for="wb1-issue-date" data-wb1-issue-date-label>访视日期（基准日期）</label><span id="wb1-issue-date-help" data-wb1-issue-date-help>修改后，系统将立即重新计算下方尚未执行的任务。</span></div>
+            <input id="wb1-issue-date" data-wb1-issue-date type="date" aria-describedby="wb1-issue-date-help" required>
           </div>
-          <div class="wb1-issue-preview-wrap">
+          <div class="wb1-issue-adjustment" data-wb1-issue-adjustment hidden>
+            <label for="wb1-issue-adjustment-reason">调整原因</label>
+            <textarea id="wb1-issue-adjustment-reason" rows="3" maxlength="200" placeholder="请输入调整原因" aria-describedby="wb1-issue-adjustment-error" required disabled></textarea>
+            <small id="wb1-issue-adjustment-error" role="alert"></small>
+          </div>
+          <div class="wb1-issue-preview-wrap" data-wb1-issue-details>
             <table class="wb1-issue-preview">
               <thead><tr><th>执行任务</th><th>计划日期</th><th>采集时间</th><th>允许执行窗口</th><th>状态</th></tr></thead>
               <tbody data-wb1-issue-preview></tbody>
+            </table>
+          </div>
+        </section>
+        <section class="wb1-issue-card" data-wb1-adjustment-preview hidden aria-labelledby="wb1-adjustment-preview-title">
+          <div class="wb1-issue-section-head">
+            <h3 id="wb1-adjustment-preview-title">调整预览</h3>
+            <em data-wb1-adjustment-count></em>
+          </div>
+          <div class="wb1-issue-preview-wrap">
+            <table class="wb1-adjustment-preview">
+              <thead><tr><th scope="col">执行任务</th><th scope="col">调整前</th><th scope="col">调整后</th></tr></thead>
+              <tbody data-wb1-adjustment-rows></tbody>
             </table>
           </div>
         </section>
@@ -133,8 +177,8 @@
         <button type="button" data-wb1-reason-close aria-label="关闭">×</button>
       </header>
       <div class="wb1-reason-body">
-        <label><span data-wb1-reason-label>无需处理原因 <em>*</em></span><textarea data-wb1-reason-input maxlength="500" placeholder="请填写无需处理原因，最多500字符"></textarea></label>
-        <div class="wb1-reason-meta"><strong data-wb1-reason-error></strong><span><b data-wb1-reason-count>0</b>/500</span></div>
+        <label><span data-wb1-reason-label>无需处理原因 <em>*</em></span><textarea data-wb1-reason-input maxlength="200" placeholder="请填写无需处理原因，最多200字符"></textarea></label>
+        <div class="wb1-reason-meta"><strong data-wb1-reason-error></strong><span><b data-wb1-reason-count>0</b>/200</span></div>
       </div>
       <footer class="wb1-reason-foot">
         <button type="button" data-wb1-reason-cancel>取消</button>
@@ -161,19 +205,14 @@
       </form>
     </section>
   </div>
-  <div class="wb1-toast" data-wb1-toast hidden></div>
+  <div class="wb1-toast" data-wb1-toast role="status" hidden></div>
   <div class="wb1-action-menu" data-wb1-action-menu hidden></div>
-  <div class="wvc-mask" data-calendar-drawer hidden>
-    <section class="wvc-drawer" role="dialog" aria-modal="true" aria-labelledby="wvc-drawer-title" tabindex="-1">
-      <header><div><h2 id="wvc-drawer-title"></h2></div><button type="button" data-calendar-close aria-label="关闭访视详情">×</button></header>
-      <div class="wvc-drawer-body" data-calendar-detail></div>
-      <footer><a class="wvc-participant-link" data-calendar-participant href="participant.html">参与者详情 ›</a><button type="button" data-calendar-close>关闭</button></footer>
-    </section>
-  </div>
-  <script src="research-data.js?v=visit-example-3"></script>
-  <script src="clinical-visit-store.js?v=activation-history-3"></script><script src="participant-directory-data.js?v=restore-actions-4"></script>
-  <script src="workbench-visits.js?v=default-today-2"></script>
-  <script src="workbench.js?v=participant-links-4"></script>
-<script src="workbench-context.js?v=compact-actions-4"></script><script src="global-participant-search.js?v=single-clear-4"></script>
-</body>
+  <script src="research-data.js?v=task-configuration-fields-3"></script>
+  <script src="clinical-visit-store.js?v=screening-enrollment-window-7"></script><script src="participant-directory-data.js?v=enrollment-date-3"></script>
+  <script src="workbench-task-policy.js?v=issued-execution-1"></script>
+  <script src="participant-tasks.js?v=direct-issue-16"></script>
+  <script src="workbench-task-dialogs.js?v=appointment-reference-10"></script>
+  <script src="workbench.js?v=missed-visit-notice-25"></script>
+<script src="workbench-context.js?v=calendar-task-count-1"></script><script src="global-participant-search.js?v=scope-reconciliation-3"></script>
+<script src="workbench-list-filters.js?v=remove-window-module-5"></script><script src="workbench-overview.js?v=remove-window-module-4"></script><script src="aggregate-navigation.js?v=detail-scope-disabled-6"></script><script src="table-actions.js?v=1"></script></body>
 </html>

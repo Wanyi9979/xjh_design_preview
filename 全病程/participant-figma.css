@@ -1,0 +1,326 @@
+/* Figma 1131:7564, adapted to the existing participant data and actions. */
+html[data-clinical-module=research] .participant-overview-layout > .profile-identity-bar { padding:10px 20px; box-shadow:0 3px 16px #26364b0a; }
+.participant-overview-layout .profile-identity-bar .participant-header-main { min-height:46px; height:46px; gap:24px; }
+.participant-overview-layout .participant-header-info { gap:12px; min-width:0; }
+.profile-person-portrait { display:block; flex:none; transform:rotate(180deg) scaleY(-1); }
+.profile-person-content { min-width:0; }
+.profile-person-title { display:flex; align-items:center; gap:10px; min-height:24px; }
+.participant-overview-layout .profile-person-title .person-name { font-size:18px; line-height:26px; font-weight:500; }
+.profile-person-title .status { height:20px; padding:1px 6px; border-radius:4px; font-size:11px; line-height:18px; }
+.profile-person-meta { display:flex; align-items:center; gap:4px; min-width:0; color:var(--text-primary); font-size:12px; line-height:20px; white-space:nowrap; }
+.profile-meta-label { color:#919191; }
+.profile-person-meta > span:first-child { flex:none; }
+.profile-person-meta > i { color:#9a9fa8; font-size:12px; font-style:normal; }
+.profile-person-project { min-width:0; overflow:hidden; text-overflow:ellipsis; }
+.participant-overview-layout .profile-person-meta .participant-profile-version { flex:none; margin-left:0; padding:0; background:transparent; color:var(--text-primary); font-size:12px; }
+.participant-overview-layout .participant-header-actions { gap:8px; flex:none; }
+.participant-overview-layout .participant-header-actions > .top-btn { height:30px; color:#2f2f2f; border-color:#dce5f0; font-size:11px; }
+html[data-clinical-module=research] main.page.participant-overview-layout > section.panel { box-shadow:0 3px 16px #26364b0a; }
+html[data-clinical-module=research] .participant-overview-layout .participant-detail-tabs .tab { font-size:12px; }
+html[data-clinical-module=research] .participant-overview-layout .participant-detail-tabs .tab.active { font-weight:600; }
+.participant-overview-layout > section.panel > .participant-overview { grid-template-columns:200px minmax(0,1fr); }
+.profile-cycle-nav { background:white; }
+.profile-cycle-nav > .profile-section-heading { border-bottom:1px solid #f0f0f3; }
+.profile-cycle-nav > .profile-section-heading > span { display:none; }
+.profile-cycle { width:100%; margin:0; padding:12px 16px; border:0; border-bottom:1px solid #f0f0f3; border-radius:0; background:white; }
+.profile-cycle[aria-pressed=true] { background:#f6f9ff; }
+.profile-cycle[aria-pressed=true]::before { left:auto; right:0; top:0; bottom:0; width:2px; border-radius:0; }
+.profile-cycle-top { font-size:11px; }
+.profile-cycle .profile-status { padding:1px 6px; font-size:11px; background:#f8f8f8; }
+.profile-cycle .profile-status.activated { background:#edf4ff; }
+.profile-cycle .profile-status.completed { background:#e8f8f3; }
+.profile-cycle .profile-status.partial { background:#fff6e9; }
+.profile-cycle strong { margin:6px 0; font-size:13px; line-height:20px; font-weight:400; }
+.profile-cycle small { font-size:11px; line-height:18px; }
+.profile-visit-content { padding:20px; }
+.profile-visit-facts { grid-template-columns:minmax(80px,130fr) minmax(185px,201fr) minmax(80px,184fr) minmax(90px,184fr) minmax(60px,203fr); gap:20px; margin-top:12px; padding:16px 18px; background:#f8fafc; }
+.profile-visit-facts .profile-fact-progress dd { color:#8190a4; }
+.profile-fact-progress strong { font-size:14px; font-weight:500; color:#33445b; }
+.profile-fact-progress span { font-size:12px; }
+.profile-crf-section > .profile-section-heading { padding:12px 0; }
+.profile-crf-section .profile-section-heading h3,.profile-followups .profile-section-heading h3 { font-size:12px; font-weight:500; }
+.profile-crf-table th:first-child { width:24%; }
+.profile-crf-table th:last-child { width:80px; }
+.profile-crf-table th { font-size:11px; }
+.profile-crf-table td { padding:15px 12px; }
+.profile-followups:has(.participant-detail-empty) .participant-task-table { min-width:0; width:100%; }
+.profile-followups .participant-detail-empty { height:120px; text-align:center; vertical-align:middle; font-size:12px; color:#8996a8; }
+@media (max-width:1100px) {
+ .profile-visit-facts { grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px 20px; }
+ .profile-person-meta { font-size:11px; }
+ .participant-overview-layout .profile-person-meta .participant-profile-version { font-size:11px; }
+}
+@media (max-width:800px) {
+ .participant-overview-layout .profile-identity-bar .participant-header-main { height:auto; min-height:46px; flex-wrap:wrap; gap:10px; }
+ .participant-overview-layout > section.panel > .participant-overview { grid-template-columns:170px minmax(0,1fr); }
+ .profile-visit-facts { grid-template-columns:minmax(0,1fr); }
+}
+
+/* This five-column CRF list can shrink without retaining a wider screen's measurement. */
+html[data-clinical-module=research] table.profile-crf-table.managed-action-table { min-width:540px!important; }
+
+/* Figma 1131:7183: consistent visit sections, with controls in each section header. */
+.profile-visit-content { display:flex; flex-direction:column; align-items:stretch; gap:12px; padding:16px; background:#fafafa; }
+.profile-visit-card { flex:none; min-width:0; border:1px solid #f0f0f3; border-radius:8px; background:white; }
+.profile-card-heading,
+.profile-crf-section > .profile-card-heading,
+.profile-followups > .profile-card-heading { display:flex; align-items:center; justify-content:space-between; gap:12px; min-height:44px; padding:12px 12px 12px 0; border-bottom:1px solid #f0f0f3; }
+.profile-card-heading h3,
+.profile-crf-section .profile-card-heading h3,
+.profile-followups .profile-card-heading h3 { display:flex; align-items:center; flex:none; gap:8px; margin:0; color:var(--text-primary); font-size:13px; line-height:20px; font-weight:600; }
+.profile-card-heading h3::before { content:''; display:block; flex:none; width:4px; height:20px; border-radius:0 4px 4px 0; background:var(--brand-primary); }
+.profile-info-body { padding:12px; }
+.profile-info-body .profile-visit-title { gap:12px; }
+.profile-info-body .profile-visit-title h2 { font-size:15px; font-weight:500; }
+.profile-info-body .profile-visit-facts { margin:12px 0 0; grid-template-columns:minmax(85px,1fr) minmax(190px,1.6fr) minmax(85px,1fr) minmax(90px,1fr) minmax(65px,.8fr); gap:16px; }
+.profile-crf-section .profile-crf-toolbar { flex:none; display:flex; gap:0; padding:2px; margin:0; border:0; border-radius:6px; background:#eef1fa; }
+.profile-crf-section .profile-crf-toolbar button { height:28px; min-width:70px; padding:0 12px; border:0; border-radius:6px; line-height:18px; }
+.profile-crf-section .profile-crf-toolbar button[aria-pressed=true] { background:white; color:var(--brand-primary); box-shadow:0 0 1px #0000000d; }
+.profile-crf-section .profile-crf-toolbar button span { color:#8996a8; }
+.profile-crf-section .profile-crf-table-wrap { margin:12px; }
+.profile-crf-section .profile-crf-table th { height:35px; padding:8px 12px; }
+.profile-crf-section .profile-crf-table td { height:51px; padding:15px 12px; }
+.profile-followups > [data-profile-follows] { padding:0 12px 12px; }
+.profile-visit-content > .profile-related,
+.profile-visit-content > .profile-records { flex:none; margin:0; padding:12px; border:1px solid #f0f0f3; border-radius:8px; background:white; }
+@container visit-content (max-width:760px) {
+ .profile-info-body .profile-visit-facts { grid-template-columns:minmax(85px,1fr) minmax(190px,1.8fr) minmax(85px,1fr); }
+}
+.profile-visit-content { container-type:inline-size; container-name:visit-content; }
+@media(max-width:800px) {
+ .profile-card-heading { flex-wrap:wrap; }
+ .profile-info-body .profile-visit-facts { grid-template-columns:repeat(2,minmax(0,1fr)); }
+ .profile-info-body .profile-fact-window { grid-column:1 / -1; }
+}
+
+/* One task workspace, switched by collection or follow-up without losing list state. */
+.profile-task-switch { display:flex; flex:none; gap:0; padding:2px; border-radius:6px; background:#eef1fa; }
+.profile-task-switch button { min-height:30px; padding:0 16px; border:0; border-radius:6px; background:transparent; color:#5f6f85; font:inherit; font-size:12px; cursor:pointer; white-space:nowrap; }
+.profile-task-switch button[aria-selected=true] { background:white; color:var(--brand-primary); box-shadow:0 0 1px #0000000d; }
+.profile-task-switch button span { margin-left:5px; color:#8996a8; font-size:11px; }
+.profile-task-management > [role=tabpanel] { min-width:0; padding:0 12px 12px; }
+.profile-task-management > [role=tabpanel][hidden] { display:none!important; }
+.profile-task-management .profile-followups > [data-profile-follows] { padding:0; }
+
+/* Figma 1133:8224: selected cycle has a left theme rule and neutral background. */
+.profile-cycle[aria-pressed=true] { background:#fafafa; }
+.profile-cycle[aria-pressed=true]::before { left:0; right:auto; top:0; bottom:0; width:2px; border-radius:0; background:var(--brand-primary); }
+
+/* Floating section shortcuts stay anchored to the visit workspace. */
+.participant-overview { position:relative; }
+.profile-quick-nav { position:absolute; right:24px; bottom:20px; z-index:12; display:flex; flex-direction:column; width:92px; padding:4px; border:1px solid #e3e9f1; border-radius:8px; background:rgb(255 255 255 / 97%); box-shadow:0 4px 18px #26364b14; }
+.profile-quick-nav button { min-height:30px; padding:5px 8px; border:0; border-radius:4px; background:transparent; color:#718096; font:inherit; font-size:11px; text-align:left; cursor:pointer; }
+.profile-quick-nav button:hover { background:#f5f7fa; color:var(--brand-primary); }
+.profile-quick-nav button[aria-current=location] { background:#edf4ff; color:var(--brand-primary); }
+.profile-quick-nav .profile-quick-drag { display:flex; align-items:center; gap:5px; margin-bottom:3px; border-bottom:1px solid #edf0f5; border-radius:0; color:#98a3b3; font-size:10px; cursor:ns-resize; touch-action:none; user-select:none; }
+.profile-quick-drag > span:first-child { font-size:16px; }
+.profile-quick-nav.is-dragging { box-shadow:0 6px 22px #26364b24; user-select:none; }
+
+/* Align the top spacing with other management pages (16px total). */
+.participant-overview-layout > .research-topbar { margin-bottom:4px; }
+.profile-crf-section .profile-crf-table th:first-child { width:30%; }
+.profile-crf-section .profile-crf-table th:last-child { width:160px; }
+.profile-entry-progress { display:flex; align-items:center; gap:8px; min-width:90px; }
+.profile-entry-progress progress { appearance:none; width:72px; height:5px; overflow:hidden; border:0; border-radius:4px; background:#edf1f6; }
+.profile-entry-progress progress::-webkit-progress-bar { background:#edf1f6; border-radius:4px; }
+.profile-entry-progress progress::-webkit-progress-value { background:var(--brand-primary); border-radius:4px; }
+.profile-entry-progress progress::-moz-progress-bar { background:var(--brand-primary); border-radius:4px; }
+.profile-entry-progress span { color:#8190a4; font-size:11px; font-variant-numeric:tabular-nums; }
+
+/* Figma 1133:8276: compact visit header and live completion ring. */
+.profile-info-section .profile-info-body { padding:16px; }
+.profile-visit-overview { display:flex; align-items:center; gap:20px; margin-top:16px; padding-left:12px; }
+.profile-completion-ring { position:relative; flex:0 0 93px; width:93px; height:93px; }
+.profile-completion-ring > img { position:absolute; inset:0; display:block; }
+.profile-completion-ring > svg { position:absolute; inset:0; width:93px; height:93px; overflow:visible; }
+.profile-completion-ring > div { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; }
+.profile-completion-ring strong { color:#111827; font-size:20px; line-height:24px; font-weight:600; }
+.profile-completion-ring span { color:#333; font-size:11px; line-height:20px; }
+.profile-info-body .profile-visit-overview .profile-visit-facts { flex:1; min-width:0; margin:0; padding:12px 8px; background:transparent; gap:16px 12px; grid-template-columns:minmax(82px,1fr) minmax(184px,1.7fr) minmax(80px,1fr) minmax(90px,1fr) minmax(60px,.8fr); }
+.profile-info-body .profile-visit-overview .profile-visit-facts dd { color:#161616; }
+@container visit-content (max-width:900px) {
+ .profile-info-body .profile-visit-overview .profile-visit-facts { grid-template-columns:minmax(82px,1fr) minmax(184px,1.7fr) minmax(80px,1fr); }
+}
+@container visit-content (max-width:610px) {
+ .profile-visit-overview { gap:12px; padding-left:0; }
+ .profile-info-body .profile-visit-overview .profile-visit-facts { grid-template-columns:repeat(2,minmax(0,1fr)); }
+ .profile-info-body .profile-visit-overview .profile-fact-window { grid-column:1 / -1; }
+}
+
+/* Figma 1133:8172: identity and detail workspace share a single outer card. */
+html[data-clinical-module=research] .participant-overview-layout > section.panel > .profile-identity-bar {
+ display:block; position:static; flex:none; width:100%; height:auto; min-height:0; margin:0; padding:10px 20px;
+ border:0!important; border-radius:0!important; background:white!important; box-shadow:none;
+}
+html[data-clinical-module=research] .participant-overview-layout > section.panel { box-shadow:0 3px 8px #26364b0a; }
+
+/* One outer surface; the identity row has no independent elevation. */
+html[data-clinical-module=research] main.page.participant-overview-layout > section.panel { border:1px solid #e6ebf2!important; box-shadow:0 3px 12px #26364b0a!important; }
+html[data-clinical-module=research] main.page.participant-overview-layout > section.panel > .profile-identity-bar,
+html[data-clinical-module=research] .profile-identity-bar .participant-header-main { border:0!important; box-shadow:none!important; filter:none!important; }
+/* Stable card heights keep adjacent modules still when lists change. */
+.profile-info-section { height:220px; }
+.profile-info-section .profile-info-body { height:100%; }
+.profile-crf-section { display:flex; flex-direction:column; height:360px; }
+.profile-crf-section > .profile-card-heading { flex:none; }
+.profile-crf-section .profile-crf-table-wrap { flex:1; min-height:0; overflow:auto; margin-bottom:0; }
+.profile-crf-table thead th { position:sticky; top:0; z-index:2; }
+.profile-crf-pagination { margin-top:auto; border-radius:0 0 8px 8px; padding:8px 12px; min-height:46px; }
+.profile-task-management { display:flex; flex-direction:column; height:400px; }
+.profile-task-management > .profile-card-heading { flex:none; }
+.profile-task-management > [role=tabpanel] { flex:1; min-height:0; overflow:auto; }
+.profile-task-management .profile-compact-tasks { display:flex; flex-direction:column; height:100%; min-height:0; }
+.profile-task-management .participant-task-controls { display:flex; align-items:center; gap:12px; flex:none; padding:12px 0; }
+.profile-task-management .participant-task-controls .participant-task-categories { flex:none; display:flex; gap:0; padding:2px; border:0; border-radius:6px; background:#eef1fa; }
+.profile-task-management .participant-task-categories button { height:30px; min-height:30px; padding:0 10px; border:0; border-radius:4px; white-space:nowrap; font-size:11px; }
+.profile-task-management .participant-task-categories button[aria-selected=true] { background:white; box-shadow:0 0 1px #0000000d; }
+.profile-task-management .participant-task-categories button::after { display:none!important; }
+.profile-task-management .participant-task-filters { display:flex; flex:1; min-width:0; flex-wrap:nowrap!important; }
+.profile-task-management .profile-compact-tasks .participant-task-filters select { width:90px; min-width:90px; }
+.profile-task-management .profile-compact-tasks .participant-task-filters input[type=search] { flex:1; width:120px; min-width:70px; }
+.profile-task-management .participant-detail-table-wrap { flex:1; min-height:0; overflow:auto; }
+.profile-completion-ring > img { mask-image:radial-gradient(circle,transparent 39.5px,#000 40px,#000 45px,transparent 45.5px); }
+@container visit-content (max-width:600px) { .profile-task-management .participant-task-controls { flex-wrap:wrap; } .profile-task-management .participant-task-filters { flex-basis:100%; } }
+
+/* Lighter card elevation and tighter visit summary. */
+.profile-visit-card,.profile-visit-content > .profile-records { box-shadow:0 2px 8px rgb(38 54 75 / 3%); }
+.profile-info-section { height:196px; }
+.profile-info-section .profile-info-body { padding:12px 16px; }
+.profile-info-section .profile-visit-overview { margin-top:12px; }
+.profile-info-body .profile-visit-overview .profile-visit-facts { padding:4px 8px; row-gap:12px; }
+.profile-task-management .profile-compact-tasks .participant-task-filters input[type=search] { flex:0 0 180px; width:180px; min-width:180px; }
+.profile-task-management .participant-task-filters { flex:0 1 auto; }
+/* The action column uses its measured controls; the other fields share the remaining width. */
+html[data-clinical-module=research] .profile-task-management table.participant-task-table.managed-action-table { width:100%; table-layout:fixed; }
+html[data-clinical-module=research] .profile-task-management table.participant-task-table .managed-action-cell { max-width:var(--action-column-width)!important; }
+.profile-task-management table.participant-task-table col:not(.managed-action-col) { width:auto!important; }
+
+/* Match the section header used by CRF data and task management. */
+.profile-info-section { display:flex; flex-direction:column; height:242px; }
+.profile-info-section > .profile-card-heading { flex:none; }
+.profile-info-section .profile-info-body { height:auto; flex:1; min-height:0; }
+
+/* Keep the summary compact when its date fields fit on a single row. */
+.profile-info-section { height:208px; }
+@container visit-content (max-width:900px) { .profile-info-section { height:228px; } }
+
+.profile-cycle[aria-pressed=true]::before { width:3px; }
+.profile-list-empty { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; min-height:180px; padding:12px; color:#8996a8; font-size:12px; text-align:center; }
+.profile-list-empty img { display:block; width:130px; height:auto; }
+.profile-crf-table td.profile-empty { padding:0; text-align:center; }
+.profile-task-management .participant-task-pagination { flex:none; margin:0 -12px -12px; border-radius:0 0 8px 8px; }
+.profile-task-management > [role=tabpanel] { overflow:hidden; }
+.profile-task-management .participant-detail-table-wrap { overscroll-behavior:contain; }
+
+/* Empty rows retain the normal controls/header without an extra row divider. */
+.profile-crf-table td.profile-empty,
+.profile-task-table td.participant-detail-empty { border-bottom:0!important; }
+.profile-followups:has(.participant-detail-empty) .participant-task-controls { display:flex; }
+.profile-followups:has(.participant-detail-empty) thead { display:table-header-group; }
+.profile-cycle-progress { display:flex; align-items:center; flex-wrap:wrap; gap:4px 12px; }
+/* The all-visits task view uses the same component, filling its available workspace. */
+.participant-overview-layout > section.panel > .participant-task-view { padding:16px; background:#fafafa; overflow:hidden; }
+.profile-all-task-card { height:100%; min-height:0; }
+.profile-all-task-card .participant-task-filters { flex-wrap:wrap!important; }
+.profile-all-task-card .participant-task-controls { flex-wrap:wrap; }
+.profile-all-task-card .profile-compact-tasks .participant-task-filters select { width:110px; min-width:110px; }
+
+/* All-visit tasks stay a flat list; reuse only the category/filter/table styling. */
+.participant-overview-layout > section.panel > .participant-task-view.profile-flat-task-management { display:flex; flex-direction:column; height:auto; min-height:0; padding:16px 20px 0; border:0; border-radius:0; background:white; box-shadow:none; }
+.profile-flat-task-management > .participant-task-controls { padding:0 0 12px; }
+.profile-flat-task-management > .participant-task-pagination { margin:0 -20px; padding:10px 20px; }
+.profile-flat-task-management .participant-task-filters { flex-wrap:wrap!important; }
+.profile-flat-task-management .participant-task-controls { flex-wrap:wrap; }
+.profile-flat-task-management.profile-compact-tasks .participant-task-filters select { width:110px; min-width:110px; }
+.profile-flat-task-management .participant-detail-table-wrap { flex:1; min-height:0; overflow:auto; }
+
+/* Category selection stays white in all task views. */
+html[data-clinical-module=research] .participant-overview-layout .participant-task-categories button[aria-selected=true] { background:#fff!important; }
+html[data-clinical-module=research] .participant-overview-layout table.participant-task-table td.participant-detail-empty,
+html[data-clinical-module=research] .participant-overview-layout table.profile-crf-table td.profile-empty { border-bottom:0!important; box-shadow:none!important; }
+/* Size each module to its tallest tab, capped at five rows; preserve room for empty states. */
+.profile-crf-section { height:calc(157px + var(--profile-list-body-height, 255px)); }
+.profile-crf-section .profile-crf-table th { height:35px; }
+.profile-crf-section .profile-crf-table tbody tr:not(:has(.profile-empty)) { height:51px; }
+.profile-crf-section .profile-crf-table td { box-sizing:border-box; }
+.profile-visit-content > .profile-task-management { height:calc(236px + var(--profile-list-body-height, 400px)); }
+.profile-visit-content .profile-task-management .participant-task-table { min-width:800px!important; }
+.profile-visit-content .profile-task-management .participant-task-table thead th { height:42px; padding:10px 12px; box-sizing:border-box; }
+.profile-visit-content .profile-task-management .participant-task-table tbody tr:not(:has(.participant-detail-empty)) { height:80px; }
+.profile-visit-content .profile-task-management .participant-task-table td { padding:10px 12px; box-sizing:border-box; }
+.profile-fixed-page-size { display:inline-flex; align-items:center; height:28px; padding:0 8px; color:var(--text-secondary); font-size:11px; white-space:nowrap; }
+
+
+html[data-clinical-module=research] .profile-identity-bar .participant-header-main{align-items:center!important}
+html[data-clinical-module=research] .profile-identity-bar .participant-header-actions{align-self:center!important;margin-top:0!important}
+
+html[data-clinical-module=research] .participant-task-action-menu .participant-detail-action{font-size:12px;line-height:20px;font-weight:400}
+html[data-clinical-module=research] .participant-task-row-actions [data-task-more]{min-width:24px;justify-content:center}
+html[data-clinical-module=research] .participant-task-row-actions [data-task-more]>span{font-size:18px;line-height:18px}
+
+/* Clickable CRF and execution summaries share the corresponding card data. */
+.profile-visit-overview .profile-crf-summary{flex:0 0 93px;display:block;padding:0;border:0;border-radius:50%;background:transparent;text-align:center;cursor:pointer}
+.profile-crf-summary .profile-completion-ring strong small{font-size:15px;font-weight:500;color:var(--text-secondary)}
+.profile-crf-summary:hover .profile-completion-ring span{color:var(--brand-primary)}
+.profile-fact-progress .profile-stat-sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.profile-visit-facts .profile-task-summary{display:flex;flex-direction:column;align-items:flex-start;gap:7px;padding:0;border:0;border-radius:4px;background:transparent;color:var(--text-primary);font:inherit;text-align:left;cursor:pointer}
+.profile-task-summary>span{font-size:12px;line-height:18px;color:var(--text-muted)}
+.profile-task-summary>strong{font-size:16px;line-height:22px;font-weight:600;color:var(--brand-primary);white-space:nowrap}
+.profile-task-summary small{font-size:14px;font-weight:400;color:var(--text-secondary)}
+.profile-task-summary em{font-size:11px;font-weight:400;font-style:normal;margin-left:8px;color:var(--text-muted)}
+.profile-task-summary:hover>span{color:var(--brand-primary)}
+.profile-crf-summary:focus-visible,.profile-task-summary:focus-visible{outline:2px solid var(--brand-primary);outline-offset:4px}
+html[data-clinical-module=research] .participant-task-action-menu .participant-detail-action{color:var(--text-secondary)!important}
+html[data-clinical-module=research] .participant-task-action-menu .participant-detail-action:hover{color:var(--brand-primary)!important}
+
+.profile-progress-summaries{display:flex;align-items:center;gap:16px;flex:none}
+.profile-progress-summaries .profile-progress-summary{display:block;flex:none;padding:0;border:0;border-radius:50%;background:transparent;text-align:center;cursor:pointer}
+.profile-progress-summary .profile-completion-ring strong small{font-size:15px;font-weight:500;color:var(--text-secondary)}
+.profile-progress-summary:hover .profile-completion-ring span{color:var(--brand-primary)}
+.profile-progress-summary:focus-visible{outline:2px solid var(--brand-primary);outline-offset:4px}
+.profile-info-body .profile-visit-overview .profile-visit-facts{grid-template-columns:minmax(86px,1fr) minmax(185px,1.8fr);gap:12px 18px}
+@container visit-content (min-width:1000px){.profile-info-body .profile-visit-overview .profile-visit-facts{grid-template-columns:minmax(86px,1fr) minmax(185px,1.8fr) minmax(86px,1fr) minmax(86px,1fr)}}
+@container visit-content (max-width:610px){.profile-info-section{height:auto;min-height:300px}.profile-visit-overview{flex-wrap:wrap}.profile-progress-summaries{width:100%;justify-content:center}.profile-info-body .profile-visit-overview .profile-visit-facts{flex-basis:100%}.profile-info-body .profile-visit-overview .profile-fact-window{grid-column:auto}}
+
+.profile-crf-filters{display:flex;align-items:center;gap:8px;padding:14px 12px 0;flex:none}
+.profile-crf-filters select,.profile-crf-filters input,.profile-crf-filters button{box-sizing:border-box;height:30px;border:1px solid var(--border-default);border-radius:4px;background:#fff;color:var(--text-secondary);font:inherit;font-size:12px;line-height:18px}
+.profile-crf-filters select{width:112px;padding:0 28px 0 10px;appearance:none;background:url('figma-clinical-assets/caret-down.svg') no-repeat right 10px center / 12px #fff}
+.profile-crf-filters input{width:180px;min-width:0;padding:0 10px}.profile-crf-filters input::placeholder{color:var(--text-muted)}
+.profile-crf-filters button{padding:0 12px;cursor:pointer}.profile-crf-filters button:hover{color:var(--brand-primary);border-color:var(--brand-primary)}
+.profile-crf-section{height:calc(201px + var(--profile-list-body-height,255px))}
+html[data-clinical-module=research] .participant-task-controls>[data-task-add]{flex:none;margin-left:auto;padding:0 12px;height:32px;border:1px solid var(--brand-primary);border-radius:5px;background:var(--brand-primary);color:#fff;font-size:12px;white-space:nowrap;cursor:pointer}
+.participant-task-controls>[data-task-add][hidden]{display:none!important}
+@container visit-content (max-width:560px){.profile-crf-filters{flex-wrap:wrap}.profile-crf-filters input{flex:1}.profile-crf-section{height:calc(239px + var(--profile-list-body-height,255px))}}
+
+.profile-info-section .profile-visit-overview{padding-left:0}
+
+.profile-progress-summaries{gap:28px}
+@container visit-content (max-width:720px){
+ .profile-info-section{height:auto;min-height:330px}
+ .profile-info-section .profile-visit-overview{flex-wrap:wrap;gap:18px}
+ .profile-info-body .profile-visit-overview .profile-visit-facts{flex-basis:100%}
+ .profile-progress-summaries{flex-basis:100%;width:auto;justify-content:flex-start}
+}
+
+.profile-progress-summaries{justify-content:flex-start}
+
+/* Keep visit facts grouped by their content rather than stretching columns. */
+.profile-info-body .profile-visit-overview .profile-visit-facts{grid-template-columns:max-content max-content;justify-content:start;column-gap:24px}
+@container visit-content (min-width:1000px){.profile-info-body .profile-visit-overview .profile-visit-facts{grid-template-columns:repeat(4,max-content);column-gap:24px}}
+
+/* Rings keep 28px spacing; the visit facts share the remaining wide-screen space. */
+@container visit-content (min-width:1000px){
+ .profile-info-section .profile-visit-overview{display:grid;align-items:center;gap:0;grid-template-columns:93px 28px 93px 28px 93px 40px max-content minmax(24px,6fr) max-content minmax(24px,6fr) max-content minmax(24px,6fr) max-content}
+ .profile-info-section .profile-progress-summaries,.profile-info-body .profile-visit-overview .profile-visit-facts{display:contents}
+ .profile-progress-summaries>.profile-progress-summary,.profile-visit-facts>div{grid-row:1}
+ .profile-progress-summaries>.profile-progress-summary:nth-child(1){grid-column:1}
+ .profile-progress-summaries>.profile-progress-summary:nth-child(2){grid-column:3}
+ .profile-progress-summaries>.profile-progress-summary:nth-child(3){grid-column:5}
+ .profile-visit-facts>div:nth-child(1){grid-column:7}
+ .profile-visit-facts>div:nth-child(2){grid-column:9}
+ .profile-visit-facts>div:nth-child(3){grid-column:11}
+ .profile-visit-facts>div:nth-child(4){grid-column:13}
+}
+
+.profile-collection-details { margin-top:6px; color:var(--text-secondary); font-size:11px; line-height:1.6; overflow-wrap:anywhere; }
+.profile-collection-details>div+div { margin-top:3px; }

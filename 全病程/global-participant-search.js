@@ -22,14 +22,22 @@
   const people=participants.filter((p,i,a)=>a.findIndex(x=>x.study===p.study&&x.id===p.id)===i);
   const matches=people.filter(p=>[p.id,p.initials].some(v=>String(v||'').toUpperCase().includes(q)));
   results.innerHTML=`<div class="participant-search-caption" aria-live="polite">跨项目搜索 · ${matches.length} 位参与者</div>`+(matches.length?matches.map(p=>{
-   const href='participant.html?'+new URLSearchParams({project:p.study,id:p.id,name:p.name,initials:p.initials||'',status:p.status});
-   return `<a class="participant-search-result" href="${escape(href)}"><span class="participant-result-top"><strong>${escape(p.name)} <small>（${escape(p.initials)}）</small></strong><span class="participant-result-status ${statusClass(p.status)}">${escape(p.status)}</span></span><span class="participant-result-meta"><b>${escape(p.id)}</b><span>${escape(projectCatalog[p.study])}</span></span></a>`;
+   const href='participant.html?'+new URLSearchParams({project:p.study,id:p.id,name:p.name,initials:p.initials||'',status:p.status,tab:'participant-visits'});
+   return `<a class="participant-search-result" href="${escape(href)}"><span class="participant-result-top"><strong>${escape(p.name)}</strong><span class="participant-result-status ${statusClass(p.status)}">${escape(p.status)}</span></span><span class="participant-result-meta"><b>${escape(p.id)}</b><span>${escape(projectCatalog[p.study])}</span></span></a>`;
   }).join(''):'<div class="participant-search-empty">未找到参与者，请尝试其他姓名缩写或编号</div>');
   results.hidden=false;participantSearch.setAttribute('aria-expanded','true');
  }
  participantSearch.addEventListener('input',renderParticipants);participantSearch.addEventListener('focus',renderParticipants);
  participantClear.addEventListener('click',()=>{participantSearch.value='';renderParticipants();participantSearch.focus();});
  participantSearch.addEventListener('keydown',event=>{if(event.key==='Escape'){collapse(true);}else if(event.key==='ArrowDown'&&!results.hidden){event.preventDefault();results.querySelector('a')?.focus();}else if(event.key==='Enter'&&!results.hidden&&results.querySelectorAll('a').length===1){results.querySelector('a').click();}});
+ results.addEventListener('click',event=>{
+  const link=event.target.closest('.participant-search-result');if(!link)return;
+  const url=new URL(link.href,location.href),people=window.clinicalParticipantDirectory.create().participants;
+  const person=people.find(p=>p.study===url.searchParams.get('project')&&p.id===url.searchParams.get('id'));if(!person)return;
+  if(window.prepareGlobalParticipantNavigation?.(person)===false){event.preventDefault();event.stopImmediatePropagation();return;}
+  const center=window.sharedResearchScope?.center;
+  if(center)url.searchParams.set('hospital',center);else url.searchParams.delete('hospital');link.href=url.href;
+ });
  results.addEventListener('keydown',event=>{const links=[...results.querySelectorAll('a')],index=links.indexOf(document.activeElement);if(event.key==='Escape'){collapse(true);}else if(event.key==='ArrowDown'||event.key==='ArrowUp'){event.preventDefault();const next=index+(event.key==='ArrowDown'?1:-1);if(next<0)participantSearch.focus();else links[Math.min(next,links.length-1)]?.focus();}});
  document.addEventListener('click',event=>{if(!host.contains(event.target))collapse();});
  document.addEventListener('focusin',event=>{if(!host.contains(event.target))collapse();});

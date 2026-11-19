@@ -5,28 +5,21 @@
     'HX-BC-III-02': '乳腺癌 III 期临床研究',
     'HX-GI-III-01': '消化道肿瘤 III 期研究'
   };
-  const versions = [
-    {
-      id: 'v2', name: '任务配置修订', version: 'V2.0', description: '由原待发布任务迁移', visitVersion: 'V2.0', groups: '全部组', updated: '2026-10-21 14:30',
-      tasks: [
-        ['基线健康评估', '筛选期', '表单填写', '仅患者可填', '单次采集', '提前3天 / 延后2天'],
-        ['生活质量评估', '第1周期第1天（C1D1）、第2周期第1天（C2D1）、第3周期第15天（C3D15）', '表单填写', '仅患者可填', '单次采集', '提前0天 / 延后2天'],
-        ['每日用药日记', '—', '表单填写', '仅患者可填', '连续采集', '提前3天 / 延后2天'],
-        ['常规治疗记录', '—', '表单填写', '仅患者可填', '连续采集', '提前3天 / 延后2天'],
-        ['院外报告上传', '—', '上传文件', '仅患者可填', '单次采集', '提前3天 / 延后2天']
-      ]
-    }
-  ];
+  const versions = window.clinicalTaskTemplates.seed();
   const escape = value => String(value ?? '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
   const params = new URLSearchParams(location.search);
-  const projectId = params.get('project') || 'CT-2026-001';
+  const projectId = params.get('project') || '';
   const original = structuredClone(versions[0]);
   original.id='v1'; original.name='初始任务配置'; original.version='V1.0'; original.visitVersion='V1.0'; original.description='保留供原版本参与者使用'; original.updated='2026-09-01 09:00';
   versions.push(original);
   const initialProtocol=window.visitProtocols.get(projectId,original.visitVersion);if(initialProtocol)original.tasks[1][1]=initialProtocol.visits.slice(1).join('、');
+  const baseVersions=structuredClone(versions);versions.length=0;
+  Object.entries(projects).filter(([id])=>!projectId||id===projectId).forEach(([id,name])=>{
+    baseVersions.forEach(base=>{const item=structuredClone(base);item.id=id+':'+base.id;item.projectId=id;item.projectName=name;const protocol=window.visitProtocols.get(id,item.visitVersion);if(protocol)item.tasks[1][1]=protocol.visits.slice(1).join('、');versions.push(item);});
+  });
   const versionFilter = document.getElementById('template-version-filter');
   const nameSearch = document.getElementById('template-name-search');
-  versionFilter.insertAdjacentHTML('beforeend', versions.map(item => `<option value="${escape(item.version)}">${escape(item.version)}</option>`).join(''));
+  versionFilter.insertAdjacentHTML('beforeend', [...new Set(versions.map(item=>item.version))].map(value => `<option value="${escape(value)}">${escape(value)}</option>`).join(''));
 
   const list = document.getElementById('version-list');
   const rows = document.getElementById('template-task-rows');
@@ -37,13 +30,13 @@
 
   function render() {
     const query = nameSearch.value.trim().toLocaleLowerCase();
-    const filtered = versions.filter(item => (!versionFilter.value || item.version === versionFilter.value) && item.name.toLocaleLowerCase().includes(query));
+    const filtered = versions.filter(item => (!versionFilter.value || item.version === versionFilter.value) && (item.name+item.projectName).toLocaleLowerCase().includes(query));
     if (!filtered.some(item => item.id === active)) active = filtered[0]?.id || null;
     document.getElementById('version-count').textContent = `共 ${filtered.length} 个版本`;
     document.getElementById('version-empty').hidden = filtered.length > 0;
     document.getElementById('task-empty').hidden = filtered.length > 0;
     document.querySelector('.template-task-table-wrap').hidden = !filtered.length;
-    list.innerHTML = filtered.map(version => `<button type="button" class="template-version-card" role="option" data-version="${version.id}" aria-selected="${version.id === active}"><span class="template-version-card-head"><strong>${escape(version.name)}</strong><span class="template-version-tag">${escape(version.version)}</span></span><p class="template-version-description">${escape(version.description)}</p><dl class="template-version-meta"><dt>访视版本</dt><dd><span class="visit-version-tag">${escape(version.visitVersion)}</span></dd><dt>适用分组</dt><dd>${escape(version.groups)}</dd><dt>更新时间</dt><dd>${escape(version.updated)}</dd></dl></button>`).join('');
+    list.innerHTML = filtered.map(version => `<button type="button" class="template-version-card" role="option" data-version="${version.id}" aria-selected="${version.id === active}"><span class="template-version-card-head"><strong>${escape(version.name)}</strong><span class="template-version-tag">${escape(version.version)}</span></span><small class="template-project-label">${escape(version.projectName)}</small><p class="template-version-description">${escape(version.description)}</p><dl class="template-version-meta"><dt>访视版本</dt><dd><span class="visit-version-tag">${escape(version.visitVersion)}</span></dd><dt>适用分组</dt><dd>${escape(version.groups)}</dd><dt>更新时间</dt><dd>${escape(version.updated)}</dd></dl></button>`).join('');
     const version = versions.find(item => item.id === active);
     document.querySelector('.template-task-filters').hidden = !version;
     if (!version) {

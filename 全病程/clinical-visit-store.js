@@ -7,12 +7,13 @@
   };
   let memory = {};
   let calendarMemory = null;
-  const statusLabels = { inactive: '未激活', activated: '已激活', completed: '已完成', terminated: '已终止' };
+  const statusLabels = { inactive: '未激活', activated: '已激活', partial: '部分完成', completed: '已完成', terminated: '已终止' };
   function status(visit) {
     const explicit = visit.visitStatus || visit.state;
     if (visit.state === '已终止' || ['terminated', '已终止','无需处理','无需执行'].includes(explicit)) return 'terminated';
     // 实际访视日期代表本次访视已完成；关联任务、资料仍保留各自的处理状态。
     if (visit.actualDate) return 'completed';
+    if (visit.executionState === 'partial' || explicit === '部分完成' || explicit === 'partial') return 'partial';
     const entry = Object.entries(statusLabels).find(([key, label]) => explicit === key || explicit === label);
     if (entry) return entry[0];
     if (['已执行', '已结束'].includes(explicit)) return 'completed';
@@ -21,23 +22,41 @@
     return 'activated';
   }
   function appointmentStatus(visit) {
-    if (visit.appointmentDate) return 'booked';
-    const last = (visit.appointmentHistory || []).at(-1);
-    return last && (last.action === '取消预约' || last.from && !last.to) ? 'cancelled' : 'unbooked';
+    return visit.appointmentDate ? 'booked' : 'unbooked';
   }
   function windowStatus(visit, today) {
-    if (status(visit) !== 'activated' || !visit.windowStart || !visit.windowEnd) return '';
+    if(visit.noWindow||(/筛选/.test(visit.name||'')&&(!visit.windowStart||!visit.windowEnd)))return 'none';
+    if (!['activated','partial'].includes(status(visit)) || !visit.windowStart || !visit.windowEnd) return '';
     return today < visit.windowStart ? 'upcoming' : today > visit.windowEnd ? 'overdue' : 'window';
+  }
+  function overdueUnhandled(visit,today){
+    if(!['activated','partial'].includes(status(visit)))return false;
+    if(['none','followup'].includes(visit.partialHandling?.type))return false;
+    const due=String(visit.nextExecutionAt||visit.appointmentDate||'').slice(0,10);
+    if(!due||due>=today)return false;
+    const handled=[visit.todayHandledDate,...(visit.executionHistory||[]).map(item=>item.at||item.time),...(visit.appointmentHistory||[]).filter(item=>item.action==='调整预约').map(item=>item.at||item.time)].filter(Boolean).map(value=>String(value).slice(0,10)).sort().at(-1)||'';
+    return handled<due;
   }
   function apply(visit) {
     const saved = read('localStorage', storageKey, memory)[key(visit)];
-    return window.visitProtocols.stamp(saved ? { ...visit, ...saved } : { ...visit });
+    const record = saved ? { ...visit, ...saved } : { ...visit };
+    record.participantId = window.demoParticipantIdentity?.canonicalId(record.participantId) || record.participantId;
+    if(/筛选/.test(record.name||'')){
+      const states=read('localStorage','journey-v2-person-status',{});
+      const baseline=states[record.projectId+':'+record.participantId]?.enrollmentDate||record.screeningBaselineDate||'';
+      record.screeningBaselineDate=baseline;record.noWindow=!/^\d{4}-\d{2}-\d{2}$/.test(baseline);
+      const shiftScreen=days=>{const date=new Date(baseline+'T12:00:00');date.setDate(date.getDate()+days);return date.toLocaleDateString('sv-SE');};
+      record.windowStart=record.noWindow?'':shiftScreen(-28);record.windowEnd=record.noWindow?'':shiftScreen(-2);
+    }
+
+    return window.visitProtocols.stamp(record);
   }
   function save(visit) {
     const records = read('localStorage', storageKey, memory);
     records[key(visit)] = {
       protocolVersion:window.visitProtocols.stamp(visit).protocolVersion, state:visit.state, visitStatus:visit.visitStatus||'',plannedDate:visit.plannedDate,windowStart:visit.windowStart,windowEnd:visit.windowEnd,
-      appointmentDate: visit.appointmentDate || '', actualDate: visit.actualDate || '',
+      appointmentWaiver: visit.appointmentWaiver || null, appointmentDate: visit.appointmentDate || '', actualDate: visit.actualDate || '',
+      todayHandledDate:visit.todayHandledDate||'', partialHandling:visit.partialHandling||null, nextExecutionAt:visit.nextExecutionAt||'', executionState:visit.executionState||'', incompleteItems:visit.incompleteItems||[], completedItems:visit.completedItems||[], executionHistory:visit.executionHistory||[],
       activationHistory: [...(visit.activationHistory || [])], appointmentHistory: [...(visit.appointmentHistory || [])], actualHistory: [...(visit.actualHistory || [])],
       ...(visit.state === '已终止' ? { id: visit.id, projectId: visit.projectId, participantId: visit.participantId, name: visit.name, plannedDate: visit.plannedDate, sourceTaskIndices: visit.sourceTaskIndices || [], state: visit.state, terminationReason: visit.terminationReason || '', terminatedAt: visit.terminatedAt || '', terminationHistory: [...(visit.terminationHistory || [])] } : {})
     };
@@ -49,6 +68,9 @@
     calendarMemory = snapshot;
     try { sessionStorage.setItem(calendarKey, JSON.stringify(snapshot)); } catch { /* 日历本身不依赖缓存。 */ }
   }
+  const overviewDemoPeople = new Set(['CT-2026-001:S001','CT-2026-001:S003']);
+  const overviewNames = (project,id) => overviewDemoPeople.has(project+':'+id) ? ['筛选期','第1周期第1天（C1D1）','第1周期第15天（C1D15）','第2周期第1天（C2D1）','第2周期第15天（C2D15）','第3周期第1天（C3D1）'] : null;
+  const cycleKey = name => String(name||'').match(/C\d+D\d+/i)?.[0]?.toUpperCase() || (/筛选/.test(name)?'screen':String(name||'').replace(/[\s（）()]/g,''));
   function directoryVisits(directory, today = directory.source.today) {
     const { source, sourcePeople, participants } = directory;
     const shift = (value, days) => {
@@ -64,15 +86,39 @@
       plannedNames.forEach((name, visitIndex) => {
         if (existing.some(visit => normalize(visit.name) === normalize(name) || visit.visitIndex === visitIndex)) return;
         const anchor = existing.find(visit => Number.isInteger(visit.visitIndex) && visit.plannedDate);
-        const plannedDate = anchor ? shift(anchor.plannedDate, (visitIndex - anchor.visitIndex) * (protocol?.cycleDays || 14)) : shift(today, (index % 3 - 1) * 7 + (visitIndex - 1) * (protocol?.cycleDays || 14));
-        visits.push({ ...apply({ id: `participant-${person.id}-${visitIndex}`, projectId: person.study, participantId: person.id,
+        const plannedDate = person.addedAt ? shift(person.appointmentDate||person.consentSignedDate||today, visitIndex * (protocol?.cycleDays || 14)) : anchor ? shift(anchor.plannedDate, (visitIndex - anchor.visitIndex) * (protocol?.cycleDays || 14)) : shift(today, (index % 3 - 1) * 7 + (visitIndex - 1) * (protocol?.cycleDays || 14));
+        const stableId = window.demoParticipantIdentity?.legacyId(person.id) || person.id;
+        visits.push({ ...apply({ id: `participant-${stableId}-${visitIndex}`, projectId: person.study, participantId: person.id,
           protocolVersion:person.protocolVersion, name: (protocol?.visits || ['筛选期', '第1周期第1天（C1D1）', '第1周期第15天（C1D15）'])[visitIndex], visitIndex, plannedDate,
-          windowStart: shift(plannedDate, -2), windowEnd: shift(plannedDate, 2), appointmentDate: visitIndex === 1 && index % 2 === 0 ? plannedDate : '',
-          actualDate: !existing.length && visitIndex === 0 && plannedDate < today ? plannedDate : '', appointmentHistory: [], actualHistory: [],
-          state: ['研究结束', '筛选失败'].includes(person.status) ? '已终止' : existing.length || visitIndex===2?'未激活':'已激活', hospital: person.hospital }), calendar: false });
+          windowStart: shift(plannedDate, -2), windowEnd: shift(plannedDate, 2), appointmentDate: person.addedAt ? (visitIndex===0?person.appointmentDate||'':'') : visitIndex === 1 && index % 2 === 0 ? plannedDate : '',
+          actualDate: !person.addedAt && !existing.length && visitIndex === 0 && plannedDate < today ? plannedDate : '', appointmentHistory: [], actualHistory: [],
+          state: ['研究结束', '筛选失败'].includes(person.status) ? '已终止' : person.addedAt ? (visitIndex===0&&person.appointmentDate?'已激活':'未激活') : existing.length || visitIndex===2?'未激活':'已激活', hospital: person.hospital }), calendar: false });
       });
     });
-    return visits;
+    // The two main prototype participants follow the six-cycle Figma example.
+    // Persisted actions retain precedence; identifiers and task associations are reused.
+    participants.filter(person=>overviewNames(person.study,person.id)&&!['研究结束','筛选失败'].includes(person.status)).forEach(person=>{
+      const names=overviewNames(person.study,person.id);
+      const own=visits.filter(v=>v.projectId===person.study&&v.participantId===person.id&&v.protocolVersion===person.protocolVersion);
+      const sampleDates=['2026-10-08','2026-10-22','2026-11-05','2026-11-05','2026-10-08','2026-11-05'];
+      const canonical=names.map((name,index)=>{
+        const candidates=own.filter(v=>cycleKey(v.name)===cycleKey(name)).sort((a,b)=>Number(['activated','partial'].includes(status(b)))-Number(['activated','partial'].includes(status(a))));
+        const base=candidates[0]||{};
+        const plannedDate=sampleDates[index];
+        const seed={...base,id:base.id||`overview-${person.id}-${cycleKey(name)}`,projectId:person.study,participantId:person.id,protocolVersion:person.protocolVersion,
+          name,visitIndex:index,plannedDate,windowStart:shift(plannedDate,-2),windowEnd:shift(plannedDate,2),
+          state:index===0?'已完成':index===1?'已激活':'未激活',visitStatus:index===0?'completed':index===1?'activated':'inactive',
+          actualDate:index===0?plannedDate:'',appointmentDate:base.appointmentDate||'',hospital:person.hospital,
+          aliasVisitIds:candidates.map(v=>v.id).filter(id=>id!==base.id),sourceTaskIndices:[...new Set(candidates.flatMap(v=>v.sourceTaskIndices||[v.sourceTaskIndex]).filter(Number.isInteger))]};
+        const merged=apply(seed);
+        merged.name=name;merged.visitIndex=index;
+        return merged;
+      });
+      const ownIds=new Set(own.map(v=>v.id));
+      for(let i=visits.length-1;i>=0;i--)if(ownIds.has(visits[i].id)&&visits[i].projectId===person.study&&visits[i].participantId===person.id)visits.splice(i,1);
+      visits.push(...canonical);
+    });
+    return visits.map(visit=>{const person=participants.find(p=>p.study===visit.projectId&&p.id===visit.participantId);return apply({...visit,screeningBaselineDate:person?.enrollmentDate||''});});
   }
   function fromTasks(tasks, projects, organizations = []) {
     const people = new Map();
@@ -111,5 +157,55 @@
     const visits = [...visitGroups.values()].map(apply);
     return { projects, participants: [...people.values()], visits, today: tasks.today };
   }
-  window.clinicalVisitStore = { apply, save, cacheCalendar, fromTasks, directoryVisits, status, statusLabels, appointmentStatus, windowStatus, calendar: () => read('sessionStorage', calendarKey, calendarMemory), terminatedVisits: () => Object.values(read('localStorage', storageKey, memory)).filter(visit => visit.state === '已终止' && visit.id) };
+
+  function executionItems(visit) {
+    const index=/C1D15|C2D1|第15天/.test(visit.name||'')?2:/C1D1|第1周期第1天/.test(visit.name||'')?1:visit.visitIndex;
+    return index===0?['生命体征','血常规','实验室检查','心电图']:index===1?['生命体征','不良事件','用药记录']:['CT检查','实验室检查','体格检查'];
+  }
+  function recordExecution(visit, completed, actualDate, note, today) {
+    if(!['activated','partial'].includes(status(visit))||!visit.appointmentDate)throw Error('仅已预约且进行中的访视可以执行');
+    const expected=executionItems(visit),chosen=[...new Set(completed)].filter(item=>expected.includes(item));
+    if(!chosen.length)throw Error('请至少勾选一项已完成内容');
+    const remaining=expected.filter(item=>!chosen.includes(item));
+    if(!remaining.length&&(!/^\d{4}-\d{2}-\d{2}$/.test(actualDate)||actualDate>today))throw Error('全部完成时，请填写不晚于今天的实际访视日期');
+    if(!remaining.length&&!visit.noWindow&&(actualDate<visit.windowStart||actualDate>visit.windowEnd)&&!note.trim())throw Error('实际访视日期超窗，请填写原因');
+    visit.completedItems=chosen;visit.incompleteItems=remaining;visit.executionState=remaining.length?'partial':'completed';
+    visit.state=remaining.length?'部分完成':'已完成';visit.visitStatus=remaining.length?'partial':'completed';
+    const at=new Date().toLocaleString('sv-SE');
+    (visit.executionHistory ||= []).push({action:remaining.length?'部分完成访视':'完成访视',completed:chosen,incomplete:remaining,actualDate:remaining.length?'':actualDate,reason:note,operator:'当前个案',at});
+    if(!remaining.length){visit.actualDate=actualDate;(visit.actualHistory ||= []).push({action:'记录实际访视日期',to:actualDate,reason:note,operator:'当前个案',at});}
+    save(visit);return visit;
+  }
+  function recordExecutionResult(visit, result, today) {
+    if (!['activated','partial'].includes(status(visit)) || !visit.appointmentDate) throw Error('仅已预约且进行中的访视可以执行');
+    const items = executionItems(visit);
+    if (result.completion === 'all') {
+      recordExecution(visit, items, String(result.actualDate || ''), String(result.reason || '').trim(), today);
+      visit.partialHandling = null; visit.nextExecutionAt = ''; save(visit);
+      return visit;
+    }
+    if (result.completion !== 'partial') throw Error('请选择访视完成情况');
+    const remaining = [...new Set(result.incompleteItems || [])];
+    if (!remaining.length || remaining.some(item => !items.includes(item))) throw Error('请至少选择一项未完成事项');
+    if (remaining.some(item => (visit.completedItems || []).includes(item))) throw Error('已完成事项不能重新标记为未完成');
+    const handling = result.handling;
+    if (!['execute','followup','none'].includes(handling)) throw Error('请选择后续处理方式');
+    const validTime = value => /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(value || '') && !Number.isNaN(new Date(value).getTime()) && value.slice(0,10) >= today;
+    const reason = String(result.reason || '').trim();
+    const followupContent = String(result.followupContent || '').trim();
+    if (handling === 'execute' && !validTime(result.nextPlannedAt)) throw Error('请填写不早于今天的下次计划执行时间');
+    if (handling === 'execute' && (!reason || reason.length > 200)) throw Error('请填写200字以内的后续执行原因');
+    if (handling === 'followup' && !validTime(result.followupAt)) throw Error('请选择不早于今天的跟进时间');
+    if (handling === 'followup' && (!followupContent || followupContent.length > 200)) throw Error('请填写200字以内的跟进内容');
+    if (handling === 'none' && (!reason || reason.length > 200)) throw Error('请填写200字以内的无需处理原因');
+    const at = new Date().toLocaleString('sv-SE');
+    const completed = items.filter(item => !remaining.includes(item));
+    const plan = {type:handling, at, operator:'当前个案', ...(handling === 'execute' ? {nextPlannedAt:result.nextPlannedAt,reason} : handling === 'followup' ? {followupAt:result.followupAt,content:followupContent} : {reason})};
+    visit.completedItems = completed; visit.incompleteItems = remaining;
+    visit.state = '部分完成'; visit.visitStatus = 'partial'; visit.executionState = 'partial';
+    visit.partialHandling = plan; visit.nextExecutionAt = handling === 'execute' ? result.nextPlannedAt : '';
+    (visit.executionHistory ||= []).push({action:'部分完成访视',completed,incomplete:remaining,handling, ...plan,reason:['execute','none'].includes(handling)?reason:'',at,operator:'当前个案'});
+    save(visit); return visit;
+  }
+  window.clinicalVisitStore = { apply, save, overviewNames, executionItems, recordExecution, recordExecutionResult, cacheCalendar, fromTasks, directoryVisits, status, statusLabels, appointmentStatus, windowStatus, overdueUnhandled, calendar: () => read('sessionStorage', calendarKey, calendarMemory), terminatedVisits: () => Object.values(read('localStorage', storageKey, memory)).filter(visit => visit.state === '已终止' && visit.id) };
 })();

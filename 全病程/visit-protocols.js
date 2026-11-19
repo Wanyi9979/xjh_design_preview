@@ -12,10 +12,12 @@
     ];
   });
   // 仅为现有演示参与者补齐首次归属；不以最新发布版本推断或覆盖归属。
-  const v2People = new Set(['CT-2026-001:S003','HX-LC-II-06:SYS0171','HX-BC-III-02:SCR0204','HX-GI-III-01:SYS0148','HX-GI-III-01:S012']);
+  const v2People = new Set(['CT-2026-001:S003','HX-LC-II-06:S101','HX-BC-III-02:S102','HX-GI-III-01:S103','HX-GI-III-01:S012']);
   function bind(project, id, explicit) {
+    id = window.demoParticipantIdentity?.canonicalId(id) || id;
     const key = JSON.stringify([project,id]);
-    if (!records.people[key]) { records.people[key] = explicit || (v2People.has(project+':'+id) ? 'V2.0' : 'V1.0'); persist(); }
+    const legacyKey = JSON.stringify([project, window.demoParticipantIdentity?.legacyId(id) || id]);
+    if (!records.people[key]) { records.people[key] = records.people[legacyKey] || explicit || (v2People.has(project+':'+id) ? 'V2.0' : 'V1.0'); persist(); }
     return records.people[key];
   }
   function stamp(visit) {

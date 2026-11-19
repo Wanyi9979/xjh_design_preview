@@ -1,0 +1,86 @@
+/* Figma 1123:4972: full-width summary, with today's work and attention below. */
+html[data-workbench-style=figma] .workbench-one > .wb-overview-layout:not([hidden]) {
+ grid-template-columns: minmax(0,1fr) 338px !important;
+ grid-template-areas: "global global" "today attention";
+ grid-template-rows: 150px minmax(250px,1fr);
+ align-items: stretch !important;
+ overflow: hidden;
+}
+html[data-workbench-style=figma] .wb1-layout.wb-overview-layout > .wb1-task-workspace { padding: 0; gap: 0; border: 1px solid #e6ebf2; border-radius: 10px; background: white; box-shadow: 0 3px 6px #243b5b05; }
+html[data-workbench-style=figma] .wb1-layout.wb-overview-layout > .wb1-task-workspace > .wb-overview-task-title { display: flex; align-items: center; flex: none; height: 48px; min-height: 48px; margin: 0; padding: 12px 18px; font-size: 15px; line-height: 22px; font-weight: 600; }
+.wb-overview-layout :is(.wb-overview-task-title, .wb-overview-list h2)::before { display: block; }
+html[data-workbench-style=figma] .wb1-layout.wb-overview-layout .wb1-task-workspace > .wb1-task-summary { grid-template-columns: repeat(6,minmax(0,1fr)) !important; gap: 10px !important; padding: 0 18px 16px !important; height: 100px; }
+html[data-workbench-style=figma] .wb1-layout.wb-overview-layout .wb1-task-workspace .wb1-task-card,
+html[data-workbench-style=figma] .wb1-layout.wb-overview-layout .wb1-task-workspace .wb1-task-card:last-child { display: flex !important; flex-direction: row !important; gap: 8px !important; height: 84px !important; min-height: 84px !important; padding: 6px 10px !important; border: 1px solid #e4e8ef !important; border-radius: 8px !important; background: rgb(240 242 255 / 20%) !important; box-shadow: none !important; }
+html[data-workbench-style=figma] .wb1-layout.wb-overview-layout .wb1-task-workspace .wb1-task-card::after { display: none; }
+html[data-workbench-style=figma] .wb1-layout.wb-overview-layout .wb1-task-workspace .wb1-stat-art { width: 56px; height: 56px; zoom: 1; }
+html[data-workbench-style=figma] .wb1-layout.wb-overview-layout .wb1-task-workspace .wb1-stat-copy { display: flex !important; flex-direction: column; justify-content: flex-start; gap: 0 !important; height: 66px; min-width: 0; flex: 1; }
+html[data-workbench-style=figma] .wb1-layout.wb-overview-layout .wb1-task-workspace .wb1-stat-label { display: flex !important; align-items: center; min-height: 34px; font-size: 13px !important; line-height: 17px !important; font-weight: 500; }
+html[data-workbench-style=figma] .wb1-layout.wb-overview-layout .wb1-task-workspace .wb1-task-card strong { font: 700 24px/26px 'DIN Alternate','Arial Narrow',sans-serif !important; }
+html[data-workbench-style=figma] .wb1-task-card:nth-child(2) .wb1-stat-art > img { left: -46.59px; }
+html[data-workbench-style=figma] .wb1-task-card:nth-child(4) .wb1-stat-art > img { left: -139.8px; }
+html[data-workbench-style=figma] .wb1-task-card:nth-child(5) .wb1-stat-art > img { left: -46.59px; }
+html[data-workbench-style=figma] .wb1-task-card:nth-child(6) .wb1-stat-art > img { left: -188.4px; }
+.wb-overview-layout > .wb-overview-list { padding: 16px 18px; border: 1px solid #e6ebf2; border-radius: 10px; background: white; box-shadow: 0 3px 16px #26364b0a; }
+.wb-overview-layout > .wb-overview-list h2 { font-size: 15px; line-height: 22px; font-weight: 600; }
+.wb-overview-attention [data-wb-attention] { padding-top: 12px; }
+.wb-preview-group { margin-top: 0; }
+.wb-preview-group + .wb-preview-group { margin-top: 16px; }
+.wb-preview-group .wb-preview-group-head { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 0; padding: 7px 10px; min-height: 32px; }
+.wb-preview-group .wb-preview-group-head a { font-size: 11px; }
+.wb-preview-group .wb-preview-group-head h3 { font-weight: 400; }
+.wb-preview-group .wb-preview-group-head h3 img { width: 12px; height: 12px; }
+.wb-preview-group ul { display: grid; gap: 0; }
+.wb-preview-item.wb-attention-visit { display: flex; flex-direction: column; gap: 7px; min-height: 62px; padding: 10px; border: 0; border-bottom: .5px solid #dce5ef; border-radius: 0; background: white; }
+.wb-preview-item.wb-attention-visit:hover { background: #fafcff; }
+.wb-attention-identity { gap: 6px; }
+.wb-attention-dates { flex: none; font-size: 11px; line-height: 18px; gap: 0; margin-right: -3px; text-align: right; }
+.wb-attention-bottom { min-width: 0; }
+.wb-attention-cycle { flex: 1; min-width: 0; padding-right: 6px; font-size: 12px; line-height: 16px; }
+.wb-attention-bottom a { font-size: 11px; line-height: 16px; }
+.wb-today-table th { height: 46px; }
+.wb-today-table td { height: 96px; }
+.wb-today-table .wb1-table-actions > button img { display: block; }
+@media (max-width: 1100px) and (min-width: 1001px) {
+ html[data-workbench-style=figma] .wb1-layout.wb-overview-layout .wb1-task-workspace .wb1-stat-art { zoom: .8; }
+ html[data-workbench-style=figma] .wb1-layout.wb-overview-layout .wb1-task-workspace .wb1-stat-label { font-size: 12px !important; }
+}
+@media (max-width: 1000px) {
+ html[data-workbench-style=figma] .workbench-one > .wb-overview-layout:not([hidden]) { grid-template-columns: minmax(0,1fr) !important; grid-template-areas: "global" "today" "attention"; grid-template-rows: auto minmax(400px,1fr) auto; overflow-y: auto; }
+ html[data-workbench-style=figma] .wb1-layout.wb-overview-layout .wb1-task-workspace > .wb1-task-summary { grid-template-columns: repeat(3,minmax(0,1fr)) !important; height: auto; }
+ .wb-overview-attention { min-height: 450px; }
+}
+@media (max-width: 560px) {
+ html[data-workbench-style=figma] .wb1-layout.wb-overview-layout .wb1-task-workspace > .wb1-task-summary { grid-template-columns: repeat(2,minmax(0,1fr)) !important; }
+}
+
+/* Figma 1123:5264, updated: the entire row opens its visit. */
+.wb-preview-item.wb-attention-visit { padding: 0; }
+.wb-preview-item > a.wb-attention-row-link { display: flex; flex-direction: column; gap: 7px; padding: 10px; text-decoration: none; color: var(--text-primary); }
+.wb-preview-item > a.wb-attention-row-link:hover { text-decoration: none; }
+.wb-attention-dates { margin-right: -3px; }
+.wb-attention-deadline { flex: none; color: #80520d; font-size: 11px; line-height: 16px; white-space: nowrap; }
+.wb-attention-deadline.is-overdue { color: #e53951; }
+
+/* Today's categories share one type scale; selection remains visible after switching. */
+.workbench-one .wb-overview-tabs button { font-size: 13px; font-weight: 400; }
+.workbench-one .wb-overview-tabs button[aria-selected=true] { color: var(--brand-primary); font-weight: 600; }
+.wb-attention-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex: none; }
+.wb-attention-heading > a { color: var(--brand-primary); font-size: 12px; white-space: nowrap; text-decoration: none; }
+.wb-attention-heading > a:hover { text-decoration: underline; }
+
+.wb-preview-group[data-attention-group=unbooked] .wb-preview-group-head { background:#edf4ff; }
+.wb-preview-group[data-attention-group=unbooked] .wb-preview-group-head h3 { color:#416ea8; }
+.wb-preview-group[data-attention-group=unbooked] .wb-attention-deadline { color:#8795a7; }
+
+.wb-attention-group-icon { display:block; flex:none; width:12px; height:12px; background-color:currentColor; mask:url('figma-attention-assets/due-clock-current.svg') center / 12px 12px no-repeat; }
+
+.wb-preview-group .wb-preview-group-head > a { color:var(--text-secondary); }
+
+.wb1-action-menu button[data-today-visit-action=terminate] { color:#e65b65!important; }
+.wb1-action-menu button[data-today-visit-action=terminate]:hover { background:#fff1f3; }
+
+/* Keep the sticky actions column sized to its buttons, without percentage expansion. */
+html[data-clinical-module=research] .wb-today-table.managed-action-table col:not(.managed-action-col) { width:auto!important; }
+html[data-clinical-module=research] .wb-today-table.managed-action-table .managed-action-cell { max-width:var(--action-column-width)!important; }
+

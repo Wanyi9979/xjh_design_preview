@@ -1,13 +1,24 @@
 // 具体访视优先使用稳定标识或源任务索引，避免把同名的多次访视混在一起。
 window.participantTaskBelongsToVisit = (task, visit) => {
   if (task.protocolVersion && visit.protocolVersion && task.protocolVersion !== visit.protocolVersion) return false;
-  if (task.kind === 'follow' || task.ambiguousVisit) return false;
-  if (task.visitId) return task.visitId === visit.id;
+  if (task.ambiguousVisit) return false;
+  if (task.visitId) return task.visitId === visit.id || Boolean(visit.aliasVisitIds?.includes(task.visitId));
+  if (task.kind === 'follow') return false;
   if (task.kind === 'execute' && Number.isInteger(task.sourceIndex) && (visit.sourceTaskIndices || [visit.sourceTaskIndex]).includes(task.sourceIndex)) return true;
   return task.visit === visit.name && task.date === visit.plannedDate;
 };
 window.loadParticipantTasks = (project, participantId) => {
-  const source = window.clinicalTasks || {};
+  const baseSource = window.clinicalTasks || {};
+  const liveFollows = window.researchDemo?.followupTasks;
+  const source = {...baseSource};
+  if (liveFollows) source.follow = liveFollows.map(row => {
+    const projectId = row.projectId || window.researchProjectId(row.trial || '');
+    const original = (baseSource.follow || []).find(item => item.id === row.participantId && item.projectId === projectId && item.content === row.content && item.date === row.date);
+    return {...original, id: row.participantId, projectId, content: row.content, cycle: row.visit || '', visitId: row.visitId || '', date: row.date, plannedAt: row.plannedAt || row.date,
+      sourceKey: original?.sourceKey || row.id || `follow:${projectId}:${row.participantId}:${row.content}:${row.date}`,
+      handled: row.scope === 'completed', state: row.scope === 'none' ? '无需处理' : '待处理', result: row.record || '',
+      handledAt: row.operatedAt || row.completedAt || '', operator: row.operator || '', noProcessReason: row.noProcessReason || ''};
+  });
   const date = value => String(value || '').replaceAll('/', '-').slice(0, 10);
   const storageKey = `journey-v2-participant-tasks-v3:${project}:${participantId}`;
   const read = key => { try { return JSON.parse(sessionStorage.getItem(key)); } catch { return null; } };
@@ -17,6 +28,7 @@ window.loadParticipantTasks = (project, participantId) => {
     if (!belongs(row)) return [];
     return [{ key: row.sourceKey || `${kind}-${index}`, kind, sourceIndex: index, visitId: row.visitId || '', protocolVersion: row.protocolVersion || window.visitProtocols.bind(project, participantId), name: row.content || (kind === 'follow' ? '参与者跟进' : '访视任务'), visit: row.cycle || '',
       date: date(kind === 'follow' ? row.followDate || row.date || row.sent : row.plannedAt || row.planDate || row.date), window: row.window || '—',
+      baselineDate:row.baselineDate||'',cycle:row.cycle||'',windowRule:row.windowRule||'',allowOverdue:row.allowOverdue,autoMapCrf:row.autoMapCrf,
       plannedAt: row.plannedAt || row.planDate || row.date || '', relativeDay: row.relativeDay || '', sequence: row.sequence || '',
       method: row.method || (/上传|文件|报告/.test(row.content) ? '上传文件' : '表单填写'),
       executionType: row.executionType || (/上传|文件|报告/.test(row.content) ? 'upload' : 'form'), formName: row.formName || row.content || '任务表单',
@@ -28,6 +40,10 @@ window.loadParticipantTasks = (project, participantId) => {
       parentKey: row.parentKey || '', overdue: Boolean(row.overdue), note: row.note || row.result || '',
       processedAt: row.executedAt || row.handledAt || row.terminatedAt || '' }];
   }));
+  let created=[];try{created=JSON.parse(localStorage.getItem(`journey-v2-created-visit-tasks:${project}:${participantId}`))||[];}catch{}
+  const createdByKey=new Map(created.filter(row=>row?.creation).map(row=>[row.key,row]));
+  tasks=tasks.map(task=>{const saved=createdByKey.get(task.key);return saved?{...saved,...task,creation:true,local:true,collectionDefinition:saved.collectionDefinition,scheduleVisit:saved.scheduleVisit,config:saved.config,parentKey:saved.parentKey}:task;});
+  tasks.push(...created.filter(row=>row?.creation&&!tasks.some(task=>task.key===row.key)));
   const saved = read(storageKey);
   if (Array.isArray(saved)) {
     const savedByKey = new Map(saved.filter(row => row && typeof row.key === 'string').map(row => [row.key, row]));
@@ -60,29 +76,32 @@ window.loadParticipantTasks = (project, participantId) => {
   return tasks;
 };
 // 参与者详情和访视任务抽屉共用操作与会话状态。
-window.createParticipantTasks = ({ container, participantId, participantName, params, onChange, visitScope = null }) => {
+window.createParticipantTasks = ({ container, participantId, participantName, params, onChange, visitScope = null, compact = false, kinds = null }) => {
   const source = window.clinicalTasks || {};
   const esc = value => String(value ?? '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
   const date = value => String(value || '').replaceAll('/', '-').slice(0, 10);
   const today = source.today || date(new Date().toLocaleDateString('sv-SE'));
   const project = params.get('project') || 'CT-2026-001';
   const storageKey = `journey-v2-participant-tasks-v3:${project}:${participantId}`;
-  const viewKey = `${storageKey}:view${visitScope ? `:${visitScope.id}` : ''}`;
+  const viewKey = `${storageKey}:view${visitScope ? `:${visitScope.id}:${(kinds||[]).join('-')}` : kinds ? ':all:'+kinds.join('-') : ''}`;
+  const listId = 'participant-task-list-' + crypto.randomUUID();
   const read = key => { try { return JSON.parse(sessionStorage.getItem(key)); } catch { return null; } };
   const write = (key, value) => { try { sessionStorage.setItem(key, JSON.stringify(value)); } catch { /* 页面内仍可处理。 */ } };
   const lifetime = new AbortController();
   let tasks = window.loadParticipantTasks(project, participantId);
-  const inScope = task => !visitScope || window.participantTaskBelongsToVisit(task, visitScope);
+  const inScope = task => (!kinds || kinds.includes(task.kind)) && (!visitScope || window.participantTaskBelongsToVisit(task, visitScope));
   const categories = [
     { key: 'draft', label: '待发放访视任务', scopes: [['draft', '待发放'], ['issued', '已发放'], ['none', '无需处理']] },
     { key: 'execute', label: '待执行访视任务', scopes: [['pending', '全部待执行'], ['today', '今日待执行'], ['overdue', '已逾期'], ['done', '已完成'], ['none', '无需处理']] },
     { key: 'follow', label: '参与者跟进', scopes: [['pending', '待完成'], ['done', '已完成'], ['none', '无需处理']] }
-  ].filter(item => !visitScope || item.key !== 'follow');
+  ].filter(item => (!kinds || kinds.includes(item.key)) && (!visitScope || item.key !== 'follow' || kinds?.includes('follow')));
+  if (compact) categories.forEach(item => { item.label = {draft:'任务发放',execute:'任务执行',follow:'跟进任务'}[item.key]; item.scopes.unshift(['all','全部状态']); });
   const previous = read(viewKey);
-  let category = categories.some(item => item.key === previous?.category) ? previous.category : 'draft';
+  let category = categories.some(item => item.key === previous?.category) ? previous.category : categories[0].key;
   let scope = categories.find(item => item.key === category).scopes.some(([key]) => key === previous?.scope) ? previous.scope : categories.find(item => item.key === category).scopes[0][0];
   let visit = '', query = '', activeTask = null, opener = null, drawerMode = '', schedule = null, returnTask = null;
   let selectedVisit = null;
+  let page = 1, pageSize = 5, pageSignature = '';
   const visitMatches = task => selectedVisit ? window.participantTaskBelongsToVisit(task, selectedVisit) : !visit || (task.visit || '__none__') === visit;
   function rememberVisit() {
     if (visitScope) return;
@@ -92,10 +111,21 @@ window.createParticipantTasks = ({ container, participantId, participantName, pa
     history.replaceState(null, '', url);
   }
   const isOverdue = task => task.kind === 'execute' && task.state === 'pending' && (task.overdue || Boolean(task.date && task.date < today));
-  const matches = (task, key) => key === 'today' ? task.state === 'pending' && !isOverdue(task) && task.date === today : key === 'overdue' ? isOverdue(task) : task.state === key;
-  const stateLabel = task => task.state === 'none' ? '无需处理' : task.state === 'done' ? '已完成' : task.kind === 'draft' ? task.state === 'issued' ? '已发放' : '待发放' : task.kind === 'follow' ? '待完成' : isOverdue(task) ? '已逾期' : task.date > today ? '未开始' : '待执行';
+  const matches = (task, key) => key === 'all' ? true : key === 'today' ? task.state === 'pending' && !isOverdue(task) && task.date === today : key === 'overdue' ? isOverdue(task) : task.state === key;
+  const stateLabel = task => task.state === 'none' ? '无需处理' : task.state === 'done' ? '已完成' : task.kind === 'draft' ? task.state === 'issued' ? issuedState(task) : '待发放' : task.kind === 'follow' ? '待完成' : isOverdue(task) ? '已逾期' : task.date > today ? '未开始' : '待执行';
   const actionable = task => task.kind === 'draft' ? task.state === 'draft' : task.state === 'pending';
-  const stateMarkup = task => `<span class="participant-task-state ${isOverdue(task) ? 'overdue' : ['done', 'issued'].includes(task.state) ? 'done' : task.state === 'none' ? '' : 'pending'}">${stateLabel(task)}</span>`;
+  function issuedState(task){
+    const children=packageChildren(task);
+    if(children.length&&children.every(child=>child.state==='done'))return '已完成';
+    if(children.some(child=>child.state==='done'))return '部分完成';
+    if(children.length&&children.every(child=>child.state==='none'))return '无需处理';
+    return '未执行';
+  }
+  const stateMarkup = task => {
+    const label=stateLabel(task);
+    const tone=label==='已完成'?'is-completed':label==='无需处理'?'is-none':isOverdue(task)?'is-overdue':task.state==='pending'&&task.date>today?'is-future':'';
+    return `<span class="participant-task-state wb1-execution-status ${tone}">${label}</span>`;
+  };
   const remember = () => write(viewKey, { category, scope });
   container.innerHTML = `<div class="participant-task-categories" role="tablist" aria-label="任务分类"></div>
     <div class="participant-task-controls">
@@ -108,8 +138,34 @@ window.createParticipantTasks = ({ container, participantId, participantName, pa
     </div></div>
     <div class="participant-task-notice" role="status" hidden></div>
     <div class="participant-detail-table-wrap"><table class="participant-detail-table participant-task-table"><colgroup><col style="width:29%"><col style="width:21%"><col style="width:25%"><col style="width:11%"><col style="width:14%"></colgroup><thead></thead><tbody></tbody></table></div>`;
+  const pagination = document.createElement('nav');
+  pagination.className = 'directory-pagination participant-task-pagination';
+  pagination.setAttribute('aria-label','任务列表分页');
+  container.append(pagination);
+  pagination.addEventListener('click', event => { const button = event.target.closest('[data-task-page]'); if (!button || button.disabled) return; page = Number(button.dataset.taskPage); render(); container.querySelector('.participant-detail-table-wrap').scrollTop = 0; });
+  pagination.addEventListener('change', event => { if (visitScope || !event.target.matches('[data-task-page-size]')) return; pageSize = Number(event.target.value); page = 1; render(); });
+  container.classList.toggle('profile-compact-tasks', compact);
+  if (compact) {
+    container.querySelector('.participant-task-controls').prepend(container.querySelector('.participant-task-categories'));
+    const status = document.createElement('select');
+    status.dataset.taskStatus = '';
+    status.setAttribute('aria-label', '任务状态');
+    container.querySelector('.participant-task-filters').prepend(status);
+    status.addEventListener('change', event => { scope = event.target.value; remember(); render(); });
+    container.querySelector('.participant-task-scopes').hidden = true;
+    container.querySelector('.participant-task-categories').hidden = categories.length === 1;
+  }
   container.querySelector('[data-task-visit]').hidden = Boolean(visitScope);
   if (visitScope) container.querySelector('[data-task-search]').placeholder = '搜索任务名称';
+  const createButton=document.createElement('button');createButton.type='button';createButton.dataset.taskCreate='';createButton.textContent='＋ 新增访视任务';
+  container.querySelector('.participant-task-controls').append(createButton);
+  createButton.addEventListener('click',()=>window.openParticipantTaskCreator({project,participantId,participantName,defaultVisit:visitScope||selectedVisit,onSave:(definition,visits,{issueImmediately=false}={})=>{
+    const additions=window.clinicalNewVisitTasks.packages(definition,visits,{participantId,participantName});
+    const executions=issueImmediately?additions.flatMap(task=>{task.packageId=`PKG-${participantId}-${task.key}`;const rows=window.clinicalNewVisitTasks.executions(task);task.state='issued';task.processedAt=stamp();return rows;}):[];
+    tasks.push(...additions,...executions);category='draft';scope=issueImmediately?'issued':'all';query='';container.querySelector('[data-task-search]').value='';
+    if(!visitScope){selectedVisit=null;visit='';rememberVisit();}remember();persist(issueImmediately?`已直接发放 ${additions.length} 条访视任务，生成 ${executions.length} 条执行任务。`:`已新增 ${additions.length} 条访视任务，待发放。`);
+  }}));
+  container.querySelector('.participant-task-controls').append(container.querySelector('[data-task-add]'));
   const drawer = document.createElement('dialog');
   drawer.className = 'participant-task-drawer';
   drawer.setAttribute('aria-labelledby', 'participant-task-drawer-title');
@@ -130,34 +186,49 @@ window.createParticipantTasks = ({ container, participantId, participantName, pa
     menu.style.top = `${Math.max(8, rect.bottom + menu.offsetHeight + 8 < innerHeight ? rect.bottom + 4 : rect.top - menu.offsetHeight - 4)}px`;
   }
   const actionButton = (task, action, label) => `<button class="participant-detail-action" type="button" data-task-action="${action}" data-task-key="${esc(task.key)}">${label}</button>`;
+  function taskActionEntries(task) {
+    let entries;
+    if(task.kind==='draft')entries=task.state==='draft'?[['issue','发放'],['ignore','无需处理'],['contact','联系参与者']]:[['view','查看任务'],...(task.state==='issued'&&!packageChildren(task).some(child=>child.state==='done')&&(!packageChildren(task).length||packageChildren(task).some(child=>child.state==='pending'))?[['adjust','调整日期']]:[]),['contact','联系参与者']];
+    else if(task.kind==='execute')entries=['none','done'].includes(task.state)?[['view','查看任务'],['contact','联系参与者']]:[...(task.canCaseExecute!==false?[['execute','去处理']]:[]),['ignore','无需处理'],['adjust','调整日期'],['contact','联系参与者']];
+    else entries=task.state==='pending'?[['complete','标记已完成'],['ignore','无需处理'],['contact','联系参与者']]:[['follow-record','操作记录']];
+    return entries;
+  }
   function actionsMarkup(task) {
-    if (task.kind === 'follow') return `<button class="participant-detail-action" type="button" data-task-open="${esc(task.key)}">${actionable(task) ? '去跟进' : '查看详情'}</button>`;
-    if (task.state === 'none') return actionButton(task, 'view', '查看任务') + actionButton(task, 'record', '查看记录');
-    if (task.kind === 'draft') return task.state === 'draft' ? actionButton(task, 'issue', '发放') + actionButton(task, 'ignore', '无需处理') + actionButton(task, 'contact', '联系参与者') : actionButton(task, 'view', '查看任务') + actionButton(task, 'contact', '联系参与者');
-    if (task.state === 'done') return actionButton(task, 'view', '查看任务') + actionButton(task, 'contact', '联系参与者');
-    return (task.canCaseExecute !== false ? actionButton(task, 'execute', '去执行') : '') + actionButton(task, 'remind', '发送提醒') + `<button class="participant-detail-action" type="button" data-task-more="${esc(task.key)}" aria-haspopup="menu" aria-expanded="false"><span>更多</span><svg class="participant-task-more-chevron" viewBox="0 0 12 12" aria-hidden="true"><path d="m3 4.5 3 3 3-3"/></svg></button>`;
+    const entries=taskActionEntries(task);
+    return entries.slice(0,entries.length<=3?3:2).map(([action,label])=>actionButton(task,action,label)).join('')+(entries.length>3?`<button class="participant-detail-action" type="button" data-task-more="${esc(task.key)}" aria-label="更多操作" title="更多操作" aria-haspopup="menu" aria-expanded="false"><span aria-hidden="true">⋯</span></button>`:'');
   }
   function render() {
     closeMenu();
     const scopedTasks = tasks.filter(task => inScope(task) && visitMatches(task));
     const config = categories.find(item => item.key === category);
-    container.querySelector('.participant-task-categories').innerHTML = categories.map(item => `<button type="button" role="tab" aria-controls="participant-task-list" data-task-category="${item.key}" aria-selected="${category === item.key}">${item.label}<span>${scopedTasks.filter(task => task.kind === item.key && actionable(task)).length}</span></button>`).join('');
-    container.querySelector('.participant-task-scopes').innerHTML = config.scopes.map(([key, label]) => `<button type="button" role="tab" data-task-scope="${key}" aria-controls="participant-task-list" aria-selected="${scope === key}">${label}<span>${scopedTasks.filter(task => task.kind === category && matches(task, key)).length}</span></button>`).join('');
+    container.querySelector('.participant-task-categories').innerHTML = categories.map(item => `<button type="button" role="tab" aria-controls="${listId}" data-task-category="${item.key}" aria-selected="${category === item.key}">${item.label}<span>${scopedTasks.filter(task => task.kind === item.key && (compact || actionable(task))).length}</span></button>`).join('');
+    container.querySelector('.participant-task-scopes').innerHTML = config.scopes.map(([key, label]) => `<button type="button" role="tab" data-task-scope="${key}" aria-controls="${listId}" aria-selected="${scope === key}">${label}<span>${scopedTasks.filter(task => task.kind === category && matches(task, key)).length}</span></button>`).join('');
+    const statusSelect = container.querySelector('[data-task-status]');
+    if (statusSelect) {
+      statusSelect.innerHTML = config.scopes.map(([key,label]) => `<option value="${key}">${label}</option>`).join('');
+      statusSelect.value = scope;
+    }
     const visits = [...new Set(tasks.filter(task => task.kind === category).map(task => task.visit))];
     const select = container.querySelector('[data-task-visit]');
     select.innerHTML = '<option value="">全部访视</option>' + visits.map(value => `<option value="${esc(value || '__none__')}">${esc(value || '无关联访视')}</option>`).join('');
     if (selectedVisit) select.insertAdjacentHTML('beforeend', `<option value="${esc(visit)}">${esc(selectedVisit.name)} · ${esc(selectedVisit.plannedDate)}</option>`);
     select.value = visit;
     select.title = selectedVisit ? `${selectedVisit.name} · ${selectedVisit.plannedDate}` : select.selectedOptions[0]?.textContent || '';
-    const rows = scopedTasks.filter(task => task.kind === category && matches(task, scope) && (!query || task.name.toLowerCase().includes(query))).sort((a, b) => a.date.localeCompare(b.date) || a.key.localeCompare(b.key));
+    const filteredRows = scopedTasks.filter(task => task.kind === category && matches(task, scope) && (!query || task.name.toLowerCase().includes(query))).sort((a, b) => a.date.localeCompare(b.date) || a.key.localeCompare(b.key));
+    const signature = JSON.stringify([category,scope,visit,query,selectedVisit?.id]);
+    if (signature !== pageSignature) { page = 1; pageSignature = signature; }
+    const pages = Math.max(1, Math.ceil(filteredRows.length / pageSize));
+    page = Math.min(page, pages);
+    const rows = filteredRows.slice((page - 1) * pageSize, page * pageSize);
+    pagination.innerHTML = `<span class="directory-page-total" aria-live="polite">共 ${filteredRows.length} 条</span>${visitScope ? '<span class="profile-fixed-page-size">5 条/页</span>' : `<select data-task-page-size aria-label="任务每页条数">${[5,10,20,50].map(size=>`<option value="${size}" ${size===pageSize?'selected':''}>${size} 条/页</option>`).join('')}</select>`}<div class="directory-page-buttons"><button type="button" data-task-page="${page-1}" aria-label="任务上一页" ${page===1?'disabled':''}>‹</button>${Array.from({length:pages},(_,i)=>`<button type="button" data-task-page="${i+1}" ${i+1===page?'aria-current="page"':''}>${i+1}</button>`).join('')}<button type="button" data-task-page="${page+1}" aria-label="任务下一页" ${page===pages?'disabled':''}>›</button></div>`;
     const table = container.querySelector('table');
-    table.id = 'participant-task-list';
+    table.id = listId;
     table.setAttribute('aria-label', `${config.label} · ${config.scopes.find(([key]) => key === scope)[1]}`);
-    const headings = category === 'draft' ? ['任务名称', '访视', '计划日期 / 访视窗口', ...(scope === 'draft' ? ['子任务数量'] : []), '操作'] : category === 'execute' ? ['任务名称', '访视', '执行节点', '计划时间 / 执行窗口', '状态', '操作'] : ['跟进内容', '关联访视', '计划跟进时间', '状态', '操作'];
-    const widths = category === 'execute' ? [22, 15, 10, 22, 9, 22] : category === 'draft' ? scope === 'draft' ? [26, 18, 25, 9, 22] : [31, 20, 27, 22] : [29, 21, 25, 11, 14];
+    const headings = category === 'draft' ? ['任务名称', '访视', '计划日期 / 访视窗口', '状态', '操作'] : category === 'execute' ? ['任务名称', '访视', '执行节点', '计划时间 / 执行窗口', '状态', '操作'] : ['跟进内容', '关联访视', '计划跟进时间', '状态', '操作'];
+    const widths = category === 'execute' ? [22, 15, 10, 22, 9, 22] : category === 'draft' ? [25, 20, 25, 10, 20] : [29, 21, 25, 11, 14];
     table.querySelector('colgroup').innerHTML = widths.map(width => `<col style="width:${width}%">`).join('');
     table.querySelector('thead').innerHTML = '<tr>' + headings.map(label => `<th>${label}</th>`).join('') + '</tr>';
-    table.querySelector('tbody').innerHTML = rows.map(task => `<tr data-task-row="${esc(task.key)}"><td>${esc(task.name)}</td><td>${esc(task.visit || '—')}</td>${category === 'execute' ? `<td>${esc(task.relativeDay || '—')}${task.sequence ? `<small>${esc(task.sequence)}</small>` : ''}</td>` : ''}<td>${esc((category === 'execute' ? task.plannedAt : task.date) || task.date || '—')}${category === 'follow' ? '' : `<small>${esc(task.window)}</small>`}</td>${category === 'draft' ? scope === 'draft' ? `<td>${(task.config?.times?.length || 1) * task.children.length} 项</td>` : '' : `<td>${stateMarkup(task)}</td>`}<td><div class="participant-task-row-actions">${actionsMarkup(task)}</div></td></tr>`).join('') || `<tr><td class="participant-detail-empty" colspan="${headings.length}">暂无匹配任务</td></tr>`;
+    table.querySelector('tbody').innerHTML = rows.map(task => `<tr data-task-row="${esc(task.key)}"><td>${esc(task.name)}</td><td>${esc(task.visit || '—')}</td>${category === 'execute' ? `<td>${esc(task.relativeDay || '—')}${task.sequence ? `<small>${esc(task.sequence)}</small>` : ''}</td>` : ''}<td>${esc((category === 'draft' ? task.date : task.plannedAt || task.date || '—').replace('T',' '))}${category === 'follow' ? '' : `<small>${esc(task.window)}</small>`}</td><td>${stateMarkup(task)}</td><td><div class="participant-task-row-actions">${actionsMarkup(task)}</div></td></tr>`).join('') || `<tr><td class="participant-detail-empty" colspan="${headings.length}"><div class="profile-list-empty"><img src="shared-assets/empty-list.png" width="174" height="133" alt=""><span>暂无匹配任务</span></div></td></tr>`;
     if (visitScope) {
       table.querySelector('colgroup').children[1]?.remove();
       table.querySelector('thead tr').children[1]?.remove();
@@ -165,6 +236,7 @@ window.createParticipantTasks = ({ container, participantId, participantName, pa
       const empty = table.querySelector('.participant-detail-empty');
       if (empty) empty.colSpan = headings.length - 1;
     }
+    createButton.hidden = !['draft','execute'].includes(category);
     container.querySelector('[data-task-add]').hidden = category !== 'follow';
     onChange?.();
   }
@@ -198,6 +270,7 @@ window.createParticipantTasks = ({ container, participantId, participantName, pa
     }
     window.saveResearchTasks?.(project, participantId, tasks);
     write(storageKey, tasks);
+    localStorage.setItem(`journey-v2-created-visit-tasks:${project}:${participantId}`,JSON.stringify(tasks.filter(task=>task.creation)));
     render();
     notify(message, showGenerated ? activeTask : null);
   }
@@ -231,7 +304,15 @@ window.createParticipantTasks = ({ container, participantId, participantName, pa
       after: config.after ?? (rule ? Number(rule[2]) : dates ? Math.max(0, distance(dates.at(-1), task.date)) : 0) };
   }
   const scheduleWindow = (value, time = '') => `${shiftDate(value.date, -value.before)}${time ? ` ${time}` : ''} ～ ${shiftDate(value.date, value.after)}${time ? ` ${time}` : ''}`;
-  const packageChildren = task => tasks.filter(item => item.kind === 'execute' && item.parentKey === task.key);
+  const packageChildren = task => {
+    const direct=tasks.filter(item=>item.kind==='execute'&&item.parentKey===task.key);
+    if(direct.length)return direct;
+    if(task.packageId){const children=tasks.filter(item=>item.kind==='execute'&&item.packageId===task.packageId);if(children.length)return children;}
+    const row=Object.values(window.researchDemo?.taskSets||{}).flat().find(row=>row[0]===participantId&&window.researchProjectId(row[8])===project&&row[1]===task.name&&row[2]===task.visit);
+    const children=row?window.workbenchTaskPolicy?.issuedExecutions(row)||[]:[];
+    const indices=new Set(children.map(child=>window.researchDemo.executionTasks.indexOf(child)));
+    return tasks.filter(item=>item.kind==='execute'&&indices.has(item.sourceIndex));
+  };
   function renderPreview() {
     const readOnly = drawerMode !== 'issue';
     const names = activeTask.children?.length ? activeTask.children : [activeTask.name];
@@ -243,43 +324,51 @@ window.createParticipantTasks = ({ container, participantId, participantName, pa
     closeMenu(); activeTask = task; opener = trigger; drawerMode = mode; returnTask = backTask;
     const canHandle = task && actionable(task);
     let title = '查看任务', content = '', extra = '', submit = '';
-    if (mode === 'issue' || mode === 'package' || (mode === 'view' && task.kind === 'draft')) {
+    if (task?.creation && (mode === 'issue' || mode === 'package' || mode === 'view' && task.kind === 'draft')) {
+      const planned=window.clinicalNewVisitTasks.executions(task),definition=task.collectionDefinition;
+      title=mode==='issue'?'发放任务':'查看任务';
+      content=`<section class="participant-task-card"><h3>任务信息</h3><div class="participant-task-field-grid"><div class="participant-task-field"><span>任务名称</span><div>${window.clinicalTaskNameMarkup(task)}</div></div>${field('访视',task.visit)}${field('采集方式',window.clinicalTaskMethodLabel(task))}${field('填写方式',task.fillMode)}${field('采集周期',task.config.cycle)}${field('时间基准',task.config.baseline)}${field('允许逾期',definition.allowOverdue?'开启':'关闭')}${field('自动预填CRF',definition.autoMapCrf?'开启':'关闭')}</div>${field('任务说明',definition.description)}</section><section class="participant-task-card"><h3>执行计划 · ${planned.length} 项</h3><div class="participant-task-preview-wrap"><table class="participant-task-plan"><thead><tr><th>执行节点</th><th>计划时间</th><th>执行窗口</th></tr></thead><tbody>${planned.map(row=>`<tr><td>${esc(row.relativeDay)} · ${esc(row.sequence)}</td><td>${esc(row.plannedAt)}${row.plannedAt.length===10?'（当天任意时间）':''}</td><td>${esc(row.window)}</td></tr>`).join('')}</tbody></table></div></section>`;
+      if(mode==='issue')submit='确认发放';
+    } else if (mode === 'issue' || mode === 'package' || (mode === 'view' && task.kind === 'draft')) {
       const readOnly = mode !== 'issue';
       schedule = scheduleFor(task);
       title = readOnly ? '查看任务' : '发放任务';
       const config = task.config || {};
-      content = `<section class="participant-task-card"><h3>任务信息</h3><div class="participant-task-field-grid">${field('任务名称', task.name)}${field('访视', task.visit)}${field('采集方式', task.method)}${field('表单', task.formName)}${field('填写方式', task.fillMode)}${field('当前状态', stateLabel(task))}</div>${field('任务说明', config.description || `${task.name}相关采集任务。`)}</section>
+      content = `<section class="participant-task-card"><h3>任务信息</h3><div class="participant-task-field-grid"><div class="participant-task-field"><span>任务名称</span><div>${window.clinicalTaskNameMarkup(task)}</div></div>${field('访视', task.visit)}${field('采集方式',window.clinicalTaskMethodLabel(task))}${field('表单', task.formName)}${field('填写方式', task.fillMode)}${field('当前状态', stateLabel(task))}</div>${field('任务说明', config.description || `${task.name}相关采集任务。`)}</section>
         <section class="participant-task-card"><h3>采集配置</h3><div class="participant-task-field-grid">${field('采集周期', config.cycle || '—')}${field('基准日期', config.baseline || '访视日期')}${field('采集时间', schedule.times.join('、'))}${field('时间窗口', `提前${schedule.before}天/延后${schedule.after}天`)}${field('允许逾期', config.overdue ? '开启' : '关闭')}${field('自动映射CRF', config.autoMap ? '开启' : '关闭')}</div></section>
         <section class="participant-task-card"><h3>执行计划</h3><label>访视日期（基准日期）<input name="baselineDate" type="date" required value="${esc(schedule.date)}"${readOnly ? ' disabled' : ''}></label><p class="participant-task-help">${readOnly ? task.state === 'none' ? '任务无需处理，以下计划尚未发放。' : '以下为已保存的基准日期及执行计划。' : '修改日期或采集时间后，将重新计算下方执行任务。'}</p><p data-issue-count></p><div class="participant-task-preview-wrap"><table class="participant-task-plan"><thead><tr><th>任务 / 执行节点</th><th>计划日期</th><th>采集时间</th><th>执行窗口</th><th>状态</th></tr></thead><tbody data-issue-preview></tbody></table></div></section>`;
       if (!readOnly) { extra = '<button type="button" data-drawer-save>保存暂不发放</button>'; submit = '确认发放'; }
+    } else if(mode==='adjust'){
+      title='调整日期';
+      const targets=task.kind==='draft'&&packageChildren(task).length?packageChildren(task).filter(child=>child.state==='pending'):[task];
+      content=`${window.workbenchTaskDialogs.projectMarkup({projectId:project})}${targets.map((target,index)=>`<div class="participant-task-field-grid">${field('任务名称',target.name)}<label>计划日期 *<input type="date" name="adjustDate${index}" required value="${esc(target.date)}"></label>${/\d{2}:\d{2}/.test(target.plannedAt||'')?`<label>采集时间 *<input type="time" name="adjustTime${index}" required value="${esc(target.plannedAt.slice(11,16))}"></label>`:''}</div>`).join('')}<label>调整原因 *<textarea name="reason" maxlength="200" required placeholder="请输入原因，最多200字"></textarea></label>`;submit='确认';
     } else if (mode === 'ignore' || mode === 'record') {
       const readOnly = mode === 'record';
       title = readOnly ? '无需处理记录' : '无需处理';
       const reason = readOnly ? task.noProcessReason || task.note || '暂无原因记录。' : '';
-      content = `${field('任务名称', task.name)}${field('访视', task.visit)}<label>无需处理原因${readOnly ? '' : ' *'}<textarea name="reason" maxlength="500"${readOnly ? ' readonly' : ' required'} placeholder="请填写无需处理原因，最多500字符">${esc(reason)}</textarea></label><div class="participant-task-reason-count"><span data-reason-count>${reason.length}</span> / 500</div>${readOnly ? field('处理时间', task.processedAt) : ''}`;
-      if (!readOnly) submit = '确认无需处理';
+      content = `${window.workbenchTaskDialogs.projectMarkup({projectId:project})}${field(task.kind==='follow'?'跟进内容':'任务名称', task.name)}${field('访视', task.visit)}<label>无需处理原因${readOnly ? '' : ' *'}<textarea name="reason" maxlength="500"${readOnly ? ' readonly' : ' required'} placeholder="请填写无需处理原因，最多500字符">${esc(reason)}</textarea></label><div class="participant-task-reason-count"><span data-reason-count>${reason.length}</span> / 500</div>${readOnly ? field('处理时间', task.processedAt) : ''}`;
+      if (!readOnly) submit = '确认';
     } else if (mode === 'execute') {
       title = task.executionType === 'upload' ? '上传文件' : `填写${task.formName || '任务表单'}`;
-      content = `${field('任务名称', task.name)}${field('访视', task.visit)}${task.executionType === 'upload' ? '<label>上传文件 *<input name="file" type="file" required aria-label="上传任务文件"></label><label>文件说明<textarea name="note" maxlength="500" placeholder="选填，说明文件内容"></textarea></label>' : '<label>是否出现相关症状 *<select name="symptom" required><option value="">请选择</option><option>是</option><option>否</option></select></label><label>严重程度 *<select name="severity" required><option value="">请选择</option><option>轻度</option><option>中度</option><option>重度</option></select></label><label>补充说明<textarea name="note" maxlength="500" placeholder="选填，补充本次执行情况"></textarea></label>'}`;
+      content = `<div class="participant-task-field"><span>任务名称</span><div>${window.clinicalTaskNameMarkup(task)}</div></div>${field('访视', task.visit)}${task.executionType === 'upload' ? '<label>上传文件 *<input name="file" type="file" required aria-label="上传任务文件"></label><label>文件说明<textarea name="note" maxlength="500" placeholder="选填，说明文件内容"></textarea></label>' : '<label>是否出现相关症状 *<select name="symptom" required><option value="">请选择</option><option>是</option><option>否</option></select></label><label>严重程度 *<select name="severity" required><option value="">请选择</option><option>轻度</option><option>中度</option><option>重度</option></select></label><label>补充说明<textarea name="note" maxlength="500" placeholder="选填，补充本次执行情况"></textarea></label>'}`;
       submit = '提交任务';
     } else if (mode === 'result') {
       title = '查看执行结果';
-      content = task.result ? `${field('执行结果', task.result)}${field('完成时间', task.completedAt)}${field('执行人', task.operator)}` : `<p class="participant-task-help">${task.state === 'done' ? '暂无执行结果记录。' : '任务尚未执行，暂时没有执行结果。'}</p>`;
+      content = task.kind==='draft'?window.clinicalTaskResultsMarkup(packageChildren(task),task.noProcessReason):task.result ? `${field('执行结果', task.result)}${field('完成时间', task.completedAt)}${field('执行人', task.operator)}` : `<p class="participant-task-help">${task.state === 'done' ? '暂无执行结果记录。' : '任务尚未执行，暂时没有执行结果。'}</p>`;
       extra = '<button type="button" data-drawer-view>返回任务详情</button>';
     } else if (mode === 'view') {
-      const parent = tasks.find(item => item.key === task.parentKey && item.kind === 'draft');
-      const children = parent ? packageChildren(parent) : [];
-      content = `<section class="participant-task-card"><h3>执行任务信息</h3><div class="participant-task-field"><span>任务名称</span><div><button type="button" class="participant-detail-action participant-task-template-link" data-drawer-package>${esc(task.name)}</button></div></div><div class="participant-task-field-grid">${field('访视', task.visit)}${field('执行节点', `${task.relativeDay || '—'}${task.sequence ? `（${task.sequence}）` : ''}`)}${field('计划时间', task.plannedAt || task.date)}${field('执行窗口', task.window)}${field('当前状态', stateLabel(task))}${field('采集方式', task.method)}${field('表单', task.formName)}${field('填写方式', task.fillMode)}${field('任务包进度', children.length ? `${children.filter(child => child.state === 'done').length} / ${children.length} 已完成` : '—')}${field('基准日期', parent?.config?.date || task.config?.date || task.date)}</div>${field('所属任务包', parent?.packageId || task.packageId)}</section>`;
+      content = window.clinicalTaskDetailsMarkup(task,{executions:task.parentKey?packageChildren(tasks.find(parent=>parent.key===task.parentKey)||task):[task]});
       extra = '<button type="button" data-drawer-result>查看执行结果</button>';
     } else {
-      title = !task ? '新增跟进任务' : canHandle ? '处理跟进任务' : '跟进详情';
-      content = !task ? `<label>跟进内容<textarea name="content" required maxlength="1000" placeholder="请输入需要跟进的事项"></textarea></label><label>计划跟进日期<input name="date" type="date" required value="${today}"></label><label>关联访视<select name="visit"><option value="">不关联访视</option>${[...new Set(tasks.map(item => item.visit).filter(Boolean))].map(value => `<option>${esc(value)}</option>`).join('')}</select></label>` : `${field('跟进内容', task.name)}${field('关联访视', task.visit)}${field('计划跟进时间', task.date)}${field('当前状态', stateLabel(task))}${canHandle ? `<label>跟进记录<textarea name="note" required maxlength="2000" placeholder="请输入跟进情况和处理结果">${esc(task.note)}</textarea></label>` : field('处理记录', task.noProcessReason || task.note)}${task.processedAt ? field('处理时间', task.processedAt) : ''}`;
+      title = !task ? '新增跟进任务' : canHandle ? '标记已完成' : '操作记录';
+      content = !task ? `<label>跟进内容<textarea name="content" required maxlength="1000" placeholder="请输入需要跟进的事项"></textarea></label><label>计划跟进日期<input name="date" type="date" required value="${today}"></label><label>关联访视<select name="visit"><option value="">不关联访视</option>${[...new Set(tasks.map(item => item.visit).filter(Boolean))].map(value => `<option>${esc(value)}</option>`).join('')}</select></label>` : `${window.workbenchTaskDialogs.projectMarkup({projectId:project})}${field('跟进内容', task.name)}${field('关联访视', task.visit)}${field('计划跟进时间', task.date)}${field('当前状态', stateLabel(task))}${canHandle ? `<label>跟进记录<textarea name="note" required maxlength="2000" placeholder="请输入跟进情况和处理结果">${esc(task.note)}</textarea></label>` : field('处理记录', task.noProcessReason || task.note)}${task.processedAt ? field('处理时间', task.processedAt) : ''}`;
       if (canHandle) extra = '<button type="button" data-drawer-ignore>无需处理</button>';
-      if (canHandle || !task) submit = task ? '完成跟进' : '保存跟进任务';
+      if (canHandle || !task) submit = task ? '确认' : '保存跟进任务';
     }
+    if(task?.kind==='draft'&&['view','package'].includes(mode))extra += '<button type="button" data-drawer-result>查看执行结果</button>';
     if (returnTask) extra += '<button type="button" data-drawer-back>返回执行任务</button>';
     const issueLayout = ['issue', 'package'].includes(mode) || mode === 'view' && task.kind === 'draft';
-    const centeredLayout = ['ignore', 'record', 'follow'].includes(mode);
+    const centeredLayout = ['ignore', 'record', 'follow', 'adjust'].includes(mode);
     drawer.dataset.layout = centeredLayout ? 'centered' : issueLayout ? 'issue' : 'execution';
     drawer.classList.toggle('is-wide', issueLayout);
     drawer.classList.toggle('wb1-reason-modal', centeredLayout);
@@ -337,11 +426,24 @@ window.createParticipantTasks = ({ container, participantId, participantName, pa
       select('follow', 'pending'); persist('跟进任务已添加。'); close(); return;
     }
     if (!activeTask || !actionable(activeTask)) return;
-    if (drawerMode === 'ignore') {
+    if(drawerMode==='adjust'){
+      const reason=String(data.get('reason')||'').trim();if(!reason)return;
+      const targets=activeTask.kind==='draft'&&packageChildren(activeTask).length?packageChildren(activeTask).filter(child=>child.state==='pending'):[activeTask];
+      targets.forEach((target,index)=>{
+        const before=target.plannedAt||target.date,newDate=String(data.get('adjustDate'+index)),time=String(data.get('adjustTime'+index)||''),after=newDate+(time?' '+time:'');
+        const delta=Date.parse(newDate+'T'+(time||'00:00'))-Date.parse(target.date+'T'+(String(before).match(/\d{2}:\d{2}/)?.[0]||'00:00'));
+        target.window=target.window.replace(/\d{4}-\d{2}-\d{2}(?: \d{2}:\d{2})?/g,value=>{const shifted=new Date(Date.parse(value.replace(' ','T')+(value.length===10?'T00:00':''))+delta);const formatted=shifted.toLocaleString('sv-SE');return value.length===10?formatted.slice(0,10):formatted.slice(0,16);});
+        target.date=newDate;target.plannedAt=after;target.overdue=false;(target.history||=[]).push({action:'调整日期',from:before,to:after,reason,at:stamp()});
+      });persist('任务日期已调整。');
+    } else if (drawerMode === 'ignore') {
       const reason = String(data.get('reason') || '').trim();
       if (!reason) { const input = form.elements.reason; input.setCustomValidity('请填写无需处理原因'); input.reportValidity(); return; }
       activeTask.state = 'none'; activeTask.noProcessReason = reason; activeTask.processedAt = stamp();
       persist('任务已标记为无需处理。');
+    } else if (drawerMode === 'issue' && activeTask.kind === 'draft' && activeTask.creation) {
+      activeTask.packageId ||= `PKG-${participantId}-${activeTask.key}`;
+      tasks.push(...window.clinicalNewVisitTasks.executions(activeTask));activeTask.state='issued';activeTask.processedAt=stamp();
+      persist(`已发放，生成 ${packageChildren(activeTask).length} 条子执行任务。`,true);
     } else if (drawerMode === 'issue' && activeTask.kind === 'draft') {
       if (!saveSchedule()) return;
       activeTask.packageId ||= `PKG-${participantId}-${activeTask.key}`;
@@ -381,14 +483,18 @@ window.createParticipantTasks = ({ container, participantId, participantName, pa
       closeMenu();
       if (!wasOpen) {
         const task = tasks.find(item => item.key === more.dataset.taskMore);
-        menu.innerHTML = ['view', 'ignore', 'contact'].map((value, index) => actionButton(task, value, ['查看任务', '无需处理', '联系参与者'][index])).join('');
+        menu.innerHTML = taskActionEntries(task).slice(2).map(([value,label])=>actionButton(task,value,label)).join('');
         menu.querySelectorAll('button').forEach(button => button.setAttribute('role', 'menuitem'));
         menuOpener = more; more.setAttribute('aria-expanded', 'true'); menu.hidden = false;
         positionMenu();
         menu.querySelector('button').focus({ preventScroll: true });
       }
     }
-    if (event.target.closest('[data-task-add]')) open(null, event.target);
+    if (event.target.closest('[data-task-add]')) {
+      const directory=window.clinicalParticipantDirectory.create();
+      const related=visitScope||selectedVisit;
+      window.workbenchTaskDialogs.addFollowup({...related,id:related?.id||'',name:related?.name||'参与者跟进',projectId:project,participantId,participant:participantName,trial:directory.projectCatalog[project]});
+    }
     if (event.target.closest('[data-task-reset]')) { selectedVisit = null; visit = ''; query = ''; rememberVisit(); container.querySelector('[data-task-search]').value = ''; render(); }
   });
   function handleAction(button) {
@@ -397,7 +503,16 @@ window.createParticipantTasks = ({ container, participantId, participantName, pa
     const trigger = menu.contains(button) ? menuOpener : button;
     closeMenu();
     const action = button.dataset.taskAction;
-    if (action === 'contact') notify(`正在联系${participantName}`);
+    if(action==='followup'){
+      const directory=window.clinicalParticipantDirectory.create();
+      const visits=window.clinicalVisitStore.directoryVisits(directory).filter(v=>v.projectId===project&&v.participantId===participantId);
+      const related=visits.find(v=>window.participantTaskBelongsToVisit(task,v));
+      window.workbenchTaskDialogs.addFollowup({...related,id:related?.id||'',name:related?.name||task.visit||task.name,projectId:project,participantId,participant:participantName,trial:directory.projectCatalog[project]});
+    }
+    else if(action==='adjust')open(task,trigger,'adjust');
+    else if(action==='complete')open(task,trigger,'follow');
+    else if(action==='follow-record')open(task,trigger,'follow');
+    else if (action === 'contact') notify(`正在联系${participantName}`);
     else if (action === 'remind') notify(`已向${participantName}发送任务提醒`);
     else if (action === 'issue' && task.kind === 'draft' && task.state === 'draft') open(task, trigger, 'issue');
     else if (action === 'execute' && task.kind === 'execute' && actionable(task) && task.canCaseExecute !== false) open(task, trigger, 'execute');
@@ -406,7 +521,7 @@ window.createParticipantTasks = ({ container, participantId, participantName, pa
     else if (action === 'view') open(task, trigger, 'view');
   }
   menu.addEventListener('click', event => { const button = event.target.closest('[data-task-action]'); if (button) handleAction(button); });
-  document.addEventListener('click', event => { if (!menu.hidden && !menu.contains(event.target) && event.target !== menuOpener) closeMenu(); }, { signal: lifetime.signal });
+  document.addEventListener('click', event => { if (!menu.hidden && !menu.contains(event.target) && !menuOpener?.contains(event.target)) closeMenu(); }, { signal: lifetime.signal });
   document.addEventListener('keydown', event => {
     if (menu.hidden) return;
     if (event.key === 'Escape') { event.preventDefault(); closeMenu(); menuOpener?.focus(); }
@@ -432,6 +547,7 @@ window.createParticipantTasks = ({ container, participantId, participantName, pa
     const value = buttons[target].getAttribute(attribute);
     buttons[target].click(); container.querySelector(`[${attribute}="${value}"]`).focus();
   });
+  window.addEventListener('workbench-tasks-changed',()=>{tasks=window.loadParticipantTasks(project,participantId);render();},{signal:lifetime.signal});
   const directory = !visitScope && params.get('visitId') ? window.clinicalParticipantDirectory?.create() : null;
   const initialVisit = directory && window.clinicalVisitStore.directoryVisits(directory).find(record => record.projectId === project && record.participantId === participantId && record.id === params.get('visitId'));
   if (initialVisit) filterVisit(initialVisit); else render();

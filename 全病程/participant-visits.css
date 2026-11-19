@@ -169,3 +169,52 @@ html[data-project-scope=single] .participants .rate{min-width:30px;width:30px;fl
 .visit-manage-tabs button:disabled{color:var(--text-muted);cursor:not-allowed;opacity:.55}
 
 html[data-clinical-module=research] .visit-dialog .visit-manage-tabs button:disabled{background:transparent!important;color:var(--text-muted)!important;opacity:1;box-shadow:none}
+
+/* Direct visit actions with an unclipped overflow menu. */
+html[data-project-scope=single] .visit-table col:nth-child(10){width:185px!important}
+.visit-row-actions{flex-wrap:nowrap;align-items:center;gap:12px}
+.visit-row-menu{position:fixed;z-index:2000;width:120px;padding:5px;background:#fff;border:1px solid var(--border-default);border-radius:6px;box-shadow:0 5px 20px #253b5b24}
+.visit-row-menu[hidden]{display:none}
+.visit-row-menu button{display:block;width:100%;border:0;background:transparent;padding:8px 10px;text-align:left;color:var(--text-secondary);font:inherit;font-size:12px;cursor:pointer}
+.visit-row-menu button:hover{background:#f2f6ff;color:var(--brand-primary)}
+
+.visit-row-actions [data-visit-more]{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:24px}
+.visit-progress{white-space:nowrap}
+
+html[data-project-scope=single] .visit-table{min-width:1120px}
+
+/* Both visit displays share the filters and the enclosing content panel. */
+#visit-view:not([hidden]) { display: flex; flex-direction: column; min-width: 0; min-height: 0; }
+#visit-view [hidden], .participant-directory-page footer.pagination[hidden] { display: none !important; }
+.visit-display-switch { display: inline-flex; gap: 3px; padding: 3px; border-radius: 6px; background: var(--surface-table-head); }
+.visit-display-switch[hidden] { display: none; }
+.visit-view-header { display: flex; flex: none; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; padding-inline: 16px; margin-bottom: 10px; }
+.visit-view-header[hidden], .visit-view-header > [hidden] { display: none; }
+.visit-view-header > * { flex: none; }
+.visit-display-switch button { min-height: 30px; padding: 0 12px; border: 1px solid transparent; border-radius: 5px; background: transparent; color: var(--text-secondary); font: inherit; font-size: 12px; cursor: pointer; }
+.visit-display-switch button[aria-pressed=true] { border-color: var(--border-default); background: var(--surface-content); color: var(--brand-primary-deep); }
+#visit-view:has([data-visit-calendar]:not([hidden])) { flex: 1; }
+html[data-clinical-module=research] body > main.page.participant-directory-page:has([data-visit-calendar]:not([hidden])) { height: 100dvh; min-height: 600px; }
+#visit-view [data-visit-calendar] { border: 1px solid var(--border-default); border-radius: 6px; overflow: hidden; }
+.filters.visit-mode .visit-time-window-filter { width: 148px; }
+.visit-progress.partial { color: #65549a; background: #f0ebfb; }
+.visit-row-menu button.danger { color: var(--status-error); }
+
+.visit-completion-trigger { border:0; font:inherit; cursor:pointer; }
+.visit-completion-trigger:focus-visible { outline:2px solid var(--brand-primary); outline-offset:2px; }
+.visit-completion-popover { position:fixed; inset:auto; margin:0; width:248px; max-width:calc(100vw - 24px); box-sizing:border-box; padding:16px; border:1px solid var(--border-default); border-radius:8px; background:var(--surface-content); color:var(--text-primary); box-shadow:0 6px 24px rgb(38 54 75 / 14%); font-size:12px; }
+.visit-completion-popover h3 { display:flex; justify-content:space-between; margin:0 0 12px; font-size:14px; }
+.visit-completion-popover h3 small { font-size:12px; font-weight:400; color:var(--text-secondary); }
+.visit-completion-popover ul { list-style:none; padding:0; margin:0; }
+.visit-completion-popover li { display:flex; justify-content:space-between; gap:16px; padding:6px 0; }
+.visit-completion-popover .is-done { color:var(--status-success); }
+.visit-completion-popover .is-pending { color:var(--text-secondary); }
+
+.visit-name-with-window { display:flex; align-items:center; flex-wrap:wrap; gap:6px; }
+.visit-name-with-window .visit-window { flex:none; white-space:nowrap; }
+
+.visit-appointment-quick-filters { display:flex; align-items:center; gap:14px; min-height:36px; flex:none; }
+.visit-appointment-quick-filters[hidden] { display:none!important; }
+.visit-appointment-quick-filters label { display:inline-flex; align-items:center; gap:6px; margin:0; color:var(--text-secondary); font-size:12px; line-height:20px; white-space:nowrap; cursor:pointer; }
+.visit-appointment-quick-filters input[type=checkbox] { appearance:auto; width:14px; height:14px; min-width:14px; padding:0; margin:0; accent-color:var(--brand-primary); cursor:pointer; }
+.visit-appointment-quick-filters label:has(input:checked) { color:var(--brand-primary); }

@@ -1,0 +1,44 @@
+/* Research data is a bounded three-column workspace. */
+.participant-overview-layout > section.panel > .data-entry-workspace:not([hidden]) { display: grid; flex: 1; height: auto; min-height: 0; min-width: 0; grid-template-columns: 200px minmax(0, 1fr); overflow: hidden; }
+.participant-overview-layout .data-entry-nav { min-width: 0; min-height: 0; padding: 18px 12px 12px; border-right: 1px solid #e8edf4; background: #fafbfd; }
+.participant-overview-layout .data-entry-nav h3 { font-size: 13px; font-weight: 500; margin: 0 0 14px; }
+.participant-overview-layout .data-search { width: 100%; height: 32px; margin-bottom: 12px; padding: 0 9px; border: 1px solid #e3e9f1; border-radius: 5px; background: white; font-size: 11px; }
+.participant-overview-layout .data-state-filter { margin-bottom: 10px; color: #8b99ac; }
+.participant-overview-layout .data-crf-tree { flex: 1; min-height: 0; overflow: auto; }
+.participant-overview-layout .data-cycle-head { height: auto; min-height: 38px; padding: 7px 2px; background: transparent; font-size: 11px; line-height: 18px; }
+.participant-overview-layout .data-cycle-head .count { flex: none; margin-left: auto; }
+.participant-overview-layout .data-crf-card { height: 34px; padding: 0 10px 0 24px; margin: 2px 0; background: transparent; font-size: 12px; border-radius: 4px; }
+.participant-overview-layout .data-crf-card[aria-selected=true] { color: var(--brand-primary); background: #eaf2ff; }
+.participant-overview-layout .data-add-visit { flex: none; height: 32px; margin-top: 12px; border: 1px solid #e1e8f2; border-radius: 5px; background: white; }
+.participant-overview-layout .data-entry-main { min-width: 0; min-height: 0; display: grid; grid-template-columns: minmax(280px, 46.3%) minmax(320px, 1fr); overflow: hidden; }
+.participant-overview-layout .data-form-panel { display: flex; flex-direction: column; position: relative; min-width: 0; min-height: 0; padding: 0; overflow: hidden; border-right: 1px solid #e8edf4; background: white; }
+.participant-overview-layout .data-form-head { flex: none; min-height: 48px; margin: 0; padding: 18px 24px 6px; gap: 12px; }
+.participant-overview-layout .data-form-head h3 { font-size: 14px; font-weight: 500; }
+.participant-overview-layout .data-form-status { white-space: nowrap; font-size: 11px; }
+.profile-data-context { flex: none; margin: 0; padding: 0 24px 16px; font-size: 11px; line-height: 18px; color: #8b99ac; border-bottom: 1px solid #edf0f5; }
+.profile-data-fields { flex: 1; min-height: 0; overflow: auto; padding: 22px 24px; }
+.participant-overview-layout .data-form-row { margin: 0 0 22px; }
+.participant-overview-layout .data-form-row > label { font-size: 12px; font-weight: 400; margin-bottom: 8px; }
+.participant-overview-layout .data-form-row input[type=text] { width: 100%; height: 36px; border: 1px solid #dfe6ee; border-radius: 5px; background: white; font-size: 12px; }
+.participant-overview-layout .data-form-actions { position: static; flex: none; margin: 0; padding: 14px 24px; min-height: 64px; border-top: 1px solid #e8edf4; background: white; justify-content: flex-end; gap: 10px; }
+.participant-overview-layout .data-form-actions button { height: 34px; border-radius: 5px; padding: 0 16px; }
+.participant-overview-layout .data-form-actions button:not(.primary) { background: white; border-color: #dfe6ee; color: #536881; }
+.participant-overview-layout .data-upload-panel { min-width: 0; min-height: 0; background: #fafbfd; text-align: left; }
+.participant-overview-layout .entry-empty { min-height: 0; justify-content: flex-start; padding: 20px 16px; gap: 12px; }
+.participant-overview-layout .entry-empty-actions { width: 100%; }
+.participant-overview-layout .entry-empty .entry-source-tile { width: 100%; min-height: 160px; padding: 24px 12px; border: 1px dashed #cfdbea; border-radius: 7px; background: white; gap: 8px; }
+.participant-overview-layout .entry-empty .entry-cloud { width: 36px; height: 36px; }
+.participant-overview-layout .entry-empty strong { font-size: 12px; font-weight: 500; }
+.participant-overview-layout .entry-empty .entry-source-tile span { font-size: 11px; line-height: 18px; color: #91a0b3; }
+.participant-overview-layout .entry-demo-link { font-size: 11px; line-height: 18px; padding: 0; }
+.participant-overview-layout .entry-empty-reference-fab { bottom: 18px; right: 18px; }
+.participant-overview-layout .entry-stage { background: #f4f6f9; }
+@media (max-width: 1200px) {
+ .participant-overview-layout > section.panel > .data-entry-workspace:not([hidden]) { grid-template-columns: 180px minmax(0,1fr); }
+ .participant-overview-layout .data-entry-main { grid-template-columns: minmax(280px,46.3%) minmax(320px,1fr); }
+ .participant-overview-layout .data-form-head { padding-inline: 20px; }
+ .profile-data-context, .profile-data-fields, .participant-overview-layout .data-form-actions { padding-inline: 20px; }
+}
+@media (max-width: 850px) {
+ .participant-overview-layout .data-entry-main { grid-template-columns: minmax(280px,46.3%) minmax(320px,1fr); overflow-x: auto; }
+}

@@ -1,0 +1,6 @@
+/* Task status tags shared by the workbench and participant task tables. */
+html[data-clinical-module=research] :is(.wb1-execution-status,.participant-task-state){display:inline-flex;align-items:center;box-sizing:border-box;height:22px;min-height:22px;padding:0 8px;border-radius:11px;background:var(--status-warning-soft);color:var(--status-warning);font-size:10px!important;line-height:20px;font-weight:400;white-space:nowrap}
+html[data-clinical-module=research] :is(.wb1-execution-status,.participant-task-state).is-future{background:var(--brand-primary-soft);color:var(--brand-primary)}
+html[data-clinical-module=research] :is(.wb1-execution-status,.participant-task-state).is-overdue{background:var(--status-error-soft);color:var(--status-error)}
+html[data-clinical-module=research] :is(.wb1-execution-status,.participant-task-state).is-completed{background:var(--status-success-soft);color:var(--status-success)}
+html[data-clinical-module=research] :is(.wb1-execution-status,.participant-task-state).is-none{background:var(--status-inactive-soft);color:var(--status-inactive)}

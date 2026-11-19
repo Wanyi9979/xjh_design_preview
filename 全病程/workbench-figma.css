@@ -29,7 +29,8 @@ html[data-workbench-style=figma] .wb1-task-card:nth-child(3) .wb1-stat-art>img{l
 html[data-workbench-style=figma] .wb1-task-tools{height:42px!important;min-height:42px!important;gap:22px!important;padding:0 16px!important}
 html[data-workbench-style=figma] .wb1-task-tab{font-size:12px!important}
 html[data-workbench-style=figma] .wb1-table-wrap{padding:12px;overflow:auto!important}
-html[data-workbench-style=figma] .wb1-table{display:table!important;min-width:720px!important;width:100%!important;table-layout:fixed}
+html[data-workbench-style=figma] .wb1-table{display:table!important;min-width:var(--wb1-table-min-width,720px)!important;width:100%!important;table-layout:fixed}
+.wb1-table.is-execution{--wb1-table-min-width:820px}
 html[data-workbench-style=figma] .wb1-table colgroup{display:table-column-group!important}
 html[data-workbench-style=figma] .wb1-table thead{display:table-header-group!important}
 html[data-workbench-style=figma] .wb1-table tbody{display:table-row-group!important;width:auto!important}
@@ -111,8 +112,8 @@ html[data-workbench-style=figma] .recent-visit.is-overdue .visit-primary-date{co
 
 html[data-workbench-style=figma]{--status-following:#13B9C8;--status-following-soft:#EBFAFC}
 html[data-workbench-style=figma] .wb1-participant-cell small{align-items:center;row-gap:4px}
-html[data-workbench-style=figma] .wb1-participant-cell .status{display:inline-flex;align-items:center;justify-content:center;flex:none;padding:1px 6px;border-radius:4px;white-space:nowrap;font-size:11px!important;line-height:18px!important;font-style:normal;font-weight:400}
-html[data-workbench-style=figma] .wb1-participant-cell .status.following{background:var(--status-following-soft)!important;color:var(--status-following)!important}
+html[data-workbench-style=figma] .wb1-participant-status .status{display:inline-flex;align-items:center;justify-content:center;flex:none;padding:1px 6px;border-radius:4px;white-space:nowrap;font-size:11px!important;line-height:18px!important;font-style:normal;font-weight:400}
+html[data-workbench-style=figma] .wb1-participant-status .status.following{background:var(--status-following-soft)!important;color:var(--status-following)!important}
 /* Table text palette verified against Figma node 1094:3928. */
 html[data-workbench-style=figma] .wb1-table{--table-text-primary:rgba(0,5,9,.89);--table-text-window:#ABABAB;--wb1-ink:var(--table-text-primary);--wb1-text:var(--table-text-primary)}
 html[data-workbench-style=figma] .wb1-table thead th,

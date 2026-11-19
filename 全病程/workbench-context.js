@@ -5,12 +5,12 @@ document.addEventListener('DOMContentLoaded',()=>{
  [project,center].forEach(el=>el.addEventListener('change',save));search.addEventListener('input',save);window.addEventListener('pagehide',save);
  if(new URLSearchParams(location.search).get('restore')==='1'){
   let state;try{state=JSON.parse(sessionStorage.getItem(key));}catch{}
-  if(state){project.value=state.project||'';center.value=state.center||'';search.value=state.search||'';project.dispatchEvent(new Event('change'));center.dispatchEvent(new Event('change'));search.dispatchEvent(new Event('input'));document.querySelector(`[data-wb1-summary="${['issue','execution','execution-overdue','followup','processing'].includes(state.summary)?state.summary:'issue'}"]`)?.click();const tab=[...document.querySelectorAll('[data-wb1-tab]')].find(button=>button.dataset.wb1Tab===state.tab&&!button.hidden);tab?.click();requestAnimationFrame(()=>window.scrollTo(0,state.scroll||0));}
+  if(state){project.value=state.project||'';center.value=state.center||'';search.value=state.search||'';project.dispatchEvent(new Event('change'));center.dispatchEvent(new Event('change'));search.dispatchEvent(new Event('input'));document.querySelector(`[data-wb1-summary="${['issue','execution','execution-overdue','followup','processing','appointment'].includes(state.summary)?state.summary:'issue'}"]`)?.click();const tab=[...document.querySelectorAll('[data-wb1-tab]')].find(button=>button.dataset.wb1Tab===state.tab&&!button.hidden);tab?.click();requestAnimationFrame(()=>window.scrollTo(0,state.scroll||0));}
   const url=new URL(location.href);url.searchParams.delete('restore');history.replaceState(null,'',url);
  }
  // Removed calendar URLs now resolve to the ordinary workbench.
  const url=new URL(location.href);if(url.searchParams.get('view')==='calendar'){url.searchParams.delete('view');history.replaceState(null,'',url);}
- const fields=[project,center,search];
+ const fields=[project,center];
  const refreshClearButtons=()=>fields.forEach(field=>{const wrapper=field.closest('.wb1-filter');wrapper.classList.toggle('has-value',Boolean(field.value));wrapper.querySelector('[data-wb1-clear]').hidden=!field.value;});
  fields.forEach(field=>['change','input'].forEach(name=>field.addEventListener(name,refreshClearButtons)));
  document.querySelectorAll('[data-wb1-clear]').forEach(button=>button.addEventListener('click',()=>{const field=button.closest('.wb1-filter').querySelector('select,input');field.value='';field.dispatchEvent(new Event(field===search?'input':'change',{bubbles:true}));field.focus();}));
