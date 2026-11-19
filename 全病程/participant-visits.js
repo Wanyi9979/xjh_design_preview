@@ -26,16 +26,8 @@
   hospitalFilter.innerHTML = '<option value="">全部中心</option>' + [...hospitals].map(h => `<option>${escape(h)}</option>`).join('');
   const panel = document.getElementById('visit-view');
   panel.innerHTML = `
-    <div class="visit-view-header">
-      <div class="visit-display-switch" role="group" aria-label="访视视图">
-        <button type="button" data-visit-display="list" aria-pressed="true">列表视图</button>
-        <button type="button" data-visit-display="calendar" aria-pressed="false">日历视图</button>
-      </div>
-      <div data-visit-week-controls hidden></div>
-    </div>
     <div class="visit-filter-context" data-visit-context role="status"></div>
-    <div class="table-wrap" data-visit-list><table class="visit-table"><colgroup><col style="width:150px"><col style="width:180px"><col style="width:160px"><col style="width:105px"><col style="width:85px"><col style="width:235px"><col style="width:115px"><col style="width:115px"><col style="width:95px"><col style="width:80px"></colgroup><thead><tr><th>参与者</th><th>参与试验</th><th>访视</th><th>访视版本</th><th>访视状态</th><th>计划日期 / 访视窗口</th><th>预约日期</th><th>实际访视日期</th><th>关联任务</th><th>操作</th></tr></thead><tbody data-visit-rows></tbody></table></div>
-    <div class="wb-calendar-zone" data-visit-calendar hidden></div>`;
+    <div class="table-wrap" data-visit-list><table class="visit-table"><colgroup><col style="width:150px"><col style="width:180px"><col style="width:160px"><col style="width:105px"><col style="width:85px"><col style="width:235px"><col style="width:115px"><col style="width:115px"><col style="width:95px"><col style="width:80px"></colgroup><thead><tr><th>参与者</th><th>参与试验</th><th>访视</th><th>访视版本</th><th>访视状态</th><th>计划日期 / 访视窗口</th><th>预约日期</th><th>实际访视日期</th><th>关联任务</th><th>操作</th></tr></thead><tbody data-visit-rows></tbody></table></div>`;
   const progressFilter = document.getElementById('visit-progress-filter');
   const appointmentFilter = document.getElementById('visit-appointment-filter');
   const windowFilter = document.getElementById('visit-time-window-filter');
@@ -52,14 +44,7 @@
   const visitRows = panel.querySelector('[data-visit-rows]');
   const context = panel.querySelector('[data-visit-context]');
   const list = panel.querySelector('[data-visit-list]');
-  const calendarElement = panel.querySelector('[data-visit-calendar]');
-  const calendarControls = panel.querySelector('[data-visit-week-controls]');
-  const displaySwitch = panel.querySelector('.visit-display-switch');
-  const viewToolbar = panel.querySelector('.visit-view-header');
-  filters.after(viewToolbar);
-  const footer = document.querySelector('footer.pagination');
   let section = 'participants';
-  let display = 'list';
   let calendarOnly = params.get('source') === 'calendar';
   let pendingOnly = params.get('pending') === '1';
   let appointmentOverdue=params.get('appointmentOverdue')==='1';
@@ -94,7 +79,7 @@
   }
   function syncURL() {
     const url = new URL(location.href);
-    const values = { view: section, display: section === 'visits' && display === 'calendar' ? 'calendar' : '', calendarDate: section === 'visits' && display === 'calendar' && calendar.date !== today ? calendar.date : '', project: projectFilter.value, protocol: protocolFilter.value, hospital: hospitalFilter.value, participantStatus: statusFilter.value, q: search.value.trim(), visitName:section==='visits'?visitNameFilter.value:'', progress: section === 'visits' ? progressFilter.value : '', appointment: section === 'visits' ? appointmentFilter.value : '', window: section === 'visits' ? windowFilter.value : '', calendarWindow, visitId: section === 'visits' ? visitId : '', visitProject: section === 'visits' && visitId ? visitProject : '', start: section === 'visits' ? startFilter.value : '', end: section === 'visits' ? endFilter.value : '', source: calendarOnly ? 'calendar' : '', pending: pendingOnly ? '1' : '', todayVisits:quickToday.checked?'1':'', missedAppointments:quickMissed.checked?'1':'', department, group, appointmentOverdue:appointmentOverdue?'1':'', referenceDate: calendarOnly||appointmentOverdue ? today : '' };
+    const values = { view: section, display:'', calendarDate:'', project: projectFilter.value, protocol: protocolFilter.value, hospital: hospitalFilter.value, participantStatus: statusFilter.value, q: search.value.trim(), visitName:section==='visits'?visitNameFilter.value:'', progress: section === 'visits' ? progressFilter.value : '', appointment: section === 'visits' ? appointmentFilter.value : '', window: section === 'visits' ? windowFilter.value : '', calendarWindow, visitId: section === 'visits' ? visitId : '', visitProject: section === 'visits' && visitId ? visitProject : '', start: section === 'visits' ? startFilter.value : '', end: section === 'visits' ? endFilter.value : '', source: calendarOnly ? 'calendar' : '', pending: pendingOnly ? '1' : '', todayVisits:quickToday.checked?'1':'', missedAppointments:quickMissed.checked?'1':'', department, group, appointmentOverdue:appointmentOverdue?'1':'', referenceDate: calendarOnly||appointmentOverdue ? today : '' };
     Object.entries(values).forEach(([key, value]) => value ? url.searchParams.set(key, value) : url.searchParams.delete(key));
     history.replaceState(null, '', url);
   }
@@ -193,29 +178,6 @@
     const step = event.key === 'ArrowDown' ? 1 : -1;
     items[(items.indexOf(document.activeElement) + step + items.length) % items.length]?.focus();
   });
-  const calendar = window.createVisitCalendar({
-    root: calendarElement, controls: calendarControls, today, dateFor, windowState,
-    actionMarkup: visit => moreButton(visit, 0, 'appointment-card-more'),
-    onDateChange: renderVisits
-  });
-  function syncDisplay() {
-    const showCalendar = section === 'visits' && display === 'calendar';
-    viewToolbar.hidden = section !== 'visits';
-    list.hidden = showCalendar;
-    calendarElement.hidden = calendarControls.hidden = !showCalendar;
-    footer.hidden = showCalendar;
-    displaySwitch.querySelectorAll('[data-visit-display]').forEach(button =>
-      button.setAttribute('aria-pressed', String(button.dataset.visitDisplay === display)));
-  }
-  displaySwitch.addEventListener('click', event => {
-    const button = event.target.closest('[data-visit-display]');
-    if (!button || button.dataset.visitDisplay === display) return;
-    display = button.dataset.visitDisplay;
-    if (display === 'calendar' && startFilter.value && calendar.date < startFilter.value) calendar.setDate(startFilter.value);
-    if (display === 'calendar' && endFilter.value && calendar.date > endFilter.value) calendar.setDate(endFilter.value);
-    renderVisits();
-  });
-
   const completionPopover = document.createElement('div');
   completionPopover.className = 'visit-completion-popover';
   completionPopover.id = 'visit-completion-popover';
@@ -251,7 +213,6 @@
     const selectedName=visitNameFilter.value||params.get('visitName')||'';const names=[...new Set(visits.filter(v=>(!projectFilter.value||v.projectId===projectFilter.value)&&(!protocolFilter.value||v.protocolVersion===protocolFilter.value)).map(v=>v.name))];visitNameFilter.innerHTML='<option value="">全部访视</option>'+names.map(name=>`<option value="${escape(name)}">${escape(name)}</option>`).join('');visitNameFilter.value=names.includes(selectedName)?selectedName:'';params.delete('visitName');
     closeCompletionPopover();
     closeMenu();
-    syncDisplay();
     updateProtocolFilter(visits.filter(visit => progress(visit) !== 'inactive'));
     const query = search.value.trim().toLowerCase();
     const invalidRange = startFilter.value && endFilter.value && startFilter.value > endFilter.value;
@@ -268,21 +229,17 @@
         matchesWindow(visit) &&
         (!startFilter.value || dateFor(visit) >= startFilter.value) && (!endFilter.value || dateFor(visit) <= endFilter.value);
     }).sort((a, b) => (b.plannedDate || '').localeCompare(a.plannedDate || '') || a.participantId.localeCompare(b.participantId));
-    if (display === 'calendar') {
-      calendar.render(visible, invalidRange);
-    } else {
       const pageRows = window.directoryPagination.slice(visible,'visits',renderVisits,'次访视');
       visitRows.innerHTML = pageRows.length ? pageRows.map(visit => {
         const index = visits.indexOf(visit), state = progress(visit), period = windowState(visit);
         return `<tr>
-          <td><div class="visit-person"><a class="participant-link name" href="${escape(detailURL(visit))}">${escape(visit.person.name)}</a><small>${escape(visit.participantId)}<em>${escape(visit.person.status)}</em></small></div></td>
+          <td><div class="visit-person"><a class="participant-link name" href="${escape(detailURL(visit))}">${escape(visit.person.name)}</a><small>${escape(visit.participantId)}<em class="status ${{'已入组':'enrolled','筛选中':'screening','筛选失败':'failed','随访中':'following','研究结束':'ended','已终止':'ended','终止':'ended'}[visit.person.status]||'ended'}">${escape(visit.person.status)}</em></small></div></td>
           <td><div class="visit-study">${escape(projectCatalog[visit.projectId] || visit.projectId)}</div></td>
           <td><div class="visit-name-with-window"><span>${escape(visit.name)}</span>${period ? `<span class="visit-window ${period}">${{ upcoming: '未到窗口', window: '窗口期内', overdue: '已超窗', none:'暂无窗口' }[period]}</span>` : ''}</div></td><td><span class="protocol-tag">${escape(visit.protocolVersion)}</span></td><td>${state === 'partial' ? `<button type="button" class="visit-progress ${state} visit-completion-trigger" data-visit-completion="${index}" aria-expanded="false" aria-controls="visit-completion-popover" aria-label="部分完成，查看访视项完成情况">${store.statusLabels[state]}</button>` : `<span class="visit-progress ${state}">${store.statusLabels[state]}</span>`}</td><td><div class="visit-plan"><div class="visit-plan-date">${escape(visit.plannedDate)}</div><small>${visit.noWindow?'暂无窗口':`${escape(visit.windowStart)} ～ ${escape(visit.windowEnd)}`}</small></div></td>
           <td>${escape(visit.appointmentDate || '未预约')}</td><td>${escape(visit.actualDate || '—')}</td>
           <td>${taskProgressMarkup(visit, index)}</td>
           <td><div class="visit-row-actions">${rowActions(visit)}</div></td></tr>`;
       }).join('') : `<tr><td class="visit-empty" colspan="10">${invalidRange ? '开始日期不能晚于结束日期，请调整筛选范围' : '暂无匹配访视，可调整或重置筛选条件'}</td></tr>`;
-    }
     context.hidden = !(appointmentOverdue || visitId || calendarOnly || pendingOnly || calendarWindow || department || group);
     context.innerHTML = `${appointmentOverdue?'<span>今日之前未执行或调整的访视</span>':''}${visitId ? '<span>从工作台打开的访视</span>' : ''}${calendarOnly ? '<span>来自访视日历</span>' : ''}${pendingOnly ? '<span>仅待访视</span>' : ''}${calendarWindow ? '<span>即将访视</span>' : ''}${calendarOnly && (startFilter.value || endFilter.value) ? `<span>${escape(startFilter.value || '不限')} ～ ${escape(endFilter.value || '不限')}</span>` : ''}${department || group ? `<span>${escape([department, group].filter(Boolean).join(' / '))}</span>` : ''}${!context.hidden ? '<button type="button" data-clear-visit-scope>清除带入条件</button>' : ''}`;
     syncURL();
@@ -295,7 +252,6 @@
     hospitalFilter.querySelector('option').textContent = '全部中心';
     hospitalFilter.setAttribute('aria-label', '研究中心筛选');
     panel.hidden = section !== 'visits';
-    syncDisplay();
     visitFilter.hidden = section === 'visits';
     if (section === 'visits') dateRangeFilter.after(search);
     else visitFilter.after(search);
@@ -353,7 +309,7 @@
     taskController?.destroy(); taskController = null;
     document.body.style.overflow = '';
     if (detailTrigger?.isConnected) detailTrigger.focus();
-    else displaySwitch.querySelector(`[data-visit-display="${display}"]`)?.focus();
+    else visitNameFilter.focus();
     detailTrigger = null;
   }
   panel.addEventListener('click', event => {
@@ -377,7 +333,6 @@
   });
   progressFilter.addEventListener('change', renderVisits);
   [startFilter, endFilter].forEach(input => input.addEventListener('change', () => {
-    if (input.value) calendar.setDate(input.value);
     renderVisits();
   }));
   windowFilter.addEventListener('change', () => { calendarWindow = ''; renderVisits(); });
@@ -403,8 +358,6 @@
     calendarWindow = p.get('calendarWindow') === 'upcoming' || p.get('window') === 'upcoming' ? 'upcoming' : '';
     visitId = p.get('visitId') || '';
     visitProject = p.get('visitProject') || '';
-    display = p.get('display') === 'calendar' ? 'calendar' : 'list';
-    calendar.setDate(day(p.get('calendarDate')) ? p.get('calendarDate') : startFilter.value || endFilter.value || (visitId && dateFor(visits.find(visit => visit.id === visitId && (!visitProject || visit.projectId === visitProject)) || {})) || today);
     setSection(p.get('view') === 'visits' ? 'visits' : 'participants');
   }
   window.addEventListener('popstate', restoreLocation);

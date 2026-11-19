@@ -575,7 +575,7 @@
             <label class="is-full">
               上传文件
               <span class="wb1-upload">
-                <input name="file" type="file" required aria-label="上传任务文件" aria-describedby="wb1-upload-filename">
+                <input name="file" type="file" multiple required aria-label="上传任务文件" aria-describedby="wb1-upload-filename">
                 <img src="figma-clinical-assets/upload-cloud.png" alt="" width="32" height="32">
                 <span id="wb1-upload-filename" class="wb1-upload-filename" aria-live="polite" hidden></span>
                 <span class="wb1-upload-action">选择文件</span>
@@ -587,10 +587,7 @@
       const sectionHeading = task.executionType === 'upload' ? '' : `<h3>填写${task.formName || '任务表单'}</h3>`;
       executionBody.innerHTML = `<section class="wb1-execution-card">${sectionHeading}${actionContent}</section>`;
     } else if (mode === 'result') {
-      const result = task.result
-        ? `<div class="wb1-execution-result"><strong>执行结果</strong>${task.result}${task.completedAt ? `<br>完成时间：${task.completedAt}` : ''}${task.operator ? `<br>执行人：${task.operator}` : ''}</div>`
-        : '<div class="wb1-execution-result is-empty">任务尚未执行，暂时没有执行结果。</div>';
-      executionBody.innerHTML = `<section class="wb1-execution-card"><h3>执行结果</h3>${result}</section>`;
+      executionBody.innerHTML = `<section class="wb1-execution-card">${window.clinicalExecutionResultMarkup(task)}</section>`;
     } else {
       executionBody.innerHTML = window.clinicalTaskDetailsMarkup({...task,name:task.task},{configuration:issueConfig(executionTaskToRow(task)),executions:[task]});
     }
@@ -1283,12 +1280,15 @@
     openIssueModal(executionTaskToRow(task), true);
   });
   actionMenu.addEventListener('click', event => handleTaskAction(event.target));
-  executionSubmit.addEventListener('click', () => {
+  executionSubmit.addEventListener('click', async () => {
     if (executionModalMode !== 'execute' || !currentExecutionTask) return;
     const block=P.executionBlock(currentExecutionTask);if(block){showToast(block);return;}
     const form = executionBody.querySelector('[data-wb1-execution-form]');
     if (!form.reportValidity()) return;
     const formData = new FormData(form);
+    const submittedTask=currentExecutionTask;executionSubmit.disabled=true;
+    try {const payload=await window.captureClinicalExecution(form);if(currentExecutionTask!==submittedTask||executionMask.hidden)return;Object.assign(submittedTask,payload);}
+    catch(error){showToast(error.message);return;}finally{executionSubmit.disabled=false;}
     if (currentExecutionTask.executionType === 'upload') {
       const file = form.querySelector('input[type="file"]').files[0];
       currentExecutionTask.result = `已上传文件：${file.name}${formData.get('note') ? `；说明：${formData.get('note')}` : ''}`;
@@ -1297,7 +1297,7 @@
     }
     currentExecutionTask.status = '已完成';
     currentExecutionTask.scope = 'completed';
-    currentExecutionTask.completedAt = '2026-10-29 18:12';
+    currentExecutionTask.completedAt = new Date().toLocaleString('sv-SE');
     currentExecutionTask.operator = '当前个案';
     const packageTasks = executionTasks.filter(task => task.packageId === currentExecutionTask.packageId && P.personKey(task) === P.personKey(currentExecutionTask));
     const completedCount = packageTasks.filter(task => task.scope === 'completed').length;

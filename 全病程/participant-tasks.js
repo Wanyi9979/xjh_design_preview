@@ -33,7 +33,7 @@ window.loadParticipantTasks = (project, participantId) => {
       method: row.method || (/上传|文件|报告/.test(row.content) ? '上传文件' : '表单填写'),
       executionType: row.executionType || (/上传|文件|报告/.test(row.content) ? 'upload' : 'form'), formName: row.formName || row.content || '任务表单',
       canCaseExecute: row.canCaseExecute !== false, fillMode: row.fillMode || (row.canCaseExecute === false ? '仅患者填写' : '个案可填'),
-      config: row.config || null, packageId: row.packageId || '', result: row.result || '', noProcessReason: row.noProcessReason || row.skipReason || '',
+      config: row.config || null, packageId: row.packageId || '', result: row.result || '', uploads:row.uploads||[],formAnswers:row.formAnswers||[],executionNote:row.executionNote||'', noProcessReason: row.noProcessReason || row.skipReason || '',
       operator: row.operator || '', completedAt: row.completedAt || row.executedAt || '',
       state: ignored(row) ? 'none' : kind === 'draft' ? row.state === '已发放' || row.issued ? 'issued' : 'draft' : kind === 'follow' ? row.handled ? 'done' : 'pending' : ['已执行', '已完成'].includes(row.state) ? 'done' : 'pending',
       children: kind === 'draft' ? String(row.content || '访视执行任务').split(/[、，]/).map(name => name.trim()).filter(Boolean) : [],
@@ -350,11 +350,11 @@ window.createParticipantTasks = ({ container, participantId, participantName, pa
       if (!readOnly) submit = '确认';
     } else if (mode === 'execute') {
       title = task.executionType === 'upload' ? '上传文件' : `填写${task.formName || '任务表单'}`;
-      content = `<div class="participant-task-field"><span>任务名称</span><div>${window.clinicalTaskNameMarkup(task)}</div></div>${field('访视', task.visit)}${task.executionType === 'upload' ? '<label>上传文件 *<input name="file" type="file" required aria-label="上传任务文件"></label><label>文件说明<textarea name="note" maxlength="500" placeholder="选填，说明文件内容"></textarea></label>' : '<label>是否出现相关症状 *<select name="symptom" required><option value="">请选择</option><option>是</option><option>否</option></select></label><label>严重程度 *<select name="severity" required><option value="">请选择</option><option>轻度</option><option>中度</option><option>重度</option></select></label><label>补充说明<textarea name="note" maxlength="500" placeholder="选填，补充本次执行情况"></textarea></label>'}`;
+      content = `<div class="participant-task-field"><span>任务名称</span><div>${window.clinicalTaskNameMarkup(task)}</div></div>${field('访视', task.visit)}${task.executionType === 'upload' ? '<label>上传文件 *<input name="file" type="file" multiple required aria-label="上传任务文件"></label><label>文件说明<textarea name="note" maxlength="500" placeholder="选填，说明文件内容"></textarea></label>' : '<label>是否出现相关症状 *<select name="symptom" required><option value="">请选择</option><option>是</option><option>否</option></select></label><label>严重程度 *<select name="severity" required><option value="">请选择</option><option>轻度</option><option>中度</option><option>重度</option></select></label><label>补充说明<textarea name="note" maxlength="500" placeholder="选填，补充本次执行情况"></textarea></label>'}`;
       submit = '提交任务';
     } else if (mode === 'result') {
       title = '查看执行结果';
-      content = task.kind==='draft'?window.clinicalTaskResultsMarkup(packageChildren(task),task.noProcessReason):task.result ? `${field('执行结果', task.result)}${field('完成时间', task.completedAt)}${field('执行人', task.operator)}` : `<p class="participant-task-help">${task.state === 'done' ? '暂无执行结果记录。' : '任务尚未执行，暂时没有执行结果。'}</p>`;
+      content = task.kind==='draft'?window.clinicalTaskResultsMarkup(packageChildren(task),task.noProcessReason):window.clinicalExecutionResultMarkup(task);
       extra = '<button type="button" data-drawer-view>返回任务详情</button>';
     } else if (mode === 'view') {
       content = window.clinicalTaskDetailsMarkup(task,{executions:task.parentKey?packageChildren(tasks.find(parent=>parent.key===task.parentKey)||task):[task]});
@@ -415,7 +415,7 @@ window.createParticipantTasks = ({ container, participantId, participantName, pa
       });
     }
   });
-  drawer.addEventListener('submit', event => {
+  drawer.addEventListener('submit', async event => {
     event.preventDefault();
     const form = event.target;
     if (!form.reportValidity()) return;
@@ -455,6 +455,9 @@ window.createParticipantTasks = ({ container, participantId, participantName, pa
       activeTask.state = 'issued'; activeTask.processedAt = stamp();
       persist(`已发放，生成 ${packageChildren(activeTask).length} 条子执行任务。`, true);
     } else if (drawerMode === 'execute' && activeTask.kind === 'execute' && activeTask.canCaseExecute !== false) {
+      const submittedTask=activeTask,submit=form.querySelector('[type=submit]');submit.disabled=true;
+      try{const payload=await window.captureClinicalExecution(form);if(activeTask!==submittedTask||!drawer.open)return;Object.assign(submittedTask,payload);}
+      catch(error){const alert=drawer.querySelector('.participant-task-validation');alert.hidden=false;alert.textContent=error.message;return;}finally{submit.disabled=false;}
       const note = String(data.get('note') || '').trim();
       const file = data.get('file');
       activeTask.result = activeTask.executionType === 'upload' ? `已上传文件：${file.name}${note ? `；${note}` : ''}` : `是否出现相关症状：${data.get('symptom')}；严重程度：${data.get('severity')}${note ? `；补充说明：${note}` : ''}`;

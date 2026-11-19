@@ -13,10 +13,11 @@
  const syncAppointment=()=>{if(!appointmentEdited)form.elements.appointmentDate.value=form.elements.consentSignedDate.value;};
  form.elements.consentSignedDate.addEventListener('input',syncAppointment);form.elements.consentSignedDate.addEventListener('change',syncAppointment);
  form.elements.appointmentDate.addEventListener('input',()=>{appointmentEdited=Boolean(form.elements.appointmentDate.value);});
- const roster=[{uniqueIdentifier:'PID2026001',name:'ZXX',initials:'ZXX',sex:'女',age:42,hospital:'第一医院'},{uniqueIdentifier:'PID2026002',name:'XWN',initials:'XWN',sex:'男',age:56,hospital:'第二医院'}];
+ const roster=[{uniqueIdentifier:'PID2026001',fullName:'张晓霞',name:'ZXX',initials:'ZXX',sex:'女',age:42,hospital:'第一医院'},{uniqueIdentifier:'PID2026002',fullName:'谢卫宁',name:'XWN',initials:'XWN',sex:'男',age:56,hospital:'第二医院'}];
  const showError=message=>{error.textContent=message;error.hidden=false;};
  const duplicate=(person,project)=>window.clinicalParticipantDirectory.create().participants.find(p=>p.study===project&&(p.uniqueIdentifier||p.id).toUpperCase()===person.uniqueIdentifier.toUpperCase());
- const patientMarkup=person=>`<h3>已选患者</h3><dl>${[['姓名',person.fullName||person.name],['性别 / 年龄',[person.sex,person.age!=null?person.age+'岁':''].filter(Boolean).join(' / ')],['患者唯一标示',person.uniqueIdentifier],['病种',person.disease],['所属治疗组',person.treatmentGroup],['医院',person.hospital]].map(([label,value])=>`<div><dt>${label}</dt><dd>${escape(value||'未提供')}</dd></div>`).join('')}</dl>`;
+ const patientFullName=person=>person.fullName||person.realName||(!/^[A-Z]{1,32}$/.test(person.name||'')?person.name:'');
+ const patientMarkup=person=>`<h3>已选患者</h3><dl>${[['姓名',patientFullName(person)],['性别 / 年龄',[person.sex,person.age!=null?person.age+'岁':''].filter(Boolean).join(' / ')],['患者唯一标示',person.uniqueIdentifier],['病种',person.disease],['所属治疗组',person.treatmentGroup],['医院',person.hospital]].map(([label,value])=>`<div><dt>${label}</dt><dd>${escape(value||'未提供')}</dd></div>`).join('')}</dl>`;
  function setStep(next){step=next;error.hidden=true;dialog.querySelectorAll('[data-add-step]').forEach(el=>el.hidden=Number(el.dataset.addStep)!==step);dialog.querySelectorAll('.participant-add-steps li').forEach((el,i)=>{el.classList.toggle('is-complete',i+1<step);if(i+1===step)el.setAttribute('aria-current','step');else el.removeAttribute('aria-current');});dialog.querySelector('[data-add-back]').hidden=step===1;submit.textContent=step===1?'下一步':'确认添加';submit.disabled=!match;if(step===2){dialog.querySelector('[data-selected-patient]').innerHTML=patientMarkup(match);form.elements.project.focus();}else form.elements.identifier.focus();}
  function query(){
   match=null;submit.disabled=true;error.hidden=true;result.hidden=true;
@@ -44,7 +45,7 @@
   if(!appointmentDate||!form.elements.appointmentDate.validity.valid){showError('请选择有效的访视预约日期。');form.elements.appointmentDate.focus();return;}
   if(duplicate(match,project)){showError('该参与者已加入当前项目，请勿重复添加。');return;}
   const current=window.clinicalParticipantDirectory.create();if(current.participants.some(p=>p.study===project&&p.id.toUpperCase()===screening.toUpperCase())){showError('该筛选号已在当前项目使用，请更换。');return;}
-  const rows=read();rows.push({...match,fullName:match.fullName||match.name,name:initials,initials,id:screening,screeningNumber:screening,consentSignedDate,appointmentDate,study:project,status:'筛选中',group:'',protocolVersion:window.visitProtocols.list(project)[0]?.version||'V1.0',addedAt:new Date().toISOString()});
+  const rows=read();rows.push({...match,fullName:patientFullName(match),name:initials,initials,id:screening,screeningNumber:screening,consentSignedDate,appointmentDate,study:project,status:'筛选中',group:'',protocolVersion:window.visitProtocols.list(project)[0]?.version||'V1.0',addedAt:new Date().toISOString()});
   try{localStorage.setItem(storageKey,JSON.stringify(rows));}catch{showError('保存失败，请检查浏览器存储空间后重试。');return;}
   const next=new URL(location.href);next.searchParams.set('view','participants');next.searchParams.set('added','1');location.href=next.href;
  });
