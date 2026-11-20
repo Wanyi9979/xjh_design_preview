@@ -75,7 +75,7 @@
       participants.push({ ...person, name, rate: 0, actions: actions(person.status) });
     });
     let participantStates={};try{participantStates=JSON.parse(localStorage.getItem('journey-v2-person-status'))||{};}catch{}
-    participants.forEach(person=>{const saved=participantStates[person.study+':'+person.id] || participantStates[person.study+':'+identity.legacyId(person.id)];if(saved){person.status=saved.status;if(saved.enrollmentDate!==undefined)person.enrollmentDate=saved.enrollmentDate;if(saved.group!==undefined)person.group=saved.group;person.actions=actions(person.status);}});
+    participants.forEach(person=>{const saved=participantStates[person.study+':'+person.id] || participantStates[person.study+':'+identity.legacyId(person.id)];if(saved){person.status=saved.status;if(saved.enrollmentNumber!==undefined)person.enrollmentNumber=saved.enrollmentNumber;if(saved.enrollmentDate!==undefined)person.enrollmentDate=saved.enrollmentDate;if(saved.group!==undefined)person.group=saved.group;person.actions=actions(person.status);}});
     participants.forEach(person => { person.protocolVersion = window.visitProtocols.bind(person.study, person.id, person.protocolVersion); });
     const result={participants,projectCatalog,source,sourcePeople};
     const visits=store.directoryVisits(result,source.today);
