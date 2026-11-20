@@ -84,3 +84,21 @@ html[data-workbench-style=figma] .wb1-task-card:nth-child(6) .wb1-stat-art > img
 html[data-clinical-module=research] .wb-today-table.managed-action-table col:not(.managed-action-col) { width:auto!important; }
 html[data-clinical-module=research] .wb-today-table.managed-action-table .managed-action-cell { max-width:var(--action-column-width)!important; }
 
+
+/* Figma 1141:2104: source-image geometry and inner image crops. */
+html[data-workbench-style=figma] .wb1-layout.wb-overview-layout .wb1-task-workspace .wb1-task-summary .wb1-stat-art > .wb1-stat-sprite {
+  display:block; position:absolute; overflow:hidden; pointer-events:none;
+  width:var(--task-icon-width); height:var(--task-icon-height);
+  left:var(--task-icon-left); top:var(--task-icon-top);
+}
+html[data-workbench-style=figma] .wb1-task-summary .wb1-stat-art .wb1-stat-sprite > img {
+  display:block!important; position:absolute; max-width:none!important; opacity:1!important;
+  width:var(--task-icon-inner-width,100%)!important; height:100%!important;
+  left:var(--task-icon-inner-left,0); top:0; object-fit:cover;
+}
+.wb1-task-card[data-wb1-summary=issue] { --task-icon-width:349px; --task-icon-height:116px; --task-icon-left:-10px; --task-icon-top:-32px; }
+.wb1-task-card[data-wb1-summary=execution] { --task-icon-width:329px; --task-icon-height:110px; --task-icon-left:-58.66px; --task-icon-top:-27px; }
+.wb1-task-card[data-wb1-summary=execution-overdue] { --task-icon-width:335px; --task-icon-height:112px; --task-icon-left:-113.33px; --task-icon-top:-30px; --task-icon-inner-width:100.3%; --task-icon-inner-left:-.15%; }
+.wb1-task-card[data-wb1-summary=followup] { --task-icon-width:341px; --task-icon-height:114px; --task-icon-left:-169px; --task-icon-top:-31px; --task-icon-inner-width:100.3%; --task-icon-inner-left:-.15%; }
+.wb1-task-card[data-wb1-summary=appointment] { --task-icon-width:335px; --task-icon-height:112px; --task-icon-left:-218.66px; --task-icon-top:-29px; --task-icon-inner-width:100.3%; --task-icon-inner-left:-.15%; }
+.wb1-task-card[data-wb1-summary=processing] { --task-icon-width:335px; --task-icon-height:112px; --task-icon-left:-273.33px; --task-icon-top:-29px; --task-icon-inner-width:100.3%; --task-icon-inner-left:-.15%; }

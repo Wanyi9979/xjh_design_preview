@@ -255,7 +255,7 @@ html[data-workbench-style=figma] .wb-list-filters input::placeholder{color:var(-
 
 .wb1-reason-modal [data-reason-context] + label { margin-top:16px; }
 
-.wb-execution-checklist-heading { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+.wb-execution-checklist-heading { display:flex; align-items:center; justify-content:flex-start; gap:12px; }
 .wb-execution-checklist-heading button { border:0; background:transparent; padding:2px 0; color:var(--brand-primary); font-size:12px; cursor:pointer; }
 .wb-execution-checklist-heading button:disabled { color:var(--text-muted); cursor:default; }
 
