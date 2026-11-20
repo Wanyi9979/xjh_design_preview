@@ -393,3 +393,9 @@ html[data-workbench-style=figma] .wb-list-filters input::placeholder{color:var(-
 .wb-task-operation.is-item-execution>form>footer>button{flex:none;}
 .is-item-execution .wb-item-search-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;min-height:180px;padding:16px 12px;}
 .wb-item-search-empty img{display:block;max-width:100%;object-fit:contain;}
+
+.wb-task-operation .wb-item-list-head>.wb-item-check-all{display:flex;flex-direction:row;align-items:center;gap:8px;margin:0;font-size:12px;cursor:pointer;}
+.wb-task-operation .wb-item-check-all input{flex:none;width:15px;height:15px;min-height:15px;padding:0;margin:0;accent-color:var(--brand-primary);}
+.wb-task-operation.is-item-execution .wb-item-row>select.is-placeholder{color:var(--text-muted);}
+.wb-task-operation.is-item-execution .wb-item-row>select option{color:var(--text-primary);}
+.wb-task-operation.is-item-execution .wb-item-row>select option[value=""]{color:var(--text-muted);}

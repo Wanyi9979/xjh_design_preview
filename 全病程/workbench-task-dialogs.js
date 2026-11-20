@@ -82,7 +82,7 @@
     const labels={done:'完成',execute:'后续执行',followup:'持续跟进',none:'无需处理'};
     const previous=store.itemExecutionResults(visit),locked=new Set(items.filter(name=>previous[name]?.type==='done'));
     let plans=JSON.parse(JSON.stringify(previous)),selected=new Set(),confirmed=null;
-    const optionMarkup=type=>'<option value="">设置处理</option>'+Object.entries(labels).map(([value,label])=>`<option value="${value}"${value===type?' selected':''}>${label}</option>`).join('');
+    const optionMarkup=type=>'<option value="">请选择</option>'+Object.entries(labels).map(([value,label])=>`<option value="${value}"${value===type?' selected':''}>${label}</option>`).join('');
     const fieldMarkup=(plan,prefix,batch=false)=>{
       const attr=key=>`data-plan-field="${key}" name="${prefix}-${key}"`;
       if(plan.type==='done')return `<label>完成日期 <em>*</em><input ${attr('actualDate')} type="date" max="${today}" value="${escape(plan.actualDate||today)}"${batch?'':' required'}></label><label data-done-reason${plan.actualDate&&(visit.noWindow||plan.actualDate>=visit.windowStart&&plan.actualDate<=visit.windowEnd)?' hidden':''}>超窗原因<textarea ${attr('reason')} maxlength="200" placeholder="完成日期超出访视窗口时必填">${escape(plan.reason||'')}</textarea></label>`;
@@ -93,9 +93,9 @@
     };
     const detailsText=plan=>plan.type==='done'?`完成日期：${plan.actualDate||'未记录'}${plan.reason?'；超窗原因：'+plan.reason:''}`:plan.type==='execute'?`下次执行：${String(plan.nextPlannedAt||'').replace('T',' ')}；原因：${plan.reason||''}`:plan.type==='followup'?`跟进时间：${String(plan.followupAt||'').replace('T',' ')}；内容：${plan.content||''}`:plan.reason||'';
     open('访视执行',`<p class="wb-task-subject">${escape(visit.participant||visit.person?.name||'')} · ${escape(visit.participantId)} · ${escape(visit.name)}</p>${projectMarkup({...visit,projectId,trial:projectName})}
-      <section data-item-editor><div class="wb-execution-label wb-execution-checklist-heading"><span>访视项处理</span><button type="button" data-item-select-all>全选</button><small data-item-selected-count>已选 0 项</small><input class="wb-item-search" data-item-search type="search" aria-label="按访视项名称搜索" placeholder="搜索访视项名称"></div>
+      <section data-item-editor><div class="wb-execution-label wb-execution-checklist-heading"><span>访视项处理</span><small data-item-selected-count>已选 0 项</small><input class="wb-item-search" data-item-search type="search" aria-label="按访视项名称搜索" placeholder="搜索访视项名称"></div>
       <div class="wb-item-batch" hidden><div class="wb-item-batch-actions"><strong>批量处理</strong>${Object.entries(labels).map(([type,label])=>`<button type="button" data-item-batch-action="${type}">${label}</button>`).join('')}</div></div>
-      <div class="wb-item-list-head"><span>访视项</span><span>处理结果</span><span>操作</span></div><div class="wb-item-rows" data-item-rows></div><p class="wb-execution-progress" data-item-progress role="status"></p></section>
+      <div class="wb-item-list-head"><label class="wb-item-check-all"><input type="checkbox" data-item-select-all aria-label="全选当前访视项"><span>访视项</span></label><span>处理结果</span><span>操作</span></div><div class="wb-item-rows" data-item-rows></div><p class="wb-execution-progress" data-item-progress role="status"></p></section>
 `,()=>{
         confirmed=store.validateItemExecutionResults(visit,plans,today);
         const latest=store.apply(visit);
@@ -126,7 +126,8 @@
       form.querySelector('[data-item-selected-count]').textContent=`已选 ${selected.size} 项`;
       form.querySelector('.wb-item-batch').hidden=!selected.size;
       const selectable=selectableIndexes(),total=selectable.length;
-      form.querySelector('[data-item-select-all]').textContent=total&&selectable.every(index=>selected.has(index))?'取消全选':'全选';
+      const all=form.querySelector('[data-item-select-all]'),count=selectable.filter(index=>selected.has(index)).length;
+      all.checked=Boolean(total)&&count===total;all.indeterminate=count>0&&count<total;
       form.querySelector('[data-item-select-all]').disabled=!total;
     }
     function updateProgress(){
@@ -137,7 +138,7 @@
       rows.innerHTML=matchingIndexes().map(index=>{
         const name=items[index];
         const plan=plans[name]||{},isLocked=locked.has(name);
-        return `<section class="wb-item-row" data-item-row="${index}"><label class="wb-item-pick"><input type="checkbox" aria-label="选择${escape(name)}" data-item-pick="${index}"${selected.has(index)?' checked':''}${isLocked?' disabled':''}><strong>${escape(name)}</strong></label><div class="wb-item-result"><span class="wb-item-state ${plan.type||'unset'}">${labels[plan.type]||'待处理'}</span>${plan.type?`<p title="${escape(detailsText(plan))}">${escape(detailsText(plan))}</p>`:''}</div>${isLocked?'<span class="wb-item-locked">已完成</span>':`<select data-item-type aria-label="${escape(name)}处理方式">${optionMarkup(plan.type||'')}</select>`}</section>`;
+        return `<section class="wb-item-row" data-item-row="${index}"><label class="wb-item-pick"><input type="checkbox" aria-label="选择${escape(name)}" data-item-pick="${index}"${selected.has(index)?' checked':''}${isLocked?' disabled':''}><strong>${escape(name)}</strong></label><div class="wb-item-result"><span class="wb-item-state ${plan.type||'unset'}">${labels[plan.type]||'待处理'}</span>${plan.type?`<p title="${escape(detailsText(plan))}">${escape(detailsText(plan))}</p>`:''}</div>${isLocked?'<span class="wb-item-locked">已完成</span>':`<select class="${plan.type?'':'is-placeholder'}" data-item-type aria-label="${escape(name)}处理方式">${optionMarkup(plan.type||'')}</select>`}</section>`;
       }).join('')||'<div class="wb-item-search-empty"><img src="shared-assets/empty-list.png" width="174" height="133" alt=""><span>暂无匹配的访视项</span></div>';
       syncSelection();updateProgress();
     }
