@@ -18,7 +18,7 @@
     </div>
     <select name="visitCycle" aria-label="当前访视周期"><option value="">当前访视周期</option></select>
     <select name="participantStatus" aria-label="参与者状态"><option value="">参与者状态</option></select>
-    <select name="executionState" aria-label="执行状态"><option value="">执行状态</option><option value="executed">已执行</option><option value="unexecuted">未执行</option></select>
+    <select name="executionState" aria-label="处理状态"><option value="">处理状态</option><option value="executed">已处理</option><option value="unexecuted">未处理</option></select>
     <button type="button" data-list-reset>重置</button>`;
   const fields = form.elements;
   const reset = form.querySelector('[data-list-reset]');

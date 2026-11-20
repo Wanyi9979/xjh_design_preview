@@ -284,3 +284,112 @@ html[data-workbench-style=figma] .wb-list-filters input::placeholder{color:var(-
 .wb-appointment-reference th { position:sticky; top:0; background:var(--surface-content); color:var(--text-secondary); font-weight:400; }
 .wb-appointment-reference th,.wb-appointment-reference td { padding:9px 10px; border-bottom:1px solid var(--border-default); vertical-align:top; }
 .wb-appointment-reference td small { display:block; margin-top:3px; color:var(--text-muted); font-size:11px; }
+
+/* Per-item visit handling and batch editing. */
+.wb-task-operation.is-item-execution { width:min(860px,calc(100vw - 32px)); }
+.wb-item-batch { margin:12px 0; padding:12px; border:1px solid var(--border-default); border-radius:6px; background:var(--surface-table-head); }
+.wb-item-batch-actions { display:flex; align-items:center; flex-wrap:wrap; gap:10px; }
+.wb-item-batch-actions strong { font-size:12px; font-weight:500; color:var(--text-secondary); }
+.wb-task-operation .wb-item-batch select,.wb-task-operation .wb-item-row select { min-height:34px; padding:0 28px 0 10px; border:1px solid var(--border-default); border-radius:4px; background:var(--surface-content); color:var(--text-primary); font:inherit; font-size:12px; }
+.wb-item-batch-actions button { height:34px; padding:0 12px; border:1px solid var(--brand-primary); border-radius:4px; background:var(--brand-primary); color:white; font:inherit; font-size:12px; cursor:pointer; }
+.wb-item-batch-actions button:disabled { border-color:var(--border-default); background:var(--surface-disabled); color:var(--text-muted); cursor:default; }
+.wb-item-rows { display:flex; flex-direction:column; gap:12px; }
+.wb-item-row { padding:12px; border:1px solid var(--border-default); border-radius:6px; }
+.wb-item-row.is-locked { background:var(--surface-page); }
+.wb-item-row-main { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+.wb-task-operation label.wb-item-pick { display:inline-flex; flex-direction:row; align-items:center; gap:8px; margin:0; color:var(--text-primary); }
+.wb-task-operation .wb-item-pick input[type=checkbox] { flex:none; width:15px; height:15px; min-height:15px; margin:0; padding:0; accent-color:var(--brand-primary); }
+.wb-item-pick strong { font-size:13px; font-weight:500; }
+.wb-item-plan-fields { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:0 16px; }
+.wb-item-plan-fields:empty { display:none; }
+.wb-task-operation .wb-item-plan-fields label { min-width:0; font-size:12px; margin:12px 0 0; }
+.wb-task-operation .wb-item-plan-fields label[hidden] { display:none!important; }
+.wb-item-plan-fields .is-full { grid-column:1/-1; }
+.wb-task-operation .wb-item-plan-fields textarea { height:64px; min-height:34px; }
+.wb-item-existing { margin:8px 0 0 23px; font-size:12px; line-height:1.6; color:var(--text-secondary); }
+.wb-item-done { color:var(--status-success); font-size:12px; }
+[data-item-selected-count] { font-size:12px; color:var(--text-muted); }
+.wb-item-confirm-counts { display:flex; flex-wrap:wrap; gap:10px 20px; padding:12px; background:var(--surface-table-head); border-radius:6px; font-size:12px; color:var(--text-secondary); }
+.wb-item-confirm-counts strong { color:var(--brand-primary); }
+.wb-item-confirm-row { padding:14px 0; border-bottom:1px solid var(--border-default); }
+.wb-item-confirm-row>div { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+.wb-item-confirm-row strong { font-size:13px; font-weight:500; }
+.wb-item-confirm-row span { color:var(--text-secondary); font-size:12px; }
+.wb-item-confirm-row p { margin:8px 0 0; color:var(--text-secondary); font-size:12px; line-height:1.7; overflow-wrap:anywhere; }
+@media(max-width:600px){.wb-item-plan-fields { grid-template-columns:1fr; }.wb-item-row-main { align-items:flex-start; flex-wrap:wrap; }.wb-item-row-main select { flex:1; min-width:140px; }}
+
+.wb-task-operation .wb-item-row-main>select { flex:0 0 180px; width:180px; max-width:100%; }
+.wb-task-operation label.wb-item-pick { flex:1; min-width:0; }
+.wb-item-pick strong { white-space:nowrap; }
+.wb-task-operation .wb-item-batch-actions>strong { flex:none; width:auto; }
+.wb-task-operation .wb-item-batch-actions>select { flex:0 1 200px; width:200px; }
+.wb-task-operation .wb-item-batch-actions>button { flex:none; width:auto; }
+@media(max-width:600px){.wb-task-operation .wb-item-row-main>select { flex:1; min-width:140px; }}
+
+/* Keep item handling in one compact list, with batch controls on selection. */
+.wb-task-operation.is-item-execution { width:min(760px,calc(100vw - 32px)); }
+.is-item-execution .wb-execution-project { margin-bottom:16px; }
+.is-item-execution .wb-item-rows { gap:0; border-top:1px solid var(--border-default); }
+.is-item-execution .wb-item-row { padding:12px 0; border:0; border-bottom:1px solid var(--border-default); border-radius:0; }
+.is-item-execution .wb-item-row.is-locked { background:transparent; }
+.is-item-execution .wb-item-row-main { min-height:34px; }
+.is-item-execution .wb-item-plan-fields { margin-left:23px; }
+.is-item-execution .wb-item-plan-fields textarea { height:36px; min-height:36px; }
+.is-item-execution .wb-item-batch { margin:8px 0 12px; }
+.is-item-execution .wb-item-batch[hidden] { display:none; }
+.is-item-execution .wb-item-batch .wb-item-plan-fields { margin-left:0; }
+.is-item-execution .wb-item-existing { margin-top:2px; }
+.is-item-execution .wb-execution-progress { margin-bottom:0; background:transparent; padding:10px 0 0; font-size:12px; }
+
+.wb-task-operation .wb-item-batch-actions>[data-item-batch-action] { background:var(--surface-content); color:var(--brand-primary); border-color:var(--border-default); }
+.wb-task-operation .wb-item-batch-actions>[data-item-batch-action]:hover { border-color:var(--brand-primary); background:var(--surface-page); }
+.wb-task-operation.wb-item-batch-dialog { width:min(500px,calc(100vw - 32px)); }
+.wb-item-batch-dialog .wb-item-plan-fields { grid-template-columns:1fr; }
+.wb-item-batch-dialog .wb-task-help { margin:0; }
+
+/* Visit execution: stable rows, short result summaries and one editor for every action. */
+.wb-task-operation.is-item-execution { width:min(780px,calc(100vw - 32px)); }
+.is-item-execution .wb-task-operation-body { padding:20px 24px; }
+.is-item-execution .wb-execution-checklist-heading { margin:20px 0 12px; }
+.is-item-execution .wb-item-list-head,.is-item-execution .wb-item-row { display:grid; grid-template-columns:minmax(130px,1fr) minmax(180px,1.8fr) 128px; align-items:center; gap:16px; }
+.is-item-execution .wb-item-list-head { padding:10px 24px 10px 12px; color:var(--text-secondary); background:var(--surface-table-head); font-size:12px; }
+.is-item-execution .wb-item-rows { border-top:0; }
+.is-item-execution .wb-item-row { min-height:64px; padding:12px 24px 12px 12px; }
+.is-item-execution .wb-item-row:hover { background:#f5f9ff; }
+.is-item-execution .wb-item-result { display:flex; align-items:center; gap:8px; min-width:0; }
+.is-item-execution .wb-item-result p { flex:1; min-width:0; margin:0; font-size:12px; line-height:1.5; color:var(--text-secondary); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.is-item-execution .wb-item-state { flex:none; display:inline-block; padding:2px 7px; border-radius:4px; font-size:12px; line-height:18px; background:var(--surface-page); color:var(--text-secondary); }
+.is-item-execution .wb-item-state.done { color:#008f59; background:#e7f7ef; }
+.is-item-execution .wb-item-state.execute { color:#2463d4; background:#edf3ff; }
+.is-item-execution .wb-item-state.followup { color:#b77613; background:#fff6e5; }
+.is-item-execution .wb-item-locked { color:var(--text-muted); font-size:12px; }
+.wb-task-operation.is-item-execution .wb-item-row>select { width:128px; min-height:32px; font-size:12px; margin:0; appearance:none; -webkit-appearance:none; padding:0 34px 0 12px; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='m3 4.5 3 3 3-3' fill='none' stroke='%23818d9f' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 12px center; background-size:12px 12px; }
+.is-item-execution .wb-item-batch { border:0; background:transparent; padding:0; margin:0 0 12px; }
+.wb-task-operation.is-item-execution .wb-item-batch-actions { gap:8px; }
+.wb-task-operation.is-item-execution .wb-item-batch-actions>strong { margin-right:4px; }
+.wb-task-operation .wb-item-batch-actions>[data-item-batch-action] { height:30px; padding:0 12px; }
+.is-item-execution .wb-execution-progress { font-size:12px; line-height:1.7; margin-top:4px; }
+.wb-item-batch-dialog .wb-task-operation-body { padding:16px 24px 24px; }
+.wb-item-batch-dialog .wb-item-plan-fields label { margin-top:16px; }
+@media(max-width:600px){
+ .is-item-execution .wb-item-list-head,.is-item-execution .wb-item-row { grid-template-columns:minmax(100px,1fr) minmax(100px,1.3fr) 106px; gap:8px; }
+ .wb-task-operation.is-item-execution .wb-item-row>select { width:106px; }
+ .is-item-execution .wb-task-operation-body { padding:16px; }
+}
+
+
+.wb-task-operation.is-item-execution .wb-item-search{flex:0 1 200px;min-width:140px;width:200px;height:32px;min-height:32px;margin:0 0 0 auto;padding:0 10px;border:1px solid var(--border-default);border-radius:4px;background:var(--surface-content);font:inherit;font-size:12px;}
+.wb-item-search-empty{padding:28px 12px;margin:0;text-align:center;color:var(--text-muted);font-size:12px;}
+.is-item-execution .wb-execution-checklist-heading{flex-wrap:wrap;}
+
+/* Keep the visit execution frame stable while item content changes. */
+.wb-task-operation.is-item-execution{box-sizing:border-box;height:min(640px,calc(100dvh - 40px));overflow:hidden;}
+.wb-task-operation.is-item-execution>form{height:100%;max-height:100%;min-height:0;}
+.wb-task-operation.is-item-execution>form>header,.wb-task-operation.is-item-execution>form>footer{flex:none;}
+.wb-task-operation.is-item-execution .wb-task-operation-body{flex:1;min-height:0;overflow:auto;scrollbar-gutter:stable;}
+
+.wb-task-operation.is-item-execution>form>footer{align-items:center;}
+.wb-task-operation.is-item-execution>form>footer>.wb-execution-progress{flex:1;min-width:0;margin:0 auto 0 0;padding:0;border:0;background:transparent;font-size:12px;line-height:1.7;}
+.wb-task-operation.is-item-execution>form>footer>button{flex:none;}
+.is-item-execution .wb-item-search-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;min-height:180px;padding:16px 12px;}
+.wb-item-search-empty img{display:block;max-width:100%;object-fit:contain;}

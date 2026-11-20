@@ -2,7 +2,7 @@
 .visit-progress { display: inline-flex; align-items: center; white-space: nowrap; padding: 1px 7px; border-radius: 3px; background: var(--surface-page); color: var(--text-secondary); font-size: 12px; line-height: 20px; font-weight: 400; }
 .visit-progress.activated { color: var(--status-pending); background: var(--status-pending-soft); }
 .visit-progress.completed { color: var(--status-success); background: var(--status-success-soft); }
-.visit-progress.terminated { color: var(--status-inactive); background: var(--status-inactive-soft); }
+.visit-progress.inactive, .visit-progress.terminated { color: var(--status-inactive); background: var(--status-inactive-soft); }
 .visit-progress.partial, .visit-progress.partial:hover, .visit-progress.partial:focus { color: var(--status-warning)!important; background: var(--status-warning-soft); }
 
 .visit-completion-trigger { border:0; font:inherit; cursor:pointer; }

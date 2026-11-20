@@ -90,12 +90,12 @@
   const issueCancel = document.querySelector('[data-wb1-issue-cancel]');
   const issueSave = document.querySelector('[data-wb1-issue-save]');
   const issueConfirm = document.querySelector('[data-wb1-issue-confirm]');
-  const issueResultsButton=document.createElement('button');issueResultsButton.type='button';issueResultsButton.dataset.issueResults='';issueResultsButton.textContent='查看执行结果';issueResultsButton.hidden=true;issueConfirm.before(issueResultsButton);
+  const issueResultsButton=document.createElement('button');issueResultsButton.type='button';issueResultsButton.dataset.issueResults='';issueResultsButton.textContent='查看处理结果';issueResultsButton.hidden=true;issueConfirm.before(issueResultsButton);
   const issueResults=document.createElement('div');issueResults.className='wb1-issue-body';issueResults.hidden=true;issueBody.after(issueResults);
   issueResultsButton.addEventListener('click',()=>{
     const show=issueResults.hidden;
     if(show){const rows=P.issuedExecutions(activeTask);const reason=window.researchDemo.packageSettings?.[P.packageKey(activeTask)]?.reason||reasonRecords[activeTask[0]]||'';issueResults.innerHTML=window.clinicalTaskResultsMarkup(rows,reason);}
-    issueBody.hidden=show;issueResults.hidden=!show;issueResultsButton.textContent=show?'返回任务':'查看执行结果';
+    issueBody.hidden=show;issueResults.hidden=!show;issueResultsButton.textContent=show?'返回任务':'查看处理结果';
   });
   const issueToast = document.querySelector('[data-wb1-toast]');
   const reasonMask = document.querySelector('[data-wb1-reason-modal]');
@@ -156,9 +156,9 @@
 
   const visitCompletion=document.createElement('div');visitCompletion.className='visit-completion-popover';visitCompletion.id='wb-visit-completion';visitCompletion.setAttribute('popover','auto');visitCompletion.setAttribute('role','dialog');visitCompletion.setAttribute('aria-label','访视项完成情况');document.body.append(visitCompletion);
   let completionTimer,completionOpener;
-  function visitStatusMarkup(visit,source,index){const state=window.clinicalVisitStore.status(visit);return state==='partial'?`<button type="button" class="visit-progress partial visit-completion-trigger" data-wb-visit-completion="${source}" data-completion-index="${index}" aria-controls="wb-visit-completion" aria-expanded="false">部分完成</button>`:`<span class="visit-progress ${state}">${escapeMarkup(window.clinicalVisitStore.statusLabels[state])}</span>`;}
+  function visitStatusMarkup(visit,source,index){const state=window.clinicalVisitStore.status(visit);return state==='partial'?`<button type="button" class="visit-progress partial visit-completion-trigger" data-wb-visit-completion="${source}" data-completion-index="${index}" aria-controls="wb-visit-completion" aria-expanded="false">进行中</button>`:`<span class="visit-progress ${state}">${escapeMarkup(window.clinicalVisitStore.statusLabels[state])}</span>`;}
   function closeVisitCompletion(){clearTimeout(completionTimer);if(visitCompletion.matches(':popover-open'))visitCompletion.hidePopover();completionOpener?.setAttribute('aria-expanded','false');completionOpener=null;}
-  function showVisitCompletion(trigger){clearTimeout(completionTimer);const visit=todayVisits[Number(trigger.dataset.completionIndex)];if(!visit)return;const record=window.clinicalVisitStore.apply(visit),items=window.clinicalVisitStore.executionItems(record),completed=new Set(record.completedItems||[]);completionOpener?.setAttribute('aria-expanded','false');completionOpener=trigger;trigger.setAttribute('aria-expanded','true');visitCompletion.innerHTML=`<h3>访视项完成情况 <small>${items.filter(name=>completed.has(name)).length}/${items.length}</small></h3><ul>${items.map(name=>`<li><span>${escapeMarkup(name)}</span><span class="${completed.has(name)?'is-done':'is-pending'}">${completed.has(name)?'已完成':'未完成'}</span></li>`).join('')}</ul>`;visitCompletion.showPopover();const rect=trigger.getBoundingClientRect();visitCompletion.style.left=Math.max(12,Math.min(rect.left,innerWidth-visitCompletion.offsetWidth-12))+'px';visitCompletion.style.top=(rect.bottom+visitCompletion.offsetHeight+8<innerHeight?rect.bottom+8:Math.max(12,rect.top-visitCompletion.offsetHeight-8))+'px';}
+  function showVisitCompletion(trigger){clearTimeout(completionTimer);const visit=todayVisits[Number(trigger.dataset.completionIndex)];if(!visit)return;const record=window.clinicalVisitStore.apply(visit),items=window.clinicalVisitStore.executionItems(record),completed=new Set(record.completedItems||[]);completionOpener?.setAttribute('aria-expanded','false');completionOpener=trigger;trigger.setAttribute('aria-expanded','true');visitCompletion.innerHTML=`<h3>访视项完成情况 <small>${items.filter(name=>completed.has(name)).length}/${items.length}</small></h3><ul>${items.map(name=>`<li><span>${escapeMarkup(name)}</span><span class="${completed.has(name)?'is-done':'is-pending'}">${completed.has(name)?'已完成':'未完成'}${!completed.has(name)&&record.itemResults?.[name]?` · ${({execute:'后续执行',followup:'持续跟进',none:'无需处理'})[record.itemResults[name].type]||''}`:''}</span></li>`).join('')}</ul>`;visitCompletion.showPopover();const rect=trigger.getBoundingClientRect();visitCompletion.style.left=Math.max(12,Math.min(rect.left,innerWidth-visitCompletion.offsetWidth-12))+'px';visitCompletion.style.top=(rect.bottom+visitCompletion.offsetHeight+8<innerHeight?rect.bottom+8:Math.max(12,rect.top-visitCompletion.offsetHeight-8))+'px';}
   document.addEventListener('click',event=>{const trigger=event.target.closest('[data-wb-visit-completion]');if(trigger)showVisitCompletion(trigger);});
   document.addEventListener('mouseover',event=>{const trigger=event.target.closest('[data-wb-visit-completion]');if(trigger)showVisitCompletion(trigger);});
   document.addEventListener('mouseout',event=>{if(event.target.closest('[data-wb-visit-completion]')&&!visitCompletion.contains(event.relatedTarget))completionTimer=setTimeout(closeVisitCompletion,180);});
@@ -202,7 +202,7 @@
         : [['view-task', '查看任务'], ...(activeSet === 'sent' && P.canAdjustIssued(task) ? [['adjust', '调整日期']] : []), ['contact', '联系参与者']];
     }
     else if(kind==='appointment') entries=[...(task.appointmentDate?[['execute','访视执行'],['book','调整预约']]:[['book','访视预约']]),['terminate','访视终止'],['contact','联系参与者']];
-    else if (kind === 'execution') entries = task.scope === 'none' ? [['view', '查看任务'], ['contact', '联系参与者']] : task.scope === 'completed' ? [['view', '查看任务'], ['result', '查看执行结果'], ['contact', '联系参与者']] : [...(task.canCaseExecute ? [['execute', '去处理']] : []), ['no-process', '无需处理'], ['adjust', '调整日期'], ['contact', '联系参与者']];
+    else if (kind === 'execution') entries = task.scope === 'none' ? [['view', '查看任务'], ['contact', '联系参与者']] : task.scope === 'completed' ? [['view', '查看任务'], ['result', '查看处理结果'], ['contact', '联系参与者']] : [...(task.canCaseExecute ? [['execute', '去处理']] : []), ['no-process', '无需处理'], ['adjust', '调整日期'], ['contact', '联系参与者']];
     else if (kind === 'followup') entries = task.scope === 'pending' ? [['complete', '标记已完成'], ['no-process', '无需处理'], ['contact', '联系参与者']] : [['view-record', '操作记录']];
     else entries = [['process', '去处理'], ['no-process', '无需处理'], ['contact', '联系参与者']];
     return [...entries.map(([action, label]) => button(action, label)), ...(['followup','execution','issue'].includes(kind) ? [] : [`<button type="button" data-wb1-add-followup="${kind}" data-task-index="${index}">添加跟进</button>`])];
@@ -332,7 +332,7 @@
     }
     const missedVisits=visits.filter(visit=>inScope(visit)&&store.overdueUnhandled(visit,P.today));
     missedVisitNotice.hidden=todayCategory!=='visits'||!missedVisits.length;
-    missedVisitNotice.innerHTML=missedVisits.length?`<span>有 <strong>${missedVisits.length}</strong> 次今日之前的访视尚未执行或调整，请及时处理。</span><a href="${escapeMarkup(calendarURL({appointmentOverdue:'1',referenceDate:P.today,from:'workbench'}))}">查看待处理访视 ›</a>`:'';
+    missedVisitNotice.innerHTML=missedVisits.length?`<span>有 <strong>${missedVisits.length}</strong> 次今日之前的访视尚未执行或调整，请及时处理。</span><a href="${escapeMarkup(calendarURL({missedAppointments:'1',referenceDate:P.today,from:'workbench'}))}">查看待处理访视 ›</a>`:'';
     const todayTasks = tasksByCategory[todayCategory];
     if (todayCategory === 'execution') todayTasks.sort(byExecutionDeadline);
     renderTaskColumns(todayTable, todayCategory === 'visits' ? [['参与试验',22],['访视',18],['访视状态',10],['计划日期 / 访视窗口',24],['预约日期',14]] : taskFields(todayCategory));
@@ -412,7 +412,7 @@
     if (activeMode === 'execution') {
       const scopedTasks = executionTasks.filter(row => matchesScope(row) && dateMatches(row));
       const count = scope => scopedTasks.filter(row => matchesExecutionScope(row, scope)).length;
-      tabs[0].textContent = `待执行（${count('all')}）`;
+      tabs[0].textContent = `待处理（${count('all')}）`;
       tabs[3].textContent = `已完成（${count('completed')}）`;
       tabs[4].textContent = `无需处理（${count('none')}）`;
       executionRanges.forEach(button => {
@@ -468,7 +468,7 @@
     tableBody.innerHTML = rows.length ? pageRows(rows).map(row => {
       const sent = activeSet === 'sent';
       const executed = sent && P.issuedExecuted(row);
-      const executionStatus = sent ? `<td><span class="wb1-execution-status${executed ? ' is-completed' : ''}">${executed ? '已执行' : '未执行'}</span></td>` : '';
+      const executionStatus = sent ? `<td><span class="wb1-execution-status${executed ? ' is-completed' : ''}">${executed ? '已处理' : '未处理'}</span></td>` : '';
       const date = sent ? scheduleDrafts[P.packageKey(row)]?.date || row[9] : row[9];
       return `<tr>${participantColumns(row[6], row[0], row[8], participantState(row), row.projectId)}<td class="is-strong">${escapeMarkup(row[1])}</td><td>${escapeMarkup(row[8])}</td><td>${taskVisitMarkup(row[2], row[8], row[0], row.protocolVersion, row.visitId)}</td><td>${plannedDateLabel(row, date)}</td>${participantStatusColumn(participantState(row))}${executionStatus}<td><div class="wb1-table-actions">${taskActions('issue', taskSets[activeSet].indexOf(row))}</div></td></tr>`;
     }).join('') : `<tr><td class="wb1-empty" colspan="${tableCols.children.length}">暂无匹配任务</td></tr>`;
@@ -480,14 +480,14 @@
     if (kind === 'appointment') return `<tr>${participantColumns(row.participant, row.participantId, row.trial, state, row.projectId)}<td>${escapeMarkup(row.trial)}</td><td>${escapeMarkup(row.name)}</td><td>${dateWindowMarkup(row.plannedDate,row.windowStart+' ～ '+row.windowEnd)}</td><td>${escapeMarkup(row.appointmentDate||'未预约')}</td><td><div class="wb1-table-actions">${actions}</div></td></tr>`;
     if (kind === 'followup') return `<tr>${participantColumns(row.participant, row.participantId, row.trial, state, row.projectId)}<td>${escapeMarkup(row.trial)}</td><td>${escapeMarkup(row.date)}</td><td>${escapeMarkup(row.content)}</td><td><span class="wb1-execution-status">${{ pending: '待完成', completed: '已完成', none: '无需处理' }[row.scope]}</span></td><td><div class="wb1-table-actions">${actions}</div></td></tr>`;
     const statusClass = executionStatusClass(row);
-    return `<tr>${participantColumns(row.participant, row.participantId, row.trial, state, row.projectId)}<td class="is-strong">${row.task}</td><td>${row.trial}</td><td>${escapeMarkup(row.visit)}</td><td><div class="wb1-execution-node"><strong>${row.relativeDay}</strong><span>${row.sequence}</span></div></td><td>${dateWindowMarkup(row.plannedAt, row.window)}</td><td><span class="wb1-execution-status${statusClass}">${row.status}</span></td><td><div class="wb1-table-actions">${actions}</div></td></tr>`;
+    return `<tr>${participantColumns(row.participant, row.participantId, row.trial, state, row.projectId)}<td class="is-strong">${row.task}</td><td>${row.trial}</td><td>${escapeMarkup(row.visit)}</td><td><div class="wb1-execution-node"><strong>${row.relativeDay}</strong><span>${row.sequence}</span></div></td><td>${dateWindowMarkup(row.plannedAt, row.window)}</td><td><span class="wb1-execution-status${statusClass}">${row.status==='待执行'?'待处理':row.status}</span></td><td><div class="wb1-table-actions">${actions}</div></td></tr>`;
   }
 
   function taskFields(mode) {
     if (mode === 'appointment') return [['参与试验',20],['访视',16],['计划日期/访视窗口',22],['预约日期',12]];
     if (mode === 'followup') return [['参与试验',20],['计划跟进日期',14],['跟进内容',28],['状态',10]];
     return [
-      ['任务名称', 10], ['参与试验', 9], ['访视', 7], ['执行节点', 6],
+      ['任务名称', 10], ['参与试验', 9], ['访视', 7], ['处理节点', 6],
       ['计划时间/执行窗口', 20], ['状态', 8]
     ];
   }
@@ -507,7 +507,7 @@
     setTaskColumns([
       ['任务名称', sent ? 12 : 15], ['参与试验', sent ? 11 : 13], ['访视', sent ? 9 : 11],
       ['计划日期/访视窗口', sent ? 14 : 15], ['参与者状态', 11],
-      ...(sent ? [['执行状态', 8]] : [])
+      ...(sent ? [['处理状态', 8]] : [])
     ]);
   }
 
@@ -557,16 +557,16 @@
   }
 
   function executionDetailMarkup(task) {
-    return `<section class="wb1-execution-card"><h3>执行任务信息</h3><dl class="wb1-execution-detail"><div><dt>任务名称</dt><dd><button class="wb1-task-name-link" type="button" data-wb1-template-link>${task.task}</button></dd></div><div><dt>访视</dt><dd>${task.visitFull}</dd></div><div><dt>执行节点</dt><dd>${task.relativeDay}（${task.sequence}）</dd></div><div><dt>计划时间</dt><dd>${task.plannedAt}</dd></div><div class="is-wide"><dt>执行窗口</dt><dd>${task.window}</dd></div><div><dt>当前状态</dt><dd><span class="wb1-execution-status${executionStatusClass(task)}">${task.status}</span></dd></div><div><dt>采集方式</dt><dd>${task.method}${task.formName ? ` · ${task.formName}` : ''}</dd></div><div><dt>填写方式</dt><dd>${task.fillMode}</dd></div><div><dt>任务包进度</dt><dd>${task.progress}</dd></div><div><dt>基准日期</dt><dd>${task.baselineDate}</dd></div><div class="is-wide"><dt>所属任务包</dt><dd>${task.packageId}</dd></div></dl></section>`;
+    return `<section class="wb1-execution-card"><h3>执行任务信息</h3><dl class="wb1-execution-detail"><div><dt>任务名称</dt><dd><button class="wb1-task-name-link" type="button" data-wb1-template-link>${task.task}</button></dd></div><div><dt>访视</dt><dd>${task.visitFull}</dd></div><div><dt>处理节点</dt><dd>${task.relativeDay}（${task.sequence}）</dd></div><div><dt>计划时间</dt><dd>${task.plannedAt}</dd></div><div class="is-wide"><dt>执行窗口</dt><dd>${task.window}</dd></div><div><dt>当前状态</dt><dd><span class="wb1-execution-status${executionStatusClass(task)}">${task.status==='待执行'?'待处理':task.status}</span></dd></div><div><dt>采集方式</dt><dd>${task.method}${task.formName ? ` · ${task.formName}` : ''}</dd></div><div><dt>填写方式</dt><dd>${task.fillMode}</dd></div><div><dt>任务包进度</dt><dd>${task.progress}</dd></div><div><dt>基准日期</dt><dd>${task.baselineDate}</dd></div><div class="is-wide"><dt>所属任务包</dt><dd>${task.packageId}</dd></div></dl></section>`;
   }
 
   function openExecutionModal(task, mode) {
     currentExecutionTask = task;
     executionModalMode = mode;
-    executionTitle.textContent = mode === 'execute' ? (task.executionType === 'upload' ? '上传文件' : `填写${task.formName || '任务表单'}`) : mode === 'result' ? '查看执行结果' : '查看任务';
+    executionTitle.textContent = mode === 'execute' ? (task.executionType === 'upload' ? '上传文件' : `填写${task.formName || '任务表单'}`) : mode === 'result' ? '查看处理结果' : '查看任务';
     executionSubject.textContent = `${task.participant} ${task.participantId} · ${task.relativeDay}（${task.sequence}）`;
     executionPackage.hidden = mode !== 'view';
-    executionPackage.textContent = '查看执行结果';
+    executionPackage.textContent = '查看处理结果';
     executionSubmit.hidden = mode !== 'execute';
     executionCancel.textContent = mode === 'execute' ? '取消' : '关闭';
     if (mode === 'execute') {
@@ -667,7 +667,7 @@
     issueReadOnly = readOnly;
     adjustingIssued = adjust;
     const config = issueConfig(row);
-    issueResults.hidden=true;issueBody.hidden=false;issueResultsButton.hidden=!readOnly;issueResultsButton.textContent='查看执行结果';
+    issueResults.hidden=true;issueBody.hidden=false;issueResultsButton.hidden=!readOnly;issueResultsButton.textContent='查看处理结果';
     const saved = scheduleDrafts[P.packageKey(row)];
     const issued = taskSets.sent.includes(row) ? P.issuedExecutions(row) : [];
     const executions = adjust ? issued.filter(task => !P.closed(task)) : issued;

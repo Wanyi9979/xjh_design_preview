@@ -27,7 +27,7 @@
   const panel = document.getElementById('visit-view');
   panel.innerHTML = `
     <div class="visit-filter-context" data-visit-context role="status"></div>
-    <div class="table-wrap" data-visit-list><table class="visit-table"><colgroup><col style="width:150px"><col style="width:180px"><col style="width:160px"><col style="width:105px"><col style="width:85px"><col style="width:235px"><col style="width:115px"><col style="width:115px"><col style="width:95px"><col style="width:80px"></colgroup><thead><tr><th>参与者</th><th>参与试验</th><th>访视</th><th>访视版本</th><th>访视状态</th><th>计划日期 / 访视窗口</th><th>预约日期</th><th>实际访视日期</th><th>关联任务</th><th>操作</th></tr></thead><tbody data-visit-rows></tbody></table></div>`;
+    <div class="table-wrap" data-visit-list><table class="visit-table"><colgroup><col style="width:150px"><col style="width:180px"><col style="width:160px"><col style="width:105px"><col style="width:85px"><col style="width:235px"><col style="width:115px"><col style="width:95px"><col style="width:80px"></colgroup><thead><tr><th>参与者</th><th>参与试验</th><th>访视</th><th>访视版本</th><th>访视状态</th><th>计划日期 / 访视窗口</th><th>预约日期</th><th>关联任务</th><th>操作</th></tr></thead><tbody data-visit-rows></tbody></table></div>`;
   const progressFilter = document.getElementById('visit-progress-filter');
   const appointmentFilter = document.getElementById('visit-appointment-filter');
   const windowFilter = document.getElementById('visit-time-window-filter');
@@ -79,7 +79,7 @@
   }
   function syncURL() {
     const url = new URL(location.href);
-    const values = { view: section, display:'', calendarDate:'', project: projectFilter.value, protocol: protocolFilter.value, hospital: hospitalFilter.value, participantStatus: statusFilter.value, q: search.value.trim(), visitName:section==='visits'?visitNameFilter.value:'', progress: section === 'visits' ? progressFilter.value : '', appointment: section === 'visits' ? appointmentFilter.value : '', window: section === 'visits' ? windowFilter.value : '', calendarWindow, visitId: section === 'visits' ? visitId : '', visitProject: section === 'visits' && visitId ? visitProject : '', start: section === 'visits' ? startFilter.value : '', end: section === 'visits' ? endFilter.value : '', source: calendarOnly ? 'calendar' : '', pending: pendingOnly ? '1' : '', todayVisits:quickToday.checked?'1':'', missedAppointments:quickMissed.checked?'1':'', department, group, appointmentOverdue:appointmentOverdue?'1':'', referenceDate: calendarOnly||appointmentOverdue ? today : '' };
+    const values = { view: section, display:'', calendarDate:'', project: projectFilter.value, protocol: protocolFilter.value, hospital: hospitalFilter.value, participantStatus: statusFilter.value, q: search.value.trim(), visitName:section==='visits'?visitNameFilter.value:'', progress: section === 'visits' ? progressFilter.value : '', appointment: section === 'visits' ? appointmentFilter.value : '', window: section === 'visits' ? windowFilter.value : '', calendarWindow, visitId: section === 'visits' ? visitId : '', visitProject: section === 'visits' && visitId ? visitProject : '', start: section === 'visits' ? startFilter.value : '', end: section === 'visits' ? endFilter.value : '', source: calendarOnly ? 'calendar' : '', pending: pendingOnly ? '1' : '', todayVisits:quickToday.checked?'1':'', missedAppointments:quickMissed.checked?'1':'', department, group, appointmentOverdue:appointmentOverdue?'1':'', referenceDate: calendarOnly||appointmentOverdue||quickToday.checked||quickMissed.checked ? today : '' };
     Object.entries(values).forEach(([key, value]) => value ? url.searchParams.set(key, value) : url.searchParams.delete(key));
     history.replaceState(null, '', url);
   }
@@ -199,7 +199,7 @@
     closeCompletionPopover();
     const record = store.apply(visit), items = store.executionItems(record);
     const completed = new Set(record.completedItems || []);
-    completionPopover.innerHTML = `<h3>访视项完成情况 <small>${items.filter(name => completed.has(name)).length}/${items.length}</small></h3><ul>${items.map(name => `<li><span>${escape(name)}</span><span class="${completed.has(name)?'is-done':'is-pending'}">${completed.has(name)?'已完成':'未完成'}</span></li>`).join('')}</ul>`;
+    completionPopover.innerHTML = `<h3>访视项完成情况 <small>${items.filter(name => completed.has(name)).length}/${items.length}</small></h3><ul>${items.map(name => `<li><span>${escape(name)}</span><span class="${completed.has(name)?'is-done':'is-pending'}">${completed.has(name)?'已完成':'未完成'}${!completed.has(name)&&record.itemResults?.[name]?` · ${({execute:'后续执行',followup:'持续跟进',none:'无需处理'})[record.itemResults[name].type]||''}`:''}</span></li>`).join('')}</ul>`;
     completionTrigger = trigger;
     trigger.setAttribute('aria-expanded', 'true');
     completionPopover.showPopover();
@@ -213,14 +213,14 @@
     const selectedName=visitNameFilter.value||params.get('visitName')||'';const names=[...new Set(visits.filter(v=>(!projectFilter.value||v.projectId===projectFilter.value)&&(!protocolFilter.value||v.protocolVersion===protocolFilter.value)).map(v=>v.name))];visitNameFilter.innerHTML='<option value="">全部访视</option>'+names.map(name=>`<option value="${escape(name)}">${escape(name)}</option>`).join('');visitNameFilter.value=names.includes(selectedName)?selectedName:'';params.delete('visitName');
     closeCompletionPopover();
     closeMenu();
-    updateProtocolFilter(visits.filter(visit => progress(visit) !== 'inactive'));
+    updateProtocolFilter(visits);
     const query = search.value.trim().toLowerCase();
     const invalidRange = startFilter.value && endFilter.value && startFilter.value > endFilter.value;
     const visible = visits.filter(visit => {
       const person = visit.person;
       const appointment=String(visit.appointmentDate||'').slice(0,10);
       const quickMatch=(!quickToday.checked&&!quickMissed.checked)||(isPending(visit)&&((quickToday.checked&&appointment===today)||(quickMissed.checked&&Boolean(appointment)&&appointment<today)));
-      return quickMatch && (!appointmentOverdue||store.overdueUnhandled(store.apply(visit),today)) && (!visitNameFilter.value||visit.name===visitNameFilter.value) && !invalidRange && (!visitId || (visit.id === visitId && (!visitProject || visit.projectId === visitProject))) && progress(visit) !== 'inactive' && (!calendarOnly || visit.calendar) && (!pendingOnly || isPending(visit)) &&
+      return quickMatch && (!appointmentOverdue||store.overdueUnhandled(store.apply(visit),today)) && (!visitNameFilter.value||visit.name===visitNameFilter.value) && !invalidRange && (!visitId || (visit.id === visitId && (!visitProject || visit.projectId === visitProject))) && (!calendarOnly || visit.calendar) && (!pendingOnly || isPending(visit)) &&
         (!projectFilter.value || visit.projectId === projectFilter.value) && (!protocolFilter.value || visit.protocolVersion === protocolFilter.value) && (!hospitalFilter.value || (visit.hospital || person.hospital) === hospitalFilter.value) &&
         (!department || visit.department === department) && (!group || visit.group === group) &&
         (!statusFilter.value || person.status === statusFilter.value) && (!query || `${person.name}${person.initials}${person.id}`.toLowerCase().includes(query)) &&
@@ -235,11 +235,11 @@
         return `<tr>
           <td><div class="visit-person"><a class="participant-link name" href="${escape(detailURL(visit))}">${escape(visit.person.name)}</a><small>${escape(visit.participantId)}<em class="status ${{'已入组':'enrolled','筛选中':'screening','筛选失败':'failed','随访中':'following','研究结束':'ended','已终止':'ended','终止':'ended'}[visit.person.status]||'ended'}">${escape(visit.person.status)}</em></small></div></td>
           <td><div class="visit-study">${escape(projectCatalog[visit.projectId] || visit.projectId)}</div></td>
-          <td><div class="visit-name-with-window"><span>${escape(visit.name)}</span>${period ? `<span class="visit-window ${period}">${{ upcoming: '未到窗口', window: '窗口期内', overdue: '已超窗', none:'暂无窗口' }[period]}</span>` : ''}</div></td><td><span class="protocol-tag">${escape(visit.protocolVersion)}</span></td><td>${state === 'partial' ? `<button type="button" class="visit-progress ${state} visit-completion-trigger" data-visit-completion="${index}" aria-expanded="false" aria-controls="visit-completion-popover" aria-label="部分完成，查看访视项完成情况">${store.statusLabels[state]}</button>` : `<span class="visit-progress ${state}">${store.statusLabels[state]}</span>`}</td><td><div class="visit-plan"><div class="visit-plan-date">${escape(visit.plannedDate)}</div><small>${visit.noWindow?'暂无窗口':`${escape(visit.windowStart)} ～ ${escape(visit.windowEnd)}`}</small></div></td>
-          <td>${escape(visit.appointmentDate || '未预约')}</td><td>${escape(visit.actualDate || '—')}</td>
+          <td><div class="visit-name-with-window"><span>${escape(visit.name)}</span>${period ? `<span class="visit-window ${period}">${{ upcoming: '未到窗口', window: '窗口期内', overdue: '已超窗', none:'暂无窗口' }[period]}</span>` : ''}</div></td><td><span class="protocol-tag">${escape(visit.protocolVersion)}</span></td><td>${state === 'partial' ? `<button type="button" class="visit-progress ${state} visit-completion-trigger" data-visit-completion="${index}" aria-expanded="false" aria-controls="visit-completion-popover" aria-label="进行中，查看访视项完成情况">${store.statusLabels[state]}</button>` : `<span class="visit-progress ${state}">${store.statusLabels[state]}</span>`}</td><td><div class="visit-plan"><div class="visit-plan-date">${escape(visit.plannedDate)}</div><small>${visit.noWindow?'暂无窗口':`${escape(visit.windowStart)} ～ ${escape(visit.windowEnd)}`}</small></div></td>
+          <td>${escape(visit.appointmentDate || '未预约')}</td>
           <td>${taskProgressMarkup(visit, index)}</td>
           <td><div class="visit-row-actions">${rowActions(visit)}</div></td></tr>`;
-      }).join('') : `<tr><td class="visit-empty" colspan="10">${invalidRange ? '开始日期不能晚于结束日期，请调整筛选范围' : '暂无匹配访视，可调整或重置筛选条件'}</td></tr>`;
+      }).join('') : `<tr><td class="visit-empty" colspan="9">${invalidRange ? '开始日期不能晚于结束日期，请调整筛选范围' : '暂无匹配访视，可调整或重置筛选条件'}</td></tr>`;
     context.hidden = !(appointmentOverdue || visitId || calendarOnly || pendingOnly || calendarWindow || department || group);
     context.innerHTML = `${appointmentOverdue?'<span>今日之前未执行或调整的访视</span>':''}${visitId ? '<span>从工作台打开的访视</span>' : ''}${calendarOnly ? '<span>来自访视日历</span>' : ''}${pendingOnly ? '<span>仅待访视</span>' : ''}${calendarWindow ? '<span>即将访视</span>' : ''}${calendarOnly && (startFilter.value || endFilter.value) ? `<span>${escape(startFilter.value || '不限')} ～ ${escape(endFilter.value || '不限')}</span>` : ''}${department || group ? `<span>${escape([department, group].filter(Boolean).join(' / '))}</span>` : ''}${!context.hidden ? '<button type="button" data-clear-visit-scope>清除带入条件</button>' : ''}`;
     syncURL();
@@ -347,9 +347,9 @@
     params.set('visitName',p.get('visitName')||'');visitNameFilter.value=p.get('visitName')||'';
     projectFilter.value = projectCatalog[p.get('project')] ? p.get('project') : '';
     hospitalFilter.value = hospitals.has(p.get('hospital')) ? p.get('hospital') : '';
-    updateProtocolFilter(p.get('view') === 'visits' ? visits.filter(visit => progress(visit) !== 'inactive') : participants, p.get('protocol') || '');
+    updateProtocolFilter(p.get('view') === 'visits' ? visits : participants, p.get('protocol') || '');
     statusFilter.value = p.get('participantStatus') || ''; search.value = p.get('q') || '';
-    progressFilter.value = ['activated','partial','completed','terminated'].includes(p.get('progress')) ? p.get('progress') : '';
+    progressFilter.value = ['inactive','activated','partial','completed','terminated'].includes(p.get('progress')) ? p.get('progress') : '';
     appointmentFilter.value = ['booked', 'unbooked'].includes(p.get('appointment')) ? p.get('appointment') : '';
     windowFilter.value = ['soon', 'upcoming', 'window', 'overdue', 'last-day', 'none'].includes(p.get('window')) ? p.get('window') : '';
     startFilter.value = day(p.get('start')) ? p.get('start') : ''; endFilter.value = day(p.get('end')) ? p.get('end') : '';

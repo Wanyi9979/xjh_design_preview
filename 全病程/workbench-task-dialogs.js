@@ -5,6 +5,7 @@
   let onSave=null,refresh=()=>{},returnTo=null;
   function close(){dialog.close();returnTo?.focus?.({preventScroll:true});}
   function open(title,body,save,label='保存'){
+    dialog.classList.remove('is-item-execution');
     returnTo=document.activeElement;onSave=save;
     dialog.innerHTML=`<form><header><h2>${escape(title)}</h2><button type="button" data-close aria-label="关闭">×</button></header><div class="wb-task-operation-body">${body}<p role="alert" class="wb-task-error"></p></div><footer><button type="button" data-close>${save?'取消':'关闭'}</button>${save?`<button class="primary" type="submit">${label}</button>`:''}</footer></form>`;
     dialog.showModal();dialog.querySelector('h2').tabIndex=-1;dialog.querySelector('h2').focus();
@@ -28,7 +29,7 @@
     const project=visit.projectId||P.project(visit),record=window.clinicalVisitStore.apply(visit),items=window.clinicalVisitStore.executionItems(record),completed=new Set(record.completedItems||[]);
     const tasks=window.loadParticipantTasks?.(project,visit.participantId)||[];
     const label=task=>task.state==='none'?'无需处理':task.state==='done'?'已完成':task.kind==='draft'?(task.state==='issued'?'已发放':'待发放'):task.kind==='follow'?'待完成':task.date<P.today?'已逾期':'待执行';
-    return `<section class="wb-appointment-reference"><h3>本次访视项 <small>${items.filter(name=>completed.has(name)).length}/${items.length} 已完成</small></h3><ul class="wb-appointment-items">${items.map(name=>`<li><span>${escape(name)}</span><span class="${completed.has(name)?'is-done':''}">${completed.has(name)?'已完成':'未完成'}</span></li>`).join('')}</ul></section><section class="wb-appointment-reference"><h3>参与者任务清单 <small>共 ${tasks.length} 条</small></h3>${tasks.length?`<div class="wb-appointment-task-scroll"><table><thead><tr><th>任务名称 / 类型</th><th>关联访视</th><th>计划时间</th><th>状态</th></tr></thead><tbody>${tasks.map(task=>`<tr><td>${escape(task.name)}<small>${{draft:'任务发放',execute:'任务执行',follow:'跟进任务'}[task.kind]||''}</small></td><td>${escape(task.visit||'—')}</td><td>${escape(task.plannedAt||task.date||'—')}</td><td>${label(task)}</td></tr>`).join('')}</tbody></table></div>`:'<p class="wb-task-help">暂无任务</p>'}</section>`;
+    return `<section class="wb-appointment-reference"><h3>本次访视项 <small>${items.filter(name=>completed.has(name)).length}/${items.length} 已完成</small></h3><ul class="wb-appointment-items">${items.map(name=>`<li><span>${escape(name)}</span><span class="${completed.has(name)?'is-done':''}">${completed.has(name)?'已完成':({execute:'后续执行',followup:'持续跟进',none:'无需处理'})[record.itemResults?.[name]?.type]||'未完成'}</span></li>`).join('')}</ul></section><section class="wb-appointment-reference"><h3>参与者任务清单 <small>共 ${tasks.length} 条</small></h3>${tasks.length?`<div class="wb-appointment-task-scroll"><table><thead><tr><th>任务名称 / 类型</th><th>关联访视</th><th>计划时间</th><th>状态</th></tr></thead><tbody>${tasks.map(task=>`<tr><td>${escape(task.name)}<small>${{draft:'任务发放',execute:'任务执行',follow:'跟进任务'}[task.kind]||''}</small></td><td>${escape(task.visit||'—')}</td><td>${escape(task.plannedAt||task.date||'—')}</td><td>${label(task)}</td></tr>`).join('')}</tbody></table></div>`:'<p class="wb-task-help">暂无任务</p>'}</section>`;
   }
   function appointment(task,action){
     if(action==='followup'){followup(task);return;}
@@ -77,69 +78,108 @@
   function followup(visit){open('添加跟进',`<p class="wb-task-subject">${escape(visit.participant)} · ${escape(visit.participantId)} · ${escape(visit.name)}</p>${projectMarkup(visit)}<label>跟进日期 <em>*</em><input name="date" type="date" value="${P.today}" required></label>${reasonField('跟进内容')}`,form=>{const content=validReason(form);window.researchDemo.followupTasks.push({id:'visit-followup-'+crypto.randomUUID(),projectId:visit.projectId||P.project(visit),participantId:visit.participantId,participant:visit.participant,participantStatus:visit.participantStatus,trial:visit.trial,visit:visit.name,visitId:visit.id,content,date:String(form.get('date')),scope:'pending',createdAt:P.now(),operator:'当前个案',history:[{action:'新增跟进任务',at:P.now(),operator:'当前个案',scope:'pending',date:String(form.get('date')),content}]});markTodayHandled(visit);},'确认');}
   function executeVisit(original){
     const visit=store.apply(original),items=store.executionItems(visit),today=visit.referenceDate||P.today;
-    const projectId=visit.projectId||P.project(visit);
-    const projectName=visit.trial||window.clinicalParticipantDirectory?.create().projectCatalog[projectId]||projectId;
-    const defaultContent=`“${visit.name}”部分完成，剩余事项需持续跟进`;
-    const previous=visit.partialHandling||{},priorCompleted=new Set(visit.completedItems||[]);
-    let step=1;
-    open('访视执行',`<p class="wb-task-subject">${escape(visit.participant||visit.person?.name||'')} · ${escape(visit.participantId)} · ${escape(visit.name)}</p>
-      <div class="wb-execution-project"><span>临床项目</span><strong>${escape(projectId)}</strong><span>${escape(projectName)}</span></div>
-      <ol class="wb-execution-steps" aria-label="访视执行步骤"><li data-execution-step="1" aria-current="step"><b>1</b>勾选访视项</li><li data-execution-step="2"><b>2</b>确认执行结果</li></ol>
-      <section data-execution-checklist><div class="wb-execution-label wb-execution-checklist-heading"><span>本次已完成的访视项</span><button type="button" data-execution-select-all>全选</button></div>
-        <div class="wb-visit-checklist">${items.map(item=>`<label><input name="completed" type="checkbox" value="${escape(item)}" ${priorCompleted.has(item)?'checked disabled':''}>${escape(item)}${priorCompleted.has(item)?'<small>上次已完成</small>':''}</label>`).join('')}</div><p class="wb-execution-progress" data-execution-progress role="status"></p>
-      </section>
-      <section data-execution-result hidden><div class="wb-execution-result-summary" data-execution-summary></div>
-        <section data-execution-all hidden><label>实际访视日期 <em>*</em><input name="actual" type="date" max="${today}" value="${escape(visit.actualDate||today)}"></label>
-          <label data-execution-window-reason hidden>超窗原因 <em>*</em><textarea name="windowReason" maxlength="200" placeholder="请输入实际访视日期超窗的原因，最多200字"></textarea></label>
-        </section>
-        <section data-execution-partial hidden><label>后续处理方式 <em>*</em><select name="handling"><option value="">请选择</option><option value="execute">后续执行</option><option value="followup">持续跟进</option><option value="none">无需处理</option></select></label>
-          <div data-execution-handling="execute" hidden><label>下次计划执行时间 <em>*</em><input name="nextPlannedAt" type="datetime-local" min="${today}T00:00" value="${escape(previous.nextPlannedAt||'')}"></label><label>原因 <em>*</em><textarea name="nextExecutionReason" maxlength="200" placeholder="请输入原因，最多200字">${escape(previous.type==='execute'?previous.reason||'':'')}</textarea></label></div>
-          <div data-execution-handling="followup" hidden><label>跟进时间 <em>*</em><input name="followupAt" type="datetime-local" min="${today}T00:00" value="${escape(previous.followupAt||'')}"></label><label>跟进内容 <em>*</em><textarea name="followupContent" maxlength="200">${escape(previous.content||defaultContent)}</textarea></label></div>
-          <div data-execution-handling="none" hidden><label>无需处理原因 <em>*</em><textarea name="noProcessReason" maxlength="200" placeholder="请输入无需处理的原因，最多200字">${escape(previous.reason||'')}</textarea></label></div>
-        </section>
-      </section>`,data=>{
-        if(step===1){step=2;sync();dialog.querySelector('.wb-task-operation-body').scrollTop=0;return false;}
-        const completed=selectedItems(),incompleteItems=items.filter(item=>!completed.includes(item));
-        const completion=incompleteItems.length?'partial':'all';
-        const result={completion,actualDate:String(data.get('actual')||''),incompleteItems,handling:String(data.get('handling')||''),nextPlannedAt:String(data.get('nextPlannedAt')||''),followupAt:String(data.get('followupAt')||''),followupContent:String(data.get('followupContent')||'').trim(),reason:String(data.get(completion==='all'?'windowReason':data.get('handling')==='execute'?'nextExecutionReason':'noProcessReason')||'').trim()};
-        store.recordExecutionResult(visit,result,today);
-        markTodayHandled(visit);
-        if(completion==='partial'&&result.handling==='followup'){
-          const at=P.now();
-          window.researchDemo.followupTasks.push({id:'visit-followup-'+crypto.randomUUID(),projectId,participantId:visit.participantId,participant:visit.participant||visit.person?.name||'',participantStatus:visit.participantStatus||visit.person?.status||'',trial:projectName,visit:visit.name,visitId:visit.id,protocolVersion:visit.protocolVersion,content:result.followupContent,date:result.followupAt.slice(0,10),plannedAt:result.followupAt,scope:'pending',createdAt:at,operator:'当前个案',history:[{action:'部分完成访视后持续跟进',at,operator:'当前个案',date:result.followupAt,content:result.followupContent,scope:'pending'}]});
-        }
-      },'下一步');
-    const form=dialog.querySelector('form');
-    // Disabled, previously completed items are included explicitly rather than via FormData.
-    const selectedItems=()=>items.filter(item=>priorCompleted.has(item)||[...form.querySelectorAll('[name="completed"]:checked')].some(input=>input.value===item));
-    const back=document.createElement('button');back.type='button';back.textContent='上一步';back.dataset.executionBack='';
-    form.querySelector('footer .primary').before(back);
-    back.addEventListener('click',()=>{step=1;sync();});
-    const sync=()=>{
-      const completed=selectedItems(),remaining=items.filter(item=>!completed.includes(item)),partial=remaining.length>0;
-      const resultVisible=step===2;
-      const selectable=[...form.querySelectorAll('[name=completed]:not(:disabled)')],allButton=form.querySelector('[data-execution-select-all]');allButton.textContent=selectable.length&&selectable.every(input=>input.checked)?'取消全选':'全选';allButton.disabled=!selectable.length;
-      form.querySelector('[data-execution-checklist]').hidden=resultVisible;
-      form.querySelector('[data-execution-result]').hidden=!resultVisible;
-      form.querySelector('[data-execution-progress]').textContent=`已完成 ${completed.length}/${items.length} 项 · ${partial?'部分完成':'全部完成'}`;
-      form.querySelector('[data-execution-summary]').innerHTML=`<strong>${partial?'部分完成':'全部完成'}</strong><span>已完成 ${completed.length}/${items.length} 项</span>${partial?`<p>未完成项：${remaining.map(escape).join('、')}</p>`:`<p>已完成项：${completed.map(escape).join('、')}</p>`}`;
-      form.querySelectorAll('[data-execution-step]').forEach(item=>{if(Number(item.dataset.executionStep)===step)item.setAttribute('aria-current','step');else item.removeAttribute('aria-current');});
-      back.hidden=!resultVisible;form.querySelector('footer .primary').textContent=resultVisible?'确认':'下一步';
-      const setSection=(section,visible)=>{section.hidden=!visible;section.querySelectorAll('input,select,textarea').forEach(input=>input.disabled=!visible);};
-      setSection(form.querySelector('[data-execution-all]'),resultVisible&&!partial);
-      setSection(form.querySelector('[data-execution-partial]'),resultVisible&&partial);
-      form.elements.actual.required=resultVisible&&!partial;
-      const date=form.elements.actual.value;
-      const outside=!visit.noWindow&&resultVisible&&!partial&&Boolean(date)&&(date<visit.windowStart||date>visit.windowEnd);
-      form.querySelector('[data-execution-window-reason]').hidden=!outside;form.elements.windowReason.disabled=!outside;form.elements.windowReason.required=outside;
-      form.elements.handling.required=resultVisible&&partial;
-      const handling=form.elements.handling.value;
-      form.querySelectorAll('[data-execution-handling]').forEach(section=>{const active=resultVisible&&partial&&section.dataset.executionHandling===handling;setSection(section,active);section.querySelectorAll('input,textarea').forEach(input=>input.required=active);});
-      dialog.querySelector('[role=alert]').textContent='';
+    const projectId=visit.projectId||P.project(visit),projectName=visit.trial||window.clinicalParticipantDirectory?.create().projectCatalog[projectId]||projectId;
+    const labels={done:'完成',execute:'后续执行',followup:'持续跟进',none:'无需处理'};
+    const previous=store.itemExecutionResults(visit),locked=new Set(items.filter(name=>previous[name]?.type==='done'));
+    let plans=JSON.parse(JSON.stringify(previous)),selected=new Set(),confirmed=null;
+    const optionMarkup=type=>'<option value="">设置处理</option>'+Object.entries(labels).map(([value,label])=>`<option value="${value}"${value===type?' selected':''}>${label}</option>`).join('');
+    const fieldMarkup=(plan,prefix,batch=false)=>{
+      const attr=key=>`data-plan-field="${key}" name="${prefix}-${key}"`;
+      if(plan.type==='done')return `<label>完成日期 <em>*</em><input ${attr('actualDate')} type="date" max="${today}" value="${escape(plan.actualDate||today)}"${batch?'':' required'}></label><label data-done-reason${plan.actualDate&&(visit.noWindow||plan.actualDate>=visit.windowStart&&plan.actualDate<=visit.windowEnd)?' hidden':''}>超窗原因<textarea ${attr('reason')} maxlength="200" placeholder="完成日期超出访视窗口时必填">${escape(plan.reason||'')}</textarea></label>`;
+      if(plan.type==='execute')return `<label>下次执行时间 <em>*</em><input ${attr('nextPlannedAt')} type="datetime-local" min="${today}T00:00" value="${escape(plan.nextPlannedAt||'')}"${batch?'':' required'}></label><label>原因 <em>*</em><textarea ${attr('reason')} maxlength="200" placeholder="请输入后续执行原因"${batch?'':' required'}>${escape(plan.reason||'')}</textarea></label>`;
+      if(plan.type==='followup')return `<label>跟进时间 <em>*</em><input ${attr('followupAt')} type="datetime-local" min="${today}T00:00" value="${escape(plan.followupAt||'')}"${batch?'':' required'}></label><label>跟进内容 <em>*</em><textarea ${attr('content')} maxlength="200" placeholder="请输入跟进内容"${batch?'':' required'}>${escape(plan.content||'')}</textarea></label>`;
+      if(plan.type==='none')return `<label class="is-full">无需处理原因 <em>*</em><textarea ${attr('reason')} maxlength="200" placeholder="请输入无需处理原因"${batch?'':' required'}>${escape(plan.reason||'')}</textarea></label>`;
+      return '';
     };
-    if(previous.type)form.elements.handling.value=previous.type;
-    form.querySelector('[data-execution-select-all]').addEventListener('click',()=>{const controls=[...form.querySelectorAll('[name=completed]:not(:disabled)')];const select=controls.some(input=>!input.checked);controls.forEach(input=>input.checked=select);sync();});
-    form.addEventListener('change',sync);sync();
+    const detailsText=plan=>plan.type==='done'?`完成日期：${plan.actualDate||'未记录'}${plan.reason?'；超窗原因：'+plan.reason:''}`:plan.type==='execute'?`下次执行：${String(plan.nextPlannedAt||'').replace('T',' ')}；原因：${plan.reason||''}`:plan.type==='followup'?`跟进时间：${String(plan.followupAt||'').replace('T',' ')}；内容：${plan.content||''}`:plan.reason||'';
+    open('访视执行',`<p class="wb-task-subject">${escape(visit.participant||visit.person?.name||'')} · ${escape(visit.participantId)} · ${escape(visit.name)}</p>${projectMarkup({...visit,projectId,trial:projectName})}
+      <section data-item-editor><div class="wb-execution-label wb-execution-checklist-heading"><span>访视项处理</span><button type="button" data-item-select-all>全选</button><small data-item-selected-count>已选 0 项</small><input class="wb-item-search" data-item-search type="search" aria-label="按访视项名称搜索" placeholder="搜索访视项名称"></div>
+      <div class="wb-item-batch" hidden><div class="wb-item-batch-actions"><strong>批量处理</strong>${Object.entries(labels).map(([type,label])=>`<button type="button" data-item-batch-action="${type}">${label}</button>`).join('')}</div></div>
+      <div class="wb-item-list-head"><span>访视项</span><span>处理结果</span><span>操作</span></div><div class="wb-item-rows" data-item-rows></div><p class="wb-execution-progress" data-item-progress role="status"></p></section>
+`,()=>{
+        confirmed=store.validateItemExecutionResults(visit,plans,today);
+        const latest=store.apply(visit);
+        store.recordItemExecutionResults(latest,confirmed,today);
+        const at=P.now();
+        items.forEach(name=>{
+          const plan=confirmed[name];
+          const existing=window.researchDemo.followupTasks.find(task=>task.source==='visit-item-execution'&&task.projectId===projectId&&task.participantId===visit.participantId&&task.visitId===visit.id&&task.visitItem===name&&task.scope==='pending');
+          if(plan.type==='followup'){
+            const content=name+'：'+plan.content;
+            if(existing){if(existing.plannedAt===plan.followupAt&&existing.content===content)return;existing.plannedAt=plan.followupAt;existing.date=plan.followupAt.slice(0,10);existing.content=content;(existing.history||=[]).push({action:'调整访视项跟进',date:existing.date,content,at,operator:'当前个案'});}
+            else window.researchDemo.followupTasks.push({id:'visit-item-followup-'+crypto.randomUUID(),source:'visit-item-execution',visitItem:name,projectId,participantId:visit.participantId,participant:visit.participant||visit.person?.name||'',participantStatus:visit.participantStatus||visit.person?.status||'',trial:projectName,visit:visit.name,visitId:visit.id,protocolVersion:visit.protocolVersion,content,date:plan.followupAt.slice(0,10),plannedAt:plan.followupAt,scope:'pending',createdAt:at,operator:'当前个案',history:[{action:'访视项持续跟进',date:plan.followupAt.slice(0,10),content,scope:'pending',at,operator:'当前个案'}]});
+          }else if(existing){existing.scope=plan.type==='done'?'completed':'none';existing.operatedAt=at;existing.record=plan.type==='done'?'对应访视项已完成':'';existing.noProcessReason=plan.type==='done'?'':'访视项处理方式已调整';(existing.history||=[]).push({action:existing.scope==='completed'?'访视项已完成':'调整访视项处理方式',at,operator:'当前个案',scope:existing.scope});}
+        });
+        markTodayHandled(latest);
+      },'保存');
+    dialog.classList.add('is-item-execution');
+    const form=dialog.querySelector('form'),rows=form.querySelector('[data-item-rows]');
+    form.noValidate=true;
+    form.querySelector('footer').prepend(form.querySelector('[data-item-progress]'));
+    const search=form.querySelector('[data-item-search]');
+    const matchingIndexes=()=>items.flatMap((name,index)=>name.toLowerCase().includes(search.value.trim().toLowerCase())?[index]:[]);
+    const selectableIndexes=()=>matchingIndexes().filter(index=>!locked.has(items[index]));
+    search.addEventListener('input',()=>{const visible=new Set(matchingIndexes());selected=new Set([...selected].filter(index=>visible.has(index)));renderRows();});
+    search.addEventListener('keydown',event=>{if(event.key==='Enter')event.preventDefault();});
+    const readPlan=(root,type)=>Object.fromEntries([['type',type],...[...root.querySelectorAll('[data-plan-field]')].map(input=>[input.dataset.planField,input.value])]);
+    function syncSelection(){
+      form.querySelector('[data-item-selected-count]').textContent=`已选 ${selected.size} 项`;
+      form.querySelector('.wb-item-batch').hidden=!selected.size;
+      const selectable=selectableIndexes(),total=selectable.length;
+      form.querySelector('[data-item-select-all]').textContent=total&&selectable.every(index=>selected.has(index))?'取消全选':'全选';
+      form.querySelector('[data-item-select-all]').disabled=!total;
+    }
+    function updateProgress(){
+      const set=items.filter(name=>plans[name]?.type).length,done=items.filter(name=>plans[name]?.type==='done').length;
+      form.querySelector('[data-item-progress]').textContent=`已设置 ${set}/${items.length} 项 · 完成 ${done} 项 · 后续执行 ${items.filter(name=>plans[name]?.type==='execute').length} 项 · 持续跟进 ${items.filter(name=>plans[name]?.type==='followup').length} 项 · 无需处理 ${items.filter(name=>plans[name]?.type==='none').length} 项`;
+    }
+    function renderRows(){
+      rows.innerHTML=matchingIndexes().map(index=>{
+        const name=items[index];
+        const plan=plans[name]||{},isLocked=locked.has(name);
+        return `<section class="wb-item-row" data-item-row="${index}"><label class="wb-item-pick"><input type="checkbox" aria-label="选择${escape(name)}" data-item-pick="${index}"${selected.has(index)?' checked':''}${isLocked?' disabled':''}><strong>${escape(name)}</strong></label><div class="wb-item-result"><span class="wb-item-state ${plan.type||'unset'}">${labels[plan.type]||'待处理'}</span>${plan.type?`<p title="${escape(detailsText(plan))}">${escape(detailsText(plan))}</p>`:''}</div>${isLocked?'<span class="wb-item-locked">已完成</span>':`<select data-item-type aria-label="${escape(name)}处理方式">${optionMarkup(plan.type||'')}</select>`}</section>`;
+      }).join('')||'<div class="wb-item-search-empty"><img src="shared-assets/empty-list.png" width="174" height="133" alt=""><span>暂无匹配的访视项</span></div>';
+      syncSelection();updateProgress();
+    }
+    form.querySelector('[data-item-select-all]').onclick=()=>{const indexes=selectableIndexes(),all=indexes.length&&indexes.every(index=>selected.has(index));selected=new Set(all?[]:indexes);rows.querySelectorAll('[data-item-pick]').forEach(input=>input.checked=selected.has(Number(input.dataset.itemPick)));syncSelection();};
+    function editItems(type,targets,origin){
+      if(!targets.length)return;
+      const batch=targets.length>1,initial=targets.length===1&&plans[items[targets[0]]]?.type===type?plans[items[targets[0]]]:{type,actualDate:type==='done'?today:undefined};
+      const popup=document.createElement('dialog');popup.className='wb-task-operation wb-item-batch-dialog';
+      popup.setAttribute('aria-label',(batch?'批量':'')+labels[type]);
+      popup.innerHTML=`<form novalidate><header><h2>${batch?'批量':''}${labels[type]}</h2><button type="button" data-batch-cancel aria-label="关闭">×</button></header><div class="wb-task-operation-body"><p class="wb-task-help">${batch?'已选 '+targets.length+' 项：':''}${targets.map(index=>escape(items[index])).join('、')}</p><div class="wb-item-plan-fields">${fieldMarkup(initial,'batch')}</div><p class="wb-task-error" role="alert"></p></div><footer><button type="button" data-batch-cancel>取消</button><button type="submit" class="primary">确认</button></footer></form>`;
+      document.body.append(popup);
+      const dismiss=()=>popup.close();
+      popup.querySelectorAll('[data-batch-cancel]').forEach(control=>control.onclick=dismiss);
+      popup.addEventListener('close',()=>{popup.remove();renderRows();(origin?.isConnected?origin:rows.querySelector('[data-item-row="'+targets[0]+'"] [data-item-type]'))?.focus();},{once:true});
+      const syncReason=()=>{
+        if(type!=='done')return;
+        const date=popup.querySelector('[data-plan-field=actualDate]').value;
+        const outside=!visit.noWindow&&Boolean(date)&&(date<visit.windowStart||date>visit.windowEnd);
+        const label=popup.querySelector('[data-done-reason]');label.hidden=!outside;
+        label.querySelector('textarea').required=outside;
+      };
+      popup.addEventListener('input',syncReason);
+      popup.querySelector('form').onsubmit=event=>{
+        event.preventDefault();
+        try{
+          const value=readPlan(popup,type),updates={};
+          targets.forEach(index=>{const name=items[index];updates[name]=store.validateItemExecutionPlan(visit,name,value,today);});
+          Object.assign(plans,updates);selected.clear();renderRows();
+          dialog.querySelector('[role=alert]').textContent='';dismiss();
+        }catch(error){popup.querySelector('[role=alert]').textContent=error.message;}
+      };
+      syncReason();popup.showModal();popup.querySelector('[data-plan-field]')?.focus();
+    }
+    form.querySelectorAll('[data-item-batch-action]').forEach(button=>button.onclick=()=>editItems(button.dataset.itemBatchAction,[...selected],button));
+    rows.addEventListener('change',event=>{
+      const pick=event.target.closest('[data-item-pick]');if(pick){const index=Number(pick.dataset.itemPick);pick.checked?selected.add(index):selected.delete(index);syncSelection();return;}
+      if(event.target.matches('[data-item-type]')&&event.target.value){
+        const index=Number(event.target.closest('[data-item-row]').dataset.itemRow);
+        editItems(event.target.value,[index],event.target);
+      }
+    });
+    renderRows();
   }
   function visitDetail(visit,readOnly=false){
     const state=store.status(visit),ongoing=['activated','partial'].includes(state);

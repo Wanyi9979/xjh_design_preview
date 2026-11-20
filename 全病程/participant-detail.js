@@ -86,7 +86,8 @@
     return names.map(name => {
       const record = catalog?.read(cycle, name) || {};
       const linked = online.filter(task => [task.formName, task.name].some(value => String(value || '').replace(/表单|表|\s/g, '') === name.replace(/表单|表|\s/g, '')));
-      const done = store.status(visit) === 'completed' || (visit.completedItems || []).includes(name) || record.state === '已完成' || linked.some(task => task.state === 'done');
+      const handling=store.itemExecutionResults(visit)[name];
+      const done = handling?.type ? handling.type==='done' : (!Object.keys(visit.itemResults||{}).length&&visit.partialHandling?.type!=='none'&&store.status(visit) === 'completed') || (visit.completedItems || []).includes(name) || record.state === '已完成' || linked.some(task => task.state === 'done');
       const filled = (record.values || []).slice(0, 4).filter(value => value != null && String(value).trim() !== '').length;
       const entryProgress = record.state === '已完成' ? 100 : Math.round(filled / 4 * 100);
       return {name, cycle, done, record, linked, entryProgress, dataState: record.state || ((record.values || []).some(Boolean) ? '草稿' : '待录入')};
@@ -117,15 +118,19 @@
   });
   journeyView.querySelector('[data-crf-search]').addEventListener('input',event=>{crfQuery=event.target.value.trim().toLowerCase();crfPage=1;renderCrfRows();});
   function collectionDetails(visit,crf){
-    const details=[];
-    if(visit.appointmentDate)details.push(['预约时间',visit.appointmentDate]);
-    const handling=visit.partialHandling;
-    if(!crf.done&&handling&&(!visit.incompleteItems?.length||visit.incompleteItems.includes(crf.name))){
-      if(handling.type==='execute'){details.push(['后续执行',handling.nextPlannedAt||visit.nextExecutionAt||'']);if(handling.reason)details.push(['原因',handling.reason]);}
-      else if(handling.type==='followup'){details.push(['持续跟进',handling.followupAt||'']);if(handling.content)details.push(['跟进内容',handling.content]);}
-      else if(handling.type==='none'){details.push(['无需处理',handling.reason||'']);}
-    }
-    if(!crf.done&&visit.appointmentWaiver)details.push(['预约无需处理',visit.appointmentWaiver.reason||'']);
+    const details=[],handling=store.itemExecutionResults(visit)[crf.name]||{};
+    if(handling.type==='done'||(!handling.type&&crf.done)){
+      const date=handling.actualDate||visit.actualDate||crf.record.actualDate||String(crf.record.completedAt||'').slice(0,10);
+      details.push(['完成日期',date||'未记录']);
+    }else if(handling.type==='execute'){
+      details.push(['预约时间',handling.nextPlannedAt||visit.nextExecutionAt||'未记录']);
+      if(handling.reason)details.push(['原因',handling.reason]);
+    }else if(handling.type==='followup'){
+      details.push(['跟进日期',handling.followupAt||'未记录']);
+      if(handling.content||handling.reason)details.push(['原因',handling.content||handling.reason]);
+    }else if(handling.type==='none'){
+      if(handling.reason)details.push(['原因',handling.reason]);
+    }else if(visit.appointmentDate)details.push(['预约时间',visit.appointmentDate]);
     return details.length?`<div class="profile-collection-details">${details.map(([label,value])=>`<div><span>${label}：</span><span>${escape(String(value).replace('T',' '))}</span></div>`).join('')}</div>`:'';
   }
   function renderCrfRows() {
@@ -144,7 +149,7 @@
     crfPage = Math.min(crfPage, pages);
     const rows = filtered.slice((crfPage - 1) * crfPageSize, crfPage * crfPageSize);
     journeyView.querySelector('[data-crf-pagination]').innerHTML = `<span class="directory-page-total" aria-live="polite">共 ${filtered.length} 条</span><span class="profile-fixed-page-size">5 条/页</span><div class="directory-page-buttons"><button type="button" data-crf-page="${crfPage-1}" aria-label="CRF上一页" ${crfPage===1?'disabled':''}>‹</button>${Array.from({length:pages},(_,i)=>`<button type="button" data-crf-page="${i+1}" ${i+1===crfPage?'aria-current="page"':''}>${i+1}</button>`).join('')}<button type="button" data-crf-page="${crfPage+1}" aria-label="CRF下一页" ${crfPage===pages?'disabled':''}>›</button></div>`;
-    journeyView.querySelector('[data-profile-crf-rows]').innerHTML=rows.map(crf=>`<tr><td>${escape(crf.name)}</td><td><span class="profile-crf-state ${crf.done?'is-done':''}">${crf.done?'已完成':store.status(visit)==='inactive'?'未开始':'待完成'}</span>${collectionDetails(visit,crf)}</td><td><span class="profile-crf-state ${crf.record.state==='已完成'?'is-done':''}">${crf.record.state==='已完成'?'已完成':'未完成'}</span></td><td><div class="profile-row-actions"><button type="button" data-profile-crf="${escape(crf.name)}">录入数据</button></div></td></tr>`).join('')||'<tr><td colspan="4" class="profile-empty"><div class="profile-list-empty"><img src="shared-assets/empty-list.png" width="174" height="133" alt=""><span>暂无匹配的 CRF 表单</span></div></td></tr>';
+    journeyView.querySelector('[data-profile-crf-rows]').innerHTML=rows.map(crf=>`<tr><td>${escape(crf.name)}</td><td><span class="profile-crf-state ${crf.done?'is-done':''}">${({done:'已完成',execute:'后续执行',followup:'持续跟进',none:'无需处理'})[store.itemExecutionResults(visit)[crf.name]?.type]||(crf.done?'已完成':store.status(visit)==='inactive'?'未开始':'待完成')}</span>${collectionDetails(visit,crf)}</td><td><span class="profile-crf-state ${crf.record.state==='已完成'?'is-done':''}">${crf.record.state==='已完成'?'已完成':'未完成'}</span></td><td><div class="profile-row-actions"><button type="button" data-profile-crf="${escape(crf.name)}">录入数据</button></div></td></tr>`).join('')||'<tr><td colspan="4" class="profile-empty"><div class="profile-list-empty"><img src="shared-assets/empty-list.png" width="174" height="133" alt=""><span>暂无匹配的 CRF 表单</span></div></td></tr>';
   }
   function progressRing(target,label,done,total){
     const percentage=total?Math.round(done/total*100):0;
@@ -163,7 +168,7 @@
     const primary=ongoing?action(visit.appointmentDate?'execute':'book',visit.appointmentDate?'执行访视':'预约访视',true):state==='inactive'?action('activate','激活访视',true):'';
     journeyView.querySelector('[data-profile-summary]').innerHTML=`
       <header class="profile-visit-title"><div><h2>${escape(visit.name)}</h2><span class="profile-version">${escape(visit.protocolVersion)}</span><span class="profile-status ${state}">${store.statusLabels[state]}</span></div><div class="profile-visit-actions">${primary}${secondary.length?`<details class="profile-visit-more"><summary>更多 ⋯</summary><div>${secondary.join('')}</div></details>`:''}</div></header>
-      <div class="profile-visit-overview"><div class="profile-progress-summaries">${progressRing('collection','采集进度',crfs.filter(crf=>crf.done).length,crfs.length)}${progressRing('crf','录入进度',completed,crfs.length)}${progressRing('tasks','任务执行',executed,executionTasks.length)}</div><dl class="profile-visit-facts"><div><dt>计划日期</dt><dd>${escape(visit.plannedDate)}</dd></div><div class="profile-fact-window"><dt>允许访视窗口 ${periodLabel?`<span class="profile-window ${period}">${periodLabel}</span>`:''}</dt><dd>${visit.noWindow?'暂无窗口':`${escape(visit.windowStart)} ～ ${escape(visit.windowEnd)}`}</dd></div><div><dt>预约日期</dt><dd>${escape(visit.appointmentDate||'未预约')}</dd></div><div><dt>实际访视日期</dt><dd>${escape(visit.actualDate||'未记录')}</dd></div></dl></div>
+      <div class="profile-visit-overview"><div class="profile-progress-summaries">${progressRing('collection','采集进度',crfs.filter(crf=>crf.done).length,crfs.length)}${progressRing('crf','录入进度',completed,crfs.length)}${progressRing('tasks','任务执行',executed,executionTasks.length)}</div><dl class="profile-visit-facts"><div><dt>计划日期</dt><dd>${escape(visit.plannedDate)}</dd></div><div class="profile-fact-window"><dt>允许访视窗口 ${periodLabel?`<span class="profile-window ${period}">${periodLabel}</span>`:''}</dt><dd>${visit.noWindow?'暂无窗口':`${escape(visit.windowStart)} ～ ${escape(visit.windowEnd)}`}</dd></div><div><dt>预约日期</dt><dd>${escape(visit.appointmentDate||'未预约')}</dd></div></dl></div>
 
       ${visit.terminationReason?`<p class="profile-visit-note">终止原因：${escape(visit.terminationReason)}</p>`:''}`;
     const maxTaskRows = Math.max(0, ...['draft','execute','follow'].map(kind => tasks.filter(task => task.kind === kind).length));
