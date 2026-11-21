@@ -59,7 +59,7 @@ test('per-item execution supports four different actions and persists each plan 
  s.recordItemExecutionResults(v,plans,'2026-10-29');
  const saved=s.apply(v);assert.equal(s.status(saved),'partial');assert.deepEqual([...saved.completedItems],[names[0]]);
  assert.equal(saved.itemResults[names[1]].type,'execute');assert.equal(saved.itemResults[names[2]].content,'跟进检查报告');assert.equal(saved.itemResults[names[3]].reason,'本次不适用');
- assert.equal(saved.partialHandling,null);assert.equal(saved.nextExecutionAt,'2026-10-30T09:00');assert.equal(saved.executionHistory.at(-1).itemResults[names[3]].type,'none');
+ assert.equal(saved.partialHandling,null);assert.equal(saved.nextExecutionAt,'2026-10-30');assert.equal(saved.executionHistory.at(-1).itemResults[names[3]].type,'none');
 });
 test('per-item validation is atomic and enforces dates and reasons on each item',()=>{
  const s=setup(),v=visit(),names=s.executionItems(v),before=JSON.stringify(v);
@@ -111,4 +111,13 @@ test('item readback uses newest history snapshot only when the current result is
  assert.equal(s.itemExecutionResults(v)['生命体征'].reason,'最新预约');
  v.itemResults={生命体征:{type:'followup',followupAt:'2026-10-31T10:00',content:'当前跟进'}};
  assert.equal(s.itemExecutionResults(v)['生命体征'].type,'followup');assert.equal(s.itemExecutionResults(v)['生命体征'].content,'当前跟进');
+});
+
+test('per-item later execution and followup accept date-only plans and normalize legacy datetimes',()=>{
+ const s=setup(),v=visit(),name=s.executionItems(v)[0];
+ assert.equal(s.validateItemExecutionPlan(v,name,{type:'execute',nextPlannedAt:'2026-10-30',reason:'改期'},'2026-10-29').nextPlannedAt,'2026-10-30');
+ assert.equal(s.validateItemExecutionPlan(v,name,{type:'followup',followupAt:'2026-10-30',content:'确认'},'2026-10-29').followupAt,'2026-10-30');
+ assert.equal(s.validateItemExecutionPlan(v,name,{type:'execute',nextPlannedAt:'2026-10-30T09:00',reason:'改期'},'2026-10-29').nextPlannedAt,'2026-10-30');
+ assert.throws(()=>s.validateItemExecutionPlan(v,name,{type:'followup',followupAt:'2026-10-28',content:'确认'},'2026-10-29'),/不早于今天/);
+ assert.throws(()=>s.validateItemExecutionPlan(v,name,{type:'execute',nextPlannedAt:'2026-02-30',reason:'改期'},'2026-01-01'),/日期/);
 });

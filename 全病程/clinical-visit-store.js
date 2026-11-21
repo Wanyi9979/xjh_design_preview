@@ -202,14 +202,16 @@
       return {type,actualDate:input.actualDate,reason};
     }
     if(type==='execute'){
-      if(!validTime(input.nextPlannedAt))fail('请填写不早于今天的下次执行时间');
+      const date=String(input.nextPlannedAt||'').slice(0,10);
+      if(!(validDate(input.nextPlannedAt)||validTime(input.nextPlannedAt))||date<today)fail('请填写不早于今天的下次执行日期');
       if(!reason)fail('请填写后续执行原因');
-      return {type,nextPlannedAt:input.nextPlannedAt,reason};
+      return {type,nextPlannedAt:date,reason};
     }
     if(type==='followup'){
-      if(!validTime(input.followupAt))fail('请填写不早于今天的跟进时间');
+      const date=String(input.followupAt||'').slice(0,10);
+      if(!(validDate(input.followupAt)||validTime(input.followupAt))||date<today)fail('请填写不早于今天的跟进日期');
       if(!content)fail('请填写跟进内容');
-      return {type,followupAt:input.followupAt,content};
+      return {type,followupAt:date,content};
     }
     if(!reason)fail('请填写无需处理原因');
     return {type,reason};

@@ -123,10 +123,10 @@
       const date=handling.actualDate||visit.actualDate||crf.record.actualDate||String(crf.record.completedAt||'').slice(0,10);
       details.push(['完成日期',date||'未记录']);
     }else if(handling.type==='execute'){
-      details.push(['预约时间',handling.nextPlannedAt||visit.nextExecutionAt||'未记录']);
+      details.push(['预约时间',String(handling.nextPlannedAt||visit.nextExecutionAt||'未记录').slice(0,10)]);
       if(handling.reason)details.push(['原因',handling.reason]);
     }else if(handling.type==='followup'){
-      details.push(['跟进日期',handling.followupAt||'未记录']);
+      details.push(['跟进日期',String(handling.followupAt||'未记录').slice(0,10)]);
       if(handling.content||handling.reason)details.push(['原因',handling.content||handling.reason]);
     }else if(handling.type==='none'){
       if(handling.reason)details.push(['原因',handling.reason]);

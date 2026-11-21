@@ -399,3 +399,58 @@ html[data-workbench-style=figma] .wb-list-filters input::placeholder{color:var(-
 .wb-task-operation.is-item-execution .wb-item-row>select.is-placeholder{color:var(--text-muted);}
 .wb-task-operation.is-item-execution .wb-item-row>select option{color:var(--text-primary);}
 .wb-task-operation.is-item-execution .wb-item-row>select option[value=""]{color:var(--text-muted);}
+
+/* Two-step visit item handling. */
+.wb-task-operation.is-two-step-execution .wb-item-stepper{display:flex;align-items:center;gap:14px;margin:20px 0 2px;color:var(--text-muted);font-size:12px;}
+.wb-task-operation.is-two-step-execution .wb-item-stepper span{display:inline-flex;align-items:center;white-space:nowrap;}
+.wb-task-operation.is-two-step-execution .wb-item-stepper span.is-active{color:var(--brand-primary);font-weight:500;}
+.wb-task-operation.is-two-step-execution .wb-item-stepper i{height:1px;flex:1;background:var(--border-default);}
+.wb-task-operation.is-two-step-execution [data-step-one][hidden],.wb-task-operation.is-two-step-execution [data-step-two][hidden]{display:none!important;}
+.wb-task-operation.is-two-step-execution .wb-item-list-head,.wb-task-operation.is-two-step-execution .wb-item-row{grid-template-columns:minmax(130px,1fr) minmax(180px,1fr);}
+.wb-task-operation.is-two-step-execution .wb-item-status-control{display:flex;align-items:center;gap:12px;flex-wrap:wrap;min-width:0;}
+.wb-task-operation.is-two-step-execution .wb-item-status-control select{width:160px;min-height:32px;margin:0;appearance:none;-webkit-appearance:none;padding:0 34px 0 12px;border:1px solid var(--border-default);border-radius:4px;background:var(--surface-content) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='m3 4.5 3 3 3-3' fill='none' stroke='%23818d9f' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 12px center;background-size:12px 12px;font:inherit;font-size:12px;color:var(--text-primary);}
+.wb-task-operation.is-two-step-execution .wb-item-status-control select.is-placeholder{color:var(--text-muted);}
+.wb-task-operation.is-two-step-execution .wb-item-status-control textarea{flex:1;min-width:160px;min-height:32px;height:34px;margin:0;padding:7px 10px;font:inherit;font-size:12px;resize:vertical;}
+.wb-task-operation.is-two-step-execution .wb-item-step-section{padding:16px 0;border-bottom:1px solid var(--border-default);}
+.wb-task-operation.is-two-step-execution .wb-item-step-section h3{margin:0 0 8px;font-size:14px;font-weight:500;color:var(--text-primary);}
+.wb-task-operation.is-two-step-execution .wb-item-step-section p{margin:0 0 12px;color:var(--text-secondary);font-size:12px;}
+.wb-task-operation.is-two-step-execution .wb-item-step-section>label{display:block;max-width:340px;margin:12px 0 0;}
+.wb-task-operation.is-two-step-execution .wb-item-step-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;}
+.wb-task-operation.is-two-step-execution .wb-item-step-fields label{min-width:0;}
+.wb-task-operation.is-two-step-execution .wb-item-mode{display:flex;gap:18px;margin:12px 0;}
+.wb-task-operation.is-two-step-execution .wb-item-mode label{display:inline-flex;align-items:center;gap:6px;margin:0;font-size:13px;}
+.wb-task-operation.is-two-step-execution .wb-item-mode input{width:15px;height:15px;min-height:15px;margin:0;accent-color:var(--brand-primary);}
+.wb-task-operation.is-two-step-execution .wb-item-step-fields textarea{min-height:36px;height:36px;resize:vertical;}
+.wb-task-operation.is-two-step-execution .wb-item-batch-actions>[data-batch-status]{height:30px;padding:0 12px;background:var(--surface-content);color:var(--brand-primary);border-color:var(--border-default);}
+.wb-task-operation.is-two-step-execution .wb-item-batch-actions>[data-batch-status]:hover{border-color:var(--brand-primary);background:var(--surface-page);}
+@media(max-width:600px){.wb-task-operation.is-two-step-execution .wb-item-list-head,.wb-task-operation.is-two-step-execution .wb-item-row{grid-template-columns:minmax(90px,1fr) minmax(150px,1.4fr);}.wb-task-operation.is-two-step-execution .wb-item-step-fields{grid-template-columns:1fr;}}
+.wb-task-operation.is-two-step-execution .wb-item-step-fields[hidden]{display:none!important;}
+
+/* Visit handling details appear only after the primary Save action. */
+.wb-task-operation.is-two-step-execution .wb-item-status-control{flex-wrap:nowrap;width:100%;}
+.wb-task-operation.is-two-step-execution .wb-item-status-control select{flex:0 0 160px;}
+.wb-task-operation.is-two-step-execution .wb-item-status-control textarea{flex:1 1 auto;min-width:0;}
+.wb-task-operation.wb-item-details-dialog{width:min(560px,calc(100vw - 32px));}
+.wb-item-details-dialog .wb-task-operation-body{padding:16px 24px 24px;}
+.wb-item-details-dialog .wb-item-step-section{padding:14px 0;border-bottom:1px solid var(--border-default);}
+.wb-item-details-dialog .wb-item-step-section:last-of-type{border-bottom:0;}
+.wb-item-details-dialog .wb-item-step-section h3{margin:0 0 8px;font-size:14px;font-weight:500;color:var(--text-primary);}
+.wb-item-details-dialog .wb-item-step-section p{margin:0 0 12px;color:var(--text-secondary);font-size:12px;}
+.wb-item-details-dialog .wb-item-step-section>label{display:block;margin:12px 0 0;}
+.wb-item-details-dialog .wb-item-mode{display:flex;gap:18px;margin:12px 0;}
+.wb-item-details-dialog .wb-item-mode label{display:inline-flex;align-items:center;gap:6px;margin:0;font-size:13px;}
+.wb-item-details-dialog .wb-item-mode input{width:15px;height:15px;min-height:15px;margin:0;accent-color:var(--brand-primary);}
+.wb-item-details-dialog .wb-item-step-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;}
+.wb-item-details-dialog .wb-item-step-fields[hidden]{display:none!important;}
+.wb-item-details-dialog .wb-item-step-fields label{min-width:0;}
+.wb-item-details-dialog .wb-item-step-fields textarea{min-height:48px;resize:vertical;}
+@media(max-width:600px){.wb-item-details-dialog .wb-item-step-fields{grid-template-columns:1fr;}.wb-task-operation.is-two-step-execution .wb-item-status-control select{flex-basis:108px;}}
+
+/* Processing details: horizontal radio choices and vertical required fields. */
+.wb-task-operation.wb-item-details-dialog .wb-item-mode{display:flex;align-items:center;gap:28px;flex-wrap:nowrap;}
+.wb-task-operation.wb-item-details-dialog .wb-item-mode label{display:inline-flex;flex-direction:row;align-items:center;gap:7px;flex:0 0 auto;margin:0;white-space:nowrap;}
+.wb-task-operation.wb-item-details-dialog .wb-item-mode input[type=radio]{flex:0 0 15px;width:15px;height:15px;min-height:15px;padding:0;margin:0;}
+.wb-task-operation.wb-item-details-dialog .wb-item-step-fields{grid-template-columns:minmax(0,1fr);gap:0;}
+.wb-task-operation.wb-item-details-dialog .wb-item-step-fields label,.wb-task-operation.wb-item-details-dialog .wb-item-step-section>label{display:flex;flex-direction:column;gap:6px;margin:12px 0 0;}
+.wb-item-details-dialog .wb-item-field-title{display:inline-flex;align-items:center;gap:4px;white-space:nowrap;}
+.wb-item-details-dialog .wb-item-field-title em{display:inline;margin:0;line-height:inherit;}

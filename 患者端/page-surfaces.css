@@ -1,0 +1,7 @@
+/* One content surface shared by the body and bottom safe area on each page. */
+body .phone{background:var(--page-content-bg)!important}
+body .phone>.screen-scroll{background:var(--page-content-bg)!important}
+body .phone>.bottom,body .phone>.bottom .safe-area,body .phone>.clinical-safe-area,body .phone>.task-submit-dock{background:var(--page-content-bg)!important}
+body .phone>.bottom{border-top:0}
+body .phone>.success-screen{background:var(--page-content-bg)!important;bottom:0}
+body[data-page="task"] .phone>.sheet-layer,body[data-page="task"] .sheet{background:var(--page-content-bg)!important}

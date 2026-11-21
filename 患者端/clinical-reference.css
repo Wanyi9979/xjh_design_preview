@@ -1,0 +1,123 @@
+body.clinical-home .clinical-fixed-top{height:202px;background:linear-gradient(104.9296deg,#e6e5fc 7.735%,#e4edff 66.906%,#dce9fb 92.265%)}
+body.clinical-home .clinical-fixed-top .header{position:absolute;left:0;top:0;width:375px;height:44px;background:transparent}
+body.clinical-home .clinical-back-row{display:none}
+body.clinical-home .clinical-fixed-top .intro{position:absolute;left:0;top:37px;width:375px;height:121px;background:transparent}
+body.clinical-home .intro .eyebrow{top:19.4px;left:19.4px;font-size:8px;font-weight:600;line-height:11px;letter-spacing:1.8px}
+body.clinical-home .intro h1{top:33.73px;left:19.4px;font-size:28px;line-height:43px;font-weight:500;letter-spacing:-1px}
+body.clinical-home .intro p{top:79.89px;left:19px;font-size:12px;line-height:17px}
+body.clinical-home .research-hero{left:200px;top:8px;width:139px;height:104px}
+body.clinical-home .clinical-fixed-top .section-switch{position:absolute;left:0;top:158px;width:375px;height:44px;background:#dde4fa;border:0;border-radius:24px 24px 0 0}
+body.clinical-home .section-switch button{padding:11.41px 0 0;height:44px;font-size:16px;font-weight:500;line-height:22px}
+body.clinical-home .section-switch button[aria-selected=true]:before{top:.41px;width:192.857px;height:43.592px;background-size:192.857px 43.592px}
+body.clinical-home .section-switch button[aria-selected=true]:after{top:41.41px;height:3px;width:16px;background:#7064df}
+body.clinical-home .clinical .screen-scroll{top:202px;bottom:0;background:#f6f6f9;padding:0;display:block}
+body.clinical-home .clinical-safe-area{background:transparent;pointer-events:none}
+body.clinical-home #tasks,body.clinical-home #projects{background:#f6f6f9;padding:0;min-height:100%}
+.upcoming-visits{padding:16px 12px 0}.appointment-section-head{height:24px;margin:0 0 12px 4px}.appointment-section-head h2{font-size:14px;line-height:20px;font-weight:600}.appointment-section-head>a{font-size:12px;font-weight:500;color:#806aed}
+.appointment-preview.appointment-figma{margin:0;height:135px;box-shadow:0 0 2px #7064df1a}
+body.clinical-home .todo-heading{height:40px;padding:16px 12px 0 16px}
+body.clinical-home .todo-heading h2{font-size:14px;line-height:24px;font-weight:600}
+body.clinical-home #taskList{padding:12px 12px 0}
+body.clinical-home .task-card.questionnaire-card{padding:12px;border:1px solid #fff;border-radius:12px;margin:0 0 12px;box-shadow:0 0 2px #7064df1a;min-height:68px}
+body.clinical-home .task-card.questionnaire-card:last-child{margin-bottom:0}
+body.clinical-home .questionnaire-row{padding:0;min-height:43px;gap:8px}
+body.clinical-home .questionnaire-heading{gap:6px;align-items:center}
+body.clinical-home .questionnaire-heading img{width:40px;height:36px}
+body.clinical-home .file-task-card .questionnaire-heading img{height:37px}
+body.clinical-home .questionnaire-titles{gap:4px}
+body.clinical-home .questionnaire-name{font-size:15px;line-height:23px;font-weight:500}
+body.clinical-home [data-card-task="7"] .questionnaire-name{font-size:15px}
+body.clinical-home .questionnaire-countdown{font-size:12px;line-height:16px;color:#806aed}
+body.clinical-home .questionnaire-row>.task-action{font-size:11px;line-height:16px;font-weight:500;padding:6px 12px;border-radius:18px;background:#806aed}
+body.clinical-home .list-end{margin:0;height:50px;padding-top:22px;font-size:12px;line-height:14px;color:#b6b9c8}
+.message-float{left:316px;right:auto;top:auto;bottom:17px;width:40px;height:40px}
+body.clinical-home .todo-heading{height:39px}
+body.clinical-home .task-card.questionnaire-card:not(.file-task-card):has(.task-detail-body[hidden]){height:68px;min-height:68px}
+.appointment-figma-footer{border-top:0}
+.appointment-figma>.appointment-divider{position:absolute;left:13.5px;top:101.5px}
+/* Figma latest: content starts at 74, with a return link. */
+body.clinical-home .clinical-fixed-top{height:239px}
+body.clinical-home .clinical-fixed-top .header{height:88px}
+body.clinical-home .clinical-back-row{display:flex;left:17px;top:50px;height:32px;color:#101010}
+body.clinical-home .clinical-back-row a{font-size:12px;color:#101010;gap:5px}
+body.clinical-home .clinical-fixed-top .intro{top:74px;height:121px}
+body.clinical-home .clinical-fixed-top .section-switch{top:195px}
+body.clinical-home .clinical .screen-scroll{top:239px}
+.appointment-preview.appointment-figma{height:143px;background:linear-gradient(248.0287deg,#f1efff 22.388%,#fbfafe 95.699%);box-shadow:0 1px 3px #7064df1a}
+.appointment-phase{font-size:13px}
+.appointment-date-row{left:13.5px;top:48.5px}
+.appointment-figma-footer{height:36px;padding:0 14px;font-size:12px}
+.appointment-figma>.appointment-divider{top:106.5px}
+.appointment-section-head>a{color:#7064df}
+body.clinical-home .research-hero{left:212px;top:13px;width:126px;height:95px}
+body.clinical-home .questionnaire-countdown,body.clinical-home .todo-heading>a,body.clinical-home .todo-heading h2 span{color:#7064df}
+body.clinical-home .questionnaire-row>.task-action{background:#7064df}
+.appointment-section-head>a{font-weight:400}
+.message-float{border-radius:50%;background:#fff;box-shadow:0 1px 5px #30245212}
+.message-float img{left:-4px;top:-4px;transform:scale(.75);transform-origin:center}
+
+.message-float{display:flex;align-items:center;justify-content:center;color:#383370}.message-bell{display:block;filter:none;box-shadow:none}.message-unread{position:absolute;right:1px;top:1px;width:7px;height:7px;border-radius:50%;background:#ed1010;border:1px solid #fff}
+.appointment-date-row p{color:#81799f}
+.appointment-preview.appointment-figma{background:linear-gradient(248.03deg,#e3ddff 22.388%,#f2efff 95.699%);border-color:#d4c9fb}
+.appointment-preview.appointment-figma{background:linear-gradient(110deg,#e8e7fc 8%,#e3eaff 68%,#e0e9fb 100%);border-color:#d8def6}
+.appointment-preview.appointment-figma{background:linear-gradient(120deg,#f1eef9,#ebe6f5);border-color:#ded7ed}
+
+/* Visit card: Figma 1147:2951. */
+.appointment-preview.appointment-figma{background:linear-gradient(-84.1372deg,#b7afff 1.9937%,#7064df 97.978%);border-color:#d5ccff;color:#fff}
+.appointment-phase{background:rgba(255,255,255,.2);color:#f3f2ff;line-height:18px}
+.appointment-figma>.appointment-status{color:#fff;font-weight:500}
+.appointment-day b{font-size:20px;color:#fff}
+.appointment-day>span{color:#e8e5ff}
+.appointment-date-row p{color:rgba(242,243,255,.8)}
+.appointment-figma-footer{background:linear-gradient(90deg,rgba(255,255,255,.24),rgba(255,255,255,.08));color:#f7f7ff}
+.appointment-figma-footer>span:last-child{color:#fff}
+.message-float{left:auto;right:19px;width:34px;height:34px}
+.message-bell{width:19px;height:19px}
+.message-unread{width:6px;height:6px}
+
+body.clinical-home .questionnaire-card .task-detail-body{margin-top:16px;padding-top:14px}
+
+body.clinical-home #taskList .empty{padding:20px 8px 28px;text-align:center;background:transparent}body.clinical-home .empty-illustration{position:relative;width:150px;height:143px;overflow:hidden;margin:0 auto 14px}body.clinical-home .empty-illustration img{position:absolute;width:159.09%;height:133.38%;max-width:none;left:-28.41%;top:-15.5%}body.clinical-home .empty h3{font-size:16px;line-height:24px;font-weight:600;color:#505365}body.clinical-home .empty p{font-size:12px;line-height:20px;color:#9b9ead;margin-top:10px}body.clinical-home .empty button{margin-top:24px;padding:10px 22px;font-size:14px;background:#eeebfc;color:#7064df}
+
+/* Empty state: Figma 1149:4359. */
+body.clinical-home #taskList .empty{padding:16px 20px 28px}
+body.clinical-home .empty-illustration{width:128px;height:86px;margin:0 auto 6px}
+body.clinical-home .empty-illustration img{width:100%;height:119.11%;left:-.19%;top:-.19%}
+body.clinical-home .empty h3{font-size:13px;line-height:24px;font-weight:500}
+body.clinical-home .empty p{font-size:11px;line-height:20px;margin-top:0;white-space:nowrap}
+body.clinical-home .empty button{font-size:12px;line-height:17px;padding:6px 20px;margin-top:4px}
+
+body.clinical-home .empty-illustration{width:160px;height:108px;margin-bottom:10px}
+body.clinical-home .empty h3{font-size:15px;line-height:24px}
+body.clinical-home .empty p{font-size:12px;line-height:20px;margin-top:4px;white-space:normal}
+body.clinical-home .empty button{font-size:13px;line-height:18px;padding:8px 22px;margin-top:12px}
+
+/* Empty state: Figma 1149:4435. */
+body.clinical-home .empty-illustration{width:161px;height:108px;margin-bottom:6px}
+body.clinical-home .empty-illustration img{left:2.83%;top:-.19%;width:100%;height:119.11%}
+body.clinical-home .empty h3{font-size:16px;line-height:24px;font-weight:500}
+body.clinical-home .empty p{font-size:13px;line-height:20px;margin-top:4px}
+body.clinical-home .empty button{font-size:14px;line-height:20px;padding:6px 20px;margin-top:8px}
+.message-unread{width:9px;height:9px;right:0;top:0}
+
+body.clinical-home .clinical .screen-scroll{padding-bottom:34px}
+body.clinical-home #tasks>.list-end:not([hidden]){display:block;min-height:58px;height:auto;padding:22px 12px;text-align:center}
+
+body .questionnaire-card .questionnaire-countdown.time-normal{color:#696577}
+body .questionnaire-card .questionnaire-countdown.time-overdue{color:#e45460}
+body .questionnaire-card .questionnaire-countdown.time-today{color:#e68b35}
+
+body.clinical-home .appointment-section-head>a{display:flex;gap:5px;align-items:center;font-size:12px;font-weight:400;color:#7064df;text-decoration:none}body.clinical-home .appointment-section-head>a span{font-size:20px;line-height:15px}
+
+/* Participating projects: Figma 1154:8338. */
+body.clinical-home #projects .project-intro{margin:0;padding:18px 20px 14px;font-size:12px;line-height:17px;color:#979bad}
+body.clinical-home #projects .project-intro strong{color:#6960df;font-weight:600}
+body.clinical-home #projects .project-figma{display:flex;align-items:flex-start;gap:8px;margin:0 16px 12px;padding:16px 12px 16px 8px;border:1px solid white;border-radius:13px;background:white;box-shadow:0 1px 3px #7064df1a;text-decoration:none}
+.project-research-icon{width:55px;height:50px;object-fit:cover;transform:scaleX(-1);flex-shrink:0}
+.project-card-content{flex:1;min-width:0}
+body.clinical-home #projects .project-top{display:flex;align-items:center;justify-content:space-between;gap:4px;margin:0;min-height:22px}
+body.clinical-home #projects .project-code{font-size:10px;line-height:14px;letter-spacing:.5px;color:#aaa2c7;font-weight:600}
+body.clinical-home #projects .state{padding:4px 7px;border-radius:5px;font-size:10px;line-height:14px;font-weight:500;background:#eeebfc;color:#8b7bcd}
+body.clinical-home #projects .project-card h2{margin:0;padding-top:2px;font-size:16px;line-height:25px;font-weight:500;color:#252638}
+
+body.clinical-home #projects .state.participant-ended{background:#f2f2f2;color:#b0b0b0}
