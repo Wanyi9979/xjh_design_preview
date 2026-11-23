@@ -9,7 +9,7 @@
 <script src="dialog-focus.js"></script><script src="required-fields.js?v=1"></script>
 <script src="demo-participant-identity.js?v=1"></script><script src="visit-protocols.js?v=demo-identity-1"></script>
 <script src="shared-scope.js?v=project-resets-center-4"></script><script src="app-shell.js?v=clean-module-routes-1"></script><link rel="stylesheet" href="aggregate-navigation.css?v=scope-transition-3">
-<link rel="stylesheet" href="redesign.css"><link rel="stylesheet" href="colors.css?v=restore-medical-blue-4"><link rel="stylesheet" href="navigation.css?v=square-collapsed-6"><link rel="stylesheet" href="workbench-focus.css?v=project-first-1"><link rel="stylesheet" href="workbench-layout.css?v=focus-tabs-6"><link rel="stylesheet" href="workbench-figma.css?v=collection-method-1"><link rel="stylesheet" href="task-drawers.css?v=adjustment-preview-1"><link rel="stylesheet" href="centered-dialogs.css?v=required-markers-2"><style>[data-quiet-dialog]:focus,[data-quiet-dialog]:focus-visible{outline:none!important}</style><link rel="stylesheet" href="global-topbar.css?v=detail-scope-disabled-15"><link rel="stylesheet" href="form-preview.css?v=direct-task-content-2"><script src="form-preview.js?v=secondary-form-preview-3" defer></script><link rel="stylesheet" href="workbench-overview.css?v=figma-workbench-4972-1"><link rel="stylesheet" href="workbench-task-rules.css?v=details-form-layout-30"><link rel="stylesheet" href="table-actions.css?v=soft-shadow-2"><link rel="stylesheet" href="visit-status.css?v=inactive-state-4"><link rel="stylesheet" href="workbench-figma-layout.css?v=figma-card-1141-2104-13"><link rel="stylesheet" href="task-status-tags.css?v=1"><link rel="stylesheet" href="task-details.css?v=compact-result-no-note-3"><script src="task-details.js?v=compact-result-no-note-4" defer></script></head>
+<link rel="stylesheet" href="redesign.css"><link rel="stylesheet" href="colors.css?v=restore-medical-blue-4"><link rel="stylesheet" href="navigation.css?v=square-collapsed-6"><link rel="stylesheet" href="workbench-focus.css?v=project-first-1"><link rel="stylesheet" href="workbench-layout.css?v=focus-tabs-6"><link rel="stylesheet" href="workbench-figma.css?v=collection-method-1"><link rel="stylesheet" href="task-drawers.css?v=adjustment-preview-1"><link rel="stylesheet" href="centered-dialogs.css?v=required-markers-2"><style>[data-quiet-dialog]:focus,[data-quiet-dialog]:focus-visible{outline:none!important}</style><link rel="stylesheet" href="global-topbar.css?v=detail-scope-disabled-15"><link rel="stylesheet" href="form-preview.css?v=direct-task-content-2"><script src="form-preview.js?v=secondary-form-preview-3" defer></script><link rel="stylesheet" href="workbench-overview.css?v=figma-workbench-4972-1"><link rel="stylesheet" href="workbench-task-rules.css?v=details-form-layout-30"><link rel="stylesheet" href="table-actions.css?v=soft-shadow-2"><link rel="stylesheet" href="visit-status.css?v=inactive-state-4"><link rel="stylesheet" href="workbench-figma-layout.css?v=today-heading-final-20"><link rel="stylesheet" href="task-status-tags.css?v=1"><link rel="stylesheet" href="task-details.css?v=compact-result-no-note-3"><script src="task-details.js?v=compact-result-no-note-4" defer></script></head>
 <body>
   <main class="page">
     <section class="workbench-one" aria-label="工作台">
@@ -24,12 +24,12 @@
       <div class="wb1-layout wb-overview-layout" data-wb-overview>
         <div class="wb1-task-workspace">
           <div class="wb1-task-summary" aria-label="待办任务统计">
+            <button class="wb1-task-card" data-wb1-summary="appointment" type="button" aria-pressed="false"><span class="wb1-stat-art" aria-hidden="true"><span class="wb1-stat-sprite"><img src="figma-workbench-assets/task-center-icons-v5.png" alt=""></span></span><span class="wb1-stat-copy"><span class="wb1-stat-label">待访视预约</span><strong>0</strong></span></button>
+            <button class="wb1-task-card" data-wb1-summary="followup" type="button" aria-pressed="false" title="待跟进参与者"><span class="wb1-stat-art" aria-hidden="true"><span class="wb1-stat-sprite"><img src="figma-workbench-assets/task-center-icons-v5.png" alt=""></span></span><span class="wb1-stat-copy"><span class="wb1-stat-label">待跟进参与者</span><strong>4</strong></span></button>
+            <button class="wb1-task-card" data-wb1-summary="processing" type="button" aria-pressed="false" title="待数据录入"><span class="wb1-stat-art" aria-hidden="true"><span class="wb1-stat-sprite"><img src="figma-workbench-assets/task-center-icons-v5.png" alt=""></span></span><span class="wb1-stat-copy"><span class="wb1-stat-label">待数据录入</span><strong>4</strong></span></button>
             <button class="wb1-task-card is-active" data-wb1-summary="issue" type="button" aria-pressed="true" title="待发放访视任务"><span class="wb1-stat-art" aria-hidden="true"><span class="wb1-stat-sprite"><img src="figma-workbench-assets/task-center-icons-v5.png" alt=""></span></span><span class="wb1-stat-copy"><span class="wb1-stat-label">待发放访视任务</span><strong>7</strong></span></button>
             <button class="wb1-task-card" data-wb1-summary="execution" type="button" aria-pressed="false" title="待处理访视任务"><span class="wb1-stat-art" aria-hidden="true"><span class="wb1-stat-sprite"><img src="figma-workbench-assets/task-center-icons-v5.png" alt=""></span></span><span class="wb1-stat-copy"><span class="wb1-stat-label">待处理访视任务</span><strong>6</strong></span></button>
             <button class="wb1-task-card" data-wb1-summary="execution-overdue" type="button" aria-pressed="false" title="逾期待处理访视任务"><span class="wb1-stat-art" aria-hidden="true"><span class="wb1-stat-sprite"><img src="figma-workbench-assets/task-center-icons-v5.png" alt=""></span></span><span class="wb1-stat-copy"><span class="wb1-stat-label">逾期待处理访视任务</span><strong>1</strong></span></button>
-            <button class="wb1-task-card" data-wb1-summary="followup" type="button" aria-pressed="false" title="待跟进参与者"><span class="wb1-stat-art" aria-hidden="true"><span class="wb1-stat-sprite"><img src="figma-workbench-assets/task-center-icons-v5.png" alt=""></span></span><span class="wb1-stat-copy"><span class="wb1-stat-label">待跟进参与者</span><strong>4</strong></span></button>
-            <button class="wb1-task-card" data-wb1-summary="appointment" type="button" aria-pressed="false"><span class="wb1-stat-art" aria-hidden="true"><span class="wb1-stat-sprite"><img src="figma-workbench-assets/task-center-icons-v5.png" alt=""></span></span><span class="wb1-stat-copy"><span class="wb1-stat-label">待访视预约</span><strong>0</strong></span></button>
-            <button class="wb1-task-card" data-wb1-summary="processing" type="button" aria-pressed="false" title="待数据处理"><span class="wb1-stat-art" aria-hidden="true"><span class="wb1-stat-sprite"><img src="figma-workbench-assets/task-center-icons-v5.png" alt=""></span></span><span class="wb1-stat-copy"><span class="wb1-stat-label">待数据处理</span><strong>4</strong></span></button>
           </div>
 
           <section class="wb1-panel wb1-task-panel" aria-label="任务处理" hidden>
@@ -57,7 +57,12 @@
         </div>
 
         <section class="wb1-panel wb-overview-list wb-overview-today" aria-labelledby="wb-today-title">
-          <h2 id="wb-today-title">今日待办</h2>
+          <header class="wb-today-heading">
+            <div class="wb-today-heading-background" aria-hidden="true"><img src="figma-workbench-assets/today-heading-background.png" alt=""></div>
+            <div class="wb-today-heading-identity"><span class="wb-today-heading-icon" aria-hidden="true"><img src="figma-workbench-assets/today-heading-icon.png" alt=""></span><div class="wb-today-heading-copy"><h2 id="wb-today-title">今日待办</h2><p>聚焦今日工作，请优先处理～</p></div></div>
+            <div class="wb-today-heading-total" aria-label="今日待处理总数"><strong data-wb-today-total>0</strong><span>项待处理</span></div>
+          </header>
+          <div class="wb-today-content">
           <div class="wb-today-toolbar">
             <div class="wb-overview-tabs" role="tablist" aria-label="今日待办类型">
               <button type="button" id="wb-today-visits" role="tab" aria-controls="wb-today-panel" aria-selected="false" tabindex="-1" data-today-tab="visits">今日访视<span></span></button>
@@ -75,6 +80,7 @@
               </table>
             </div>
             <nav class="wb1-pagination wb-today-pagination" data-wb-today-pagination aria-label="今日待办分页"></nav>
+          </div>
           </div>
         </section>
         <section class="wb1-panel wb-overview-list wb-overview-attention" aria-labelledby="wb-attention-title">
@@ -212,7 +218,7 @@
   <script src="workbench-task-policy.js?v=issued-execution-1"></script>
   <script src="participant-tasks.js?v=completed-result-button-18"></script>
   <script src="workbench-task-dialogs.js?v=default-later-execution-27"></script>
-  <script src="workbench.js?v=pending-processing-status-36"></script>
+  <script src="workbench.js?v=warning-entry-labels-40"></script>
 <script src="workbench-context.js?v=calendar-task-count-1"></script><script src="global-participant-search.js?v=scope-reconciliation-3"></script>
 <script src="workbench-list-filters.js?v=processing-status-8"></script><script src="workbench-overview.js?v=remove-window-module-4"></script><script src="aggregate-navigation.js?v=detail-scope-disabled-6"></script><script src="table-actions.js?v=1"></script></body>
 </html>

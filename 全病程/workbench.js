@@ -210,7 +210,7 @@
 
   function taskActions(kind, index) {
     const entries = actionEntries(kind, index);
-    return entries.length <= 3 ? entries.join('') : entries.slice(0, 2).join('') + `<button type="button" data-wb1-more-action="${kind}" data-task-index="${index}" aria-haspopup="menu" aria-expanded="false" aria-label="更多"><img src="figma-workbench-layout/more.svg" width="12" height="12" alt=""></button>`;
+    return entries.length <= 3 ? entries.join('') : entries.slice(0, 2).join('') + `<button type="button" data-wb1-more-action="${kind}" data-task-index="${index}" aria-haspopup="menu" aria-expanded="false" aria-label="更多">${kind==='visit'?'<span class="wb-today-more-icon"><img src="figma-workbench-assets/today-row-more.svg" width="10" height="2" alt=""></span>':'<img src="figma-workbench-layout/more.svg" width="12" height="12" alt="">'}</button>`;
   }
 
   function dateWindowMarkup(planned, window) {
@@ -304,7 +304,7 @@
   function todayVisitRow(visit) {
     const store = window.clinicalVisitStore, state = store.status(visit);
     const buttons = taskActions('visit', todayVisits.indexOf(visit));
-    return `<tr><td>${participantNameLink(visit.participant,visit.participantId,visit.trial,visit.participantStatus,visit.projectId)}</td><td>${escapeMarkup(visit.participantId)}</td><td>${escapeMarkup(visit.trial)}</td><td>${escapeMarkup(visit.name)}</td><td>${visitStatusMarkup(visit,'today',todayVisits.indexOf(visit))}</td><td>${dateWindowMarkup(visit.plannedDate,visit.windowStart+' ～ '+visit.windowEnd)}</td><td>${escapeMarkup(visit.appointmentDate)}</td><td><div class="wb1-table-actions">${buttons}</div></td></tr>`;
+    return `<tr><td>${participantNameLink(visit.participant,visit.participantId,visit.trial,visit.participantStatus,visit.projectId)}</td><td>${escapeMarkup(visit.participantId)}</td><td class="wb-today-trial">${escapeMarkup(visit.trial)}</td><td>${escapeMarkup(visit.name)}</td><td>${visitStatusMarkup(visit,'today',todayVisits.indexOf(visit))}</td><td>${dateWindowMarkup(visit.plannedDate,visit.windowStart+' ～ '+visit.windowEnd)}</td><td>${escapeMarkup(visit.appointmentDate)}</td><td><div class="wb1-table-actions">${buttons}</div></td></tr>`;
   }
 
   function renderOverview(visits, matchesTrial, center, centers) {
@@ -330,9 +330,10 @@
       tasksByCategory[key] = tasks;
       updateOverviewTab(tab, key === todayCategory, todayPanel, tasks.length);
     }
+    document.querySelector('[data-wb-today-total]').textContent=Object.values(tasksByCategory).reduce((sum,tasks)=>sum+tasks.length,0);
     const missedVisits=visits.filter(visit=>inScope(visit)&&store.overdueUnhandled(visit,P.today));
     missedVisitNotice.hidden=todayCategory!=='visits'||!missedVisits.length;
-    missedVisitNotice.innerHTML=missedVisits.length?`<span>有 <strong>${missedVisits.length}</strong> 次今日之前的访视尚未执行或调整，请及时处理。</span><a href="${escapeMarkup(calendarURL({missedAppointments:'1',referenceDate:P.today,from:'workbench'}))}">查看待处理访视 ›</a>`:'';
+    missedVisitNotice.innerHTML=missedVisits.length?`<span>有 <strong>${missedVisits.length}</strong> 次今日之前的访视尚未执行或调整，请及时处理。</span><a href="${escapeMarkup(calendarURL({missedAppointments:'1',referenceDate:P.today,from:'workbench'}))}" aria-label="查看待处理访视">查看 ›</a>`:'';
     const todayTasks = tasksByCategory[todayCategory];
     if (todayCategory === 'execution') todayTasks.sort(byExecutionDeadline);
     renderTaskColumns(todayTable, todayCategory === 'visits' ? [['参与试验',22],['访视',18],['访视状态',10],['计划日期 / 访视窗口',24],['预约日期',14]] : taskFields(todayCategory));
@@ -361,8 +362,8 @@
     };
     const attentionGroups = [
       { filter: 'overdue', label: '超窗待访视', visits: pendingVisits.filter(visit => store.windowStatus(visit, P.today) === 'overdue').sort((a,b)=>a.windowEnd.localeCompare(b.windowEnd)) },
-      { filter: 'last-day', label: '即将超窗', visits: pendingVisits.filter(visit => visit.windowEnd === P.today) },
-      { filter: 'unbooked', label: '访视需预约', visits: pendingVisits.filter(visit => !visit.appointmentDate && !visit.appointmentWaiver).sort((a,b)=>a.plannedDate.localeCompare(b.plannedDate)) }
+      { filter: 'last-day', label: '即将超窗预警', visits: pendingVisits.filter(visit => visit.windowEnd === P.today) },
+      { filter: 'unbooked', label: '访视预约预警', visits: pendingVisits.filter(visit => !visit.appointmentDate && !visit.appointmentWaiver).sort((a,b)=>a.plannedDate.localeCompare(b.plannedDate)) }
     ];
     const groups = attentionGroups.filter(group => group.visits.length).map(({ filter, label, visits }) =>
       `<section class="wb-preview-group" data-attention-group="${filter}">
