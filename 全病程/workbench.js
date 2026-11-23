@@ -204,7 +204,7 @@
     else if(kind==='appointment') entries=[...(task.appointmentDate?[['execute','访视执行'],['book','调整预约']]:[['book','访视预约']]),['terminate','访视终止'],['contact','联系参与者']];
     else if (kind === 'execution') entries = task.scope === 'none' ? [['view', '查看任务'], ['contact', '联系参与者']] : task.scope === 'completed' ? [['view', '查看任务'], ['result', '查看处理结果'], ['contact', '联系参与者']] : [...(task.canCaseExecute ? [['execute', '去处理']] : []), ['no-process', '无需处理'], ['adjust', '调整日期'], ['contact', '联系参与者']];
     else if (kind === 'followup') entries = task.scope === 'pending' ? [['complete', '标记已完成'], ['no-process', '无需处理'], ['contact', '联系参与者']] : [['view-record', '操作记录']];
-    else entries = [['process', '去处理'], ['no-process', '无需处理'], ['contact', '联系参与者']];
+    else entries = [['process', '去录入'], ['no-process', '无需处理'], ['contact', '联系参与者']];
     return [...entries.map(([action, label]) => button(action, label)), ...(['followup','execution','issue'].includes(kind) ? [] : [`<button type="button" data-wb1-add-followup="${kind}" data-task-index="${index}">添加跟进</button>`])];
   }
 
@@ -333,7 +333,7 @@
     document.querySelector('[data-wb-today-total]').textContent=Object.values(tasksByCategory).reduce((sum,tasks)=>sum+tasks.length,0);
     const missedVisits=visits.filter(visit=>inScope(visit)&&store.overdueUnhandled(visit,P.today));
     missedVisitNotice.hidden=todayCategory!=='visits'||!missedVisits.length;
-    missedVisitNotice.innerHTML=missedVisits.length?`<span>有 <strong>${missedVisits.length}</strong> 次今日之前的访视尚未执行或调整，请及时处理。</span><a href="${escapeMarkup(calendarURL({missedAppointments:'1',referenceDate:P.today,from:'workbench'}))}" aria-label="查看待处理访视">查看 ›</a>`:'';
+    missedVisitNotice.innerHTML=missedVisits.length?`<span>有<strong>${missedVisits.length}</strong>次访视已超过计划日期，尚未执行或调整，请及时处理</span><a href="${escapeMarkup(calendarURL({missedAppointments:'1',referenceDate:P.today,from:'workbench'}))}" aria-label="查看待处理访视">查看 ›</a>`:'';
     const todayTasks = tasksByCategory[todayCategory];
     if (todayCategory === 'execution') todayTasks.sort(byExecutionDeadline);
     renderTaskColumns(todayTable, todayCategory === 'visits' ? [['参与试验',22],['访视',18],['访视状态',10],['计划日期 / 访视窗口',24],['预约日期',14]] : taskFields(todayCategory));
@@ -440,7 +440,7 @@
         const index = processingTasks.indexOf(row);
         const actions = taskActions('processing', index);
         const crfs=P.crfs(row),completed=crfs.filter(crf=>crf.state==='已完成').length,rate=crfs.length?Math.round(completed/crfs.length*100):0;
-        return `<tr>${participantColumns(row.participant, row.participantId, row.trial, participantState(row), row.projectId)}<td>${row.trial}</td><td>${taskVisitMarkup(row.visit,row.trial,row.participantId,row.protocolVersion,row.visitId)}</td><td>${processingDateMarkup(row)}</td>${participantStatusColumn(participantState(row))}<td>${row.actualDate}</td><td><div class="wb1-data-completeness wb1-visit-completeness" title="已完成 ${completed}/${crfs.length} 个 CRF"><progress max="100" value="${rate}" aria-label="访视完成率 ${rate}%"></progress><span>${rate}%</span></div></td><td><div class="wb1-table-actions">${actions}</div></td></tr>`;
+        return `<tr>${participantColumns(row.participant, row.participantId, row.trial, participantState(row), row.projectId)}<td>${row.trial}</td><td>${taskVisitMarkup(row.visit,row.trial,row.participantId,row.protocolVersion,row.visitId)}</td><td>${processingDateMarkup(row)}</td>${participantStatusColumn(participantState(row))}<td><div class="wb1-data-completeness wb1-visit-completeness" title="已完成 ${completed}/${crfs.length} 个 CRF"><progress max="100" value="${rate}" aria-label="访视完成率 ${rate}%"></progress><span>${rate}%</span></div></td><td><div class="wb1-table-actions">${actions}</div></td></tr>`;
       }).join('') : `<tr><td class="wb1-empty" colspan="${tableCols.children.length}">暂无匹配的待处理任务</td></tr>`;
       return;
     }
@@ -528,7 +528,7 @@
       setTaskColumns(taskFields('appointment'));
     } else if (mode === 'processing') {
       tabs.forEach(tab => { tab.hidden = true; });
-      setTaskColumns([['参与试验', 16], ['访视', 12], ['计划日期/访视窗口', 15], ['参与者状态', 11], ['实际访视日期', 11], ['访视完成率', 14]]);
+      setTaskColumns([['参与试验', 16], ['访视', 12], ['计划日期/访视窗口', 15], ['参与者状态', 11], ['访视完成率', 14]]);
     } else if (mode === 'followup') {
       followupFilter = 'pending';
       tabs.forEach((button, index) => { button.hidden = index > 2; });

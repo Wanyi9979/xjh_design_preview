@@ -22,3 +22,34 @@
  };
  addEventListener('pageshow',sync);addEventListener('storage',event=>{if(event.key===key)sync()});
 })();
+
+// All task actions share one explicit entry/return contract.
+window.taskReturnPage=function(value){
+ let url;try{url=new URL(value||'clinical.html',location.href)}catch{return 'clinical.html'}
+ const page=url.pathname.split('/').pop();
+ if(url.origin!==location.origin||!['clinical.html','all-tasks.html','visits.html'].includes(page))return 'clinical.html';
+ const params=new URLSearchParams();
+ if(page!=='clinical.html'&&/^p[12]$/.test(url.searchParams.get('project')))params.set('project',url.searchParams.get('project'));
+ const mode=url.searchParams.get('projectMode')||(window.singleProjectPreview?'single':'multi');
+ if(['single','multi'].includes(mode))params.set('projectMode',mode);
+ return page+(params.size?'?'+params.toString():'');
+};
+window.taskOrigin=function(){
+ const query=new URLSearchParams(location.search),origin=query.get('origin');
+ if(['all-tasks','clinical','visits'].includes(origin)){
+  const url=new URL(origin+'.html',location.href);
+  for(const key of ['project','projectMode'])if(query.has(key))url.searchParams.set(key,query.get(key));
+  return window.taskReturnPage(url.href);
+ }
+ return window.taskReturnPage(query.get('from')||document.referrer||'clinical.html');
+};
+window.taskFlowURL=function(page,params,source){
+ const target=new URL(page,location.href),back=new URL(window.taskReturnPage(source),location.href);
+ for(const [key,value] of Object.entries(params))target.searchParams.set(key,value);
+ target.searchParams.set('from',window.taskReturnPage(source));
+ target.searchParams.set('origin',back.pathname.split('/').pop().replace('.html',''));
+ for(const key of ['project','projectMode'])if(back.searchParams.has(key))target.searchParams.set(key,back.searchParams.get(key));
+ // A new navigation revision prevents older cached task pages from mixing return rules.
+ target.searchParams.set('flow','2');
+ return target.href;
+};

@@ -9,6 +9,7 @@
   form.innerHTML = `
     <select name="project" aria-label="任务项目筛选">${project.innerHTML}</select>
     <select name="center" aria-label="任务中心筛选">${center.innerHTML}</select>
+    <select name="trial" aria-label="试验筛选"><option value="">全部试验</option></select>
     <input name="task" type="search" placeholder="任务名称 / 跟进内容" aria-label="搜索任务名称或跟进内容">
     <div class="wb-list-date-range" role="group" aria-label="日期范围">
       <span data-list-date-label>计划日期</span>
@@ -35,18 +36,32 @@
 
   function setMode(mode, issueTab = 'draft') {
     const issue = mode === 'issue';
+    const processing = mode === 'processing';
     const visitFilters = issue || mode === 'execution';
     form.classList.toggle('is-issue', issue);
     form.classList.toggle('has-visit-filters', visitFilters);
-    fields.task.hidden = fields.task.disabled = visitFilters;
+    fields.task.hidden = fields.task.disabled = visitFilters || processing;
+    fields.trial.hidden = fields.trial.disabled = !processing;
     fields.task.placeholder = mode === 'appointment' ? '访视名称' : '任务名称 / 跟进内容';
     fields.task.setAttribute('aria-label', mode === 'appointment' ? '搜索访视名称' : '搜索任务名称或跟进内容');
-    for (const select of [fields.visitCycle, fields.participantStatus]) select.hidden = select.disabled = !visitFilters;
+    fields.visitCycle.hidden = fields.visitCycle.disabled = !(visitFilters || processing);
+    fields.participantStatus.hidden = fields.participantStatus.disabled = !visitFilters;
+    fields.visitCycle.options[0].textContent = processing ? '全部访视' : '当前访视周期';
+    fields.visitCycle.setAttribute('aria-label', processing ? '访视筛选' : '当前访视周期');
     fields.executionState.hidden = fields.executionState.disabled = !issue || issueTab !== 'sent';
     const label = visitFilters ? '访视日期' : '计划日期';
     dateLabel.textContent = label;
     dateRange.setAttribute('aria-label', label + '范围');
     form.insertBefore(searchField, visitFilters ? reset : fields.task);
+    if (processing) {
+      const tasks = window.researchDemo.processingTasks;
+      setOptions(fields.trial, tasks.map(row => row.trial));
+      setOptions(fields.visitCycle, tasks.map(visitName));
+      form.insertBefore(fields.trial, dateRange);
+      form.insertBefore(fields.visitCycle, dateRange);
+    } else {
+      form.insertBefore(fields.visitCycle, fields.participantStatus);
+    }
     if (visitFilters) {
       const { taskSets, executionTasks } = window.researchDemo;
       const tasks = issue ? Object.values(taskSets).flat() : executionTasks;
@@ -73,6 +88,7 @@
   const state = () => ({
     project: fields.project.value, center: fields.center.value, search: search.value,
     task: fields.task.disabled ? '' : fields.task.value,
+    trial: fields.trial.disabled ? '' : fields.trial.value,
     visitCycle: fields.visitCycle.disabled ? '' : fields.visitCycle.value,
     participantStatus: fields.participantStatus.disabled ? '' : fields.participantStatus.value,
     executionState: fields.executionState.disabled ? '' : fields.executionState.value,
@@ -83,10 +99,11 @@
     const filters = state();
     const array = Array.isArray(row);
     const name = array ? row[1] : row.task || row.content || row.visit || '';
-    const visitDate = !fields.visitCycle.disabled ? row.baselineDate : '';
+    const visitDate = form.classList.contains('has-visit-filters') ? row.baselineDate : '';
     const date = (array ? row[9] : visitDate || row.plannedAt || row.plannedDate || row.date || '').slice(0, 10);
     return (!filters.task || name.toLowerCase().includes(filters.task.trim().toLowerCase()))
       && (!filters.start || date >= filters.start) && (!filters.end || date <= filters.end)
+      && (!filters.trial || row.trial === filters.trial)
       && (!filters.visitCycle || visitName(row) === filters.visitCycle)
       && (!filters.participantStatus || participantStatus === filters.participantStatus);
   }
