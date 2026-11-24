@@ -1,12 +1,12 @@
-const appointments=[{id:'a1',name:'筛选期',project:'乳腺癌患者全程健康管理研究',date:'2026/11/20',week:'周五',time:'09:30',status:'已预约',hospital:'浙江大学第一附属医院',room:'xx科二楼301',items:['方案知情同意','子课题知情同意','人口学资料','女性生育状态','入组 PIK3CA 监测','入排标准']},{id:'a2',name:'第 2 月访视',project:'肿瘤患者生活质量随访研究',date:'2026/11/25',week:'周三',time:'',status:'时间待确认',items:['血常规检查','身体状况随访','生活质量评估']}];
+const appointments=[{id:'a1',name:'筛选期',project:'乳腺癌患者全程健康管理研究',date:'2026/11/20',week:'周五',time:'09:30',status:'已预约',hospital:'浙江大学第一附属医院',room:'xxxxx科室',items:['方案知情同意','子课题知情同意','人口学资料','女性生育状态','入组 PIK3CA 监测','入排标准']},{id:'a2',name:'第 2 月访视',project:'肿瘤患者生活质量随访研究',date:'2026/11/25',week:'周三',time:'',status:'时间待确认',items:['血常规检查','身体状况随访','生活质量评估']}];
 appointments[0].visitState='已来院';
 appointments[0].date='2026/10/21';
 appointments[1].name='第1周期第1天（C1D1）';appointments[1].date='2026/11/23';appointments[1].status='已取消';appointments[1].visitState='已取消';
 const scheduleProject=appointments[0].project,scheduleItems=['血常规检查','健康状况评估','用药情况记录'];
 appointments.push(
-{id:'a3',name:'第2周期第1天（C2D1）',project:scheduleProject,date:'2026/11/21',week:'周六',time:'09:30',status:'已预约',visitState:'待到院',hospital:'浙江大学第一附属医院',room:'xx科二楼301',items:scheduleItems},
-{id:'a4',name:'第2周期第15天（C2D15）',project:scheduleProject,date:'2026/12/06',week:'周日',time:'09:30',status:'已预约',visitState:'待到院',hospital:'浙江大学第一附属医院',room:'xx科二楼301',items:scheduleItems},
-{id:'a5',name:'第3周期第1天（C3D1）',project:scheduleProject,date:'2026/12/21',week:'周一',time:'09:30',status:'已预约',visitState:'待到院',hospital:'浙江大学第一附属医院',room:'xx科二楼301',items:scheduleItems});
+{id:'a3',name:'第2周期第1天（C2D1）',project:scheduleProject,date:'2026/11/21',week:'周六',time:'09:30',status:'已预约',visitState:'待到院',hospital:'浙江大学第一附属医院',room:'xxxxx科室',items:scheduleItems},
+{id:'a4',name:'第2周期第15天（C2D15）',project:scheduleProject,date:'2026/12/06',week:'周日',time:'09:30',status:'已预约',visitState:'待到院',hospital:'浙江大学第一附属医院',room:'xxxxx科室',items:scheduleItems},
+{id:'a5',name:'第3周期第1天（C3D1）',project:scheduleProject,date:'2026/12/21',week:'周一',time:'09:30',status:'已预约',visitState:'待到院',hospital:'浙江大学第一附属医院',room:'xxxxx科室',items:scheduleItems});
 // The home preview and historical screening visit are separate appointments.
 appointments.push({...appointments[0],id:'history-a1',visitState:'已来院',status:'已来院',week:'周三'});
 Object.assign(appointments[0],{visitState:'待到院',status:'待到院',date:'2026/11/20',week:'周五',hiddenFromSchedule:true});

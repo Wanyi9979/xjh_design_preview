@@ -1,4 +1,4 @@
 // Participant status is separate from study status and visit-cycle status.
 const participantProjects={p1:{status:'已入组',joined:'2026/09/11'},p2:{status:'已结束',endReason:'研究结束',joined:'2026/09/11'}};
-function participantLabel(participant,detail=false){if(participant.status==='已入组')return '已加入项目';if(['研究结束','筛选失败'].includes(participant.status))return detail?'已结束 · '+participant.status:'已结束';return participant.status==='已结束'&&detail&&participant.endReason?'已结束 · '+participant.endReason:participant.status}
+function participantLabel(participant,detail=false){if(participant.status==='已入组')return '已加入';if(['研究结束','筛选失败'].includes(participant.status))return detail?'已结束 · '+participant.status:'已结束';return participant.status==='已结束'&&detail&&participant.endReason?'已结束 · '+participant.endReason:participant.status}
 document.querySelectorAll('#projects .project-link').forEach(card=>{const participant=participantProjects[new URL(card.href).searchParams.get('project')];if(!participant)return;const label=card.querySelector('.state');label.textContent=participantLabel(participant);label.classList.toggle('participant-ended',label.textContent==='已结束')});
