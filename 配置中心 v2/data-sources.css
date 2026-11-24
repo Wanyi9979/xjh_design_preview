@@ -25,15 +25,10 @@
 .ds-crf-select { min-width: 0; border: 0; background: transparent; padding: 0; color: inherit; text-align: left; cursor: pointer; }
 .ds-crf-remove { align-self: center; border: 0; background: transparent; color: #8b98aa; padding: 5px; font-size: 12px; }
 .ds-crf-remove:hover { color: #e14c4c; }
-.ds-mapping-scroll { min-width: 1120px; }
-.ds-mapping-table { min-width: 1120px; }
-.ds-mapping-table th:nth-child(1) { width: 13%; }
-.ds-mapping-table th:nth-child(2) { width: 10%; }
-.ds-mapping-table th:nth-child(3) { width: 12%; }
-.ds-mapping-table th:nth-child(4) { width: 18%; }
-.ds-mapping-table th:nth-child(5) { width: 17%; }
-.ds-mapping-table th:nth-child(6) { width: 16%; }
-.ds-mapping-table th:nth-child(7) { width: 14%; }
+.ds-mapping-scroll { min-width: 0; }
+.ds-mapping-table { width: 100%; min-width: 0; }
+.ds-mapping-table th:nth-child(1) { width: 80%; }
+.ds-mapping-table th:nth-child(2) { width: 20%; }
 .ds-mapping-table td[rowspan] { vertical-align: top; background: #fbfcfe; }
 .ds-mapping-table .ds-unmapped { color: var(--muted); }
 .ds-row-actions { display: flex; flex-wrap: wrap; gap: 10px; }
@@ -47,6 +42,7 @@
 .ds-footer { padding: 15px 20px; border-top: 1px solid var(--line); display: flex; align-items: center; justify-content: flex-end; gap: 20px; background: #fff; }
 .ds-footer .btn { min-width: 72px; }
 .ds-dialog { width: min(760px, calc(100vw - 64px)); padding: 0; border: 0; border-radius: 8px; color: var(--ink); max-height: calc(100vh - 64px); box-shadow: 0 12px 40px #0003; }
+#ds-mapping-dialog { width: min(760px, calc(100vw - 32px)); }
 .ds-dialog::backdrop { background: rgba(0,0,0,.42); }
 .ds-dialog-head { min-height: 56px; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--line-soft); }
 .ds-dialog-head h2 { font-size: 16px; margin: 0; font-weight: 600; }
@@ -54,6 +50,10 @@
 .ds-dialog .ds-tools { padding: 0 0 16px; min-height: auto; }
 .ds-picker-filters { flex-wrap: wrap; }
 .ds-picker-filters .search { flex: 0 1 280px; width: 280px; }
+#ds-add-crf-dialog .ds-picker-filters .search { flex: 1 1 100%; width: 100%; max-width: none; }
+#ds-mapping-dialog .ds-picker-filters .search { flex: 1 1 100%; width: 100%; max-width: none; }
+.ds-mapping-context { margin: 0 0 18px; color: var(--muted); font-size: 13px; }
+.ds-mapping-context strong { color: var(--ink); font-weight: 600; }
 .ds-picker-filters .search input { height: 38px; }
 .ds-picker-filters select { flex: 0 0 180px; width: 180px; height: 38px; padding: 0 12px; color: var(--ink); background: #fff; border: 1px solid #E6E6ED; border-radius: 5px; font-size: 13px; }
 @media (max-width: 620px) {
@@ -64,13 +64,15 @@
 .ds-picker-table { table-layout: fixed; }
 .ds-picker-table th { position: sticky; top: 0; z-index: 1; }
 .ds-picker-table th:first-child { width: 48px; }
-.ds-picker-table th:last-child { width: 29%; }
+.ds-picker-table th:last-child { width: auto; }
 .ds-picker-table td { padding: 12px 17px; }
 .ds-picker-table input { width: 16px; height: 16px; accent-color: #2C73F6; vertical-align: middle; cursor: pointer; }
 .ds-picker-table tr.checked { background: #E5EEFF; }
 .ds-picker-table label { cursor: pointer; }
 .ds-picker-table small { color: var(--muted); margin-left: 10px; }
-.ds-picker-table .ds-picker-empty { text-align: center; height: 140px; color: var(--muted); }
+.ds-picker-table .ds-picker-empty { text-align: center; height: 210px; color: var(--muted); }
+.ds-picker-empty-content { min-height: 190px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; font-size: 13px; }
+.ds-picker-empty-content img { display: block; width: 112px; height: auto; }
 .ds-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px 20px; }
 .ds-form-field { display: flex; flex-direction: column; gap: 7px; min-width: 0; color: var(--ink-2); font-size: 13px; }
 .ds-form-field.full { grid-column: 1 / -1; }
@@ -78,6 +80,15 @@
 .ds-form-field input, .ds-form-field select { width: 100%; height: 38px; padding: 0 12px; border: 1px solid var(--line); border-radius: 5px; background: #fff; color: var(--ink); }
 .ds-form-field input[readonly] { background: #f7f9fc; color: var(--ink-2); }
 .ds-form-error { margin: 0 0 16px; padding: 10px 12px; border-radius: 5px; background: #fff2f0; color: #c83a32; font-size: 13px; }
+.ds-batch-mode .ds-single-only { display:none; }
+#ds-batch-fields { margin-top:20px; }
+#ds-batch-fields[hidden] { display:none; }
+.ds-batch-row { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr) 24px; align-items:start; gap:14px; padding:14px 0; border-top:1px solid #e6ebf2; }
+.ds-batch-row .ds-form-field small { min-height:16px; color:#8996a8; font-size:11px; }
+.ds-remove-field-pair { margin-top:26px; border:0; background:transparent; color:#8996a8; font-size:20px; cursor:pointer; }
+.ds-remove-field-pair:hover { color:#d9363e; }
+#ds-add-field-pair { margin-top:8px; color:#2C73F6; border-color:#bdd7fb; background:#fff; }
+@media (max-width:620px) { .ds-batch-row { grid-template-columns:minmax(0,1fr) 24px; } .ds-batch-row .ds-form-field:nth-child(2) { grid-column:1; } .ds-remove-field-pair { grid-column:2; grid-row:1; } }
 .ds-dialog-footer { min-height: 64px; padding: 12px 24px; border-top: 1px solid var(--line-soft); display: flex; justify-content: flex-end; gap: 8px; }
 .ds-dialog-footer .btn { min-width: 72px; }
 .ds-confirm-dialog { width: 420px; }

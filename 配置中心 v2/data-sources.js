@@ -3,6 +3,7 @@
 
   const el = id => document.getElementById(id);
   const escape = value => String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+  const pickerEmpty = message => `<tr><td colspan="2" class="ds-picker-empty"><div class="ds-picker-empty-content"><img src="assets/empty-list.png" alt="" /><span>${escape(message)}</span></div></td></tr>`;
   const clone = value => JSON.parse(JSON.stringify(value));
   const formIds = {
     '访视日期':'sv', '方案知情同意':'ic', '子课题知情同意':'subic', '人口学资料':'dm',
@@ -42,9 +43,9 @@
     'rs-final': {'总体疗效':'RSORRES'}, eot: {'结束治疗原因':'DSDECOD'}, followup: {'是否计划后续治疗':'FOLLOWYN'}
   };
 
-  let projectId = 'SYX-ML46252', version = 'V2.0', forms = [], activeId = null, editingMappingId = null;
+  let projectId = 'SYX-ML46252', version = 'V2.0', forms = [], activeId = null;
   let saved = {crfIds: [], mappings: []}, draft = {crfIds: [], mappings: []}, published = null;
-  let selectedCrfs = new Set(), hasStoredDraft = false, readFailed = false, pendingAction = null, pendingDeleteAction = null, navigationApproved = false;
+  let selectedCrfs = new Set(), selectedSources = new Set(), hasStoredDraft = false, readFailed = false, pendingAction = null, pendingDeleteAction = null, navigationApproved = false;
   const page = el('visit-data-sources');
   const storageKey = () => `ai-edc:data-sources:v1:${encodeURIComponent(projectId)}:${encodeURIComponent(version)}`;
   const projectQuestions = () => window.VisitTasks ? window.VisitTasks.getQuestions(projectId, version) : fallbackQuestions;
@@ -73,17 +74,10 @@
   const emptyConfiguration = () => ({crfIds: [], mappings: []});
   function defaultConfiguration() {
     if (projectId !== 'SYX-ML46252' || version !== 'V2.0') return emptyConfiguration();
-    const configuration = {crfIds: ['dm', 'vs'], mappings: []};
-    const add = (crfId, targetVariable, questionId, sourceVariable) => {
-      const target = forms.find(form => form.id === crfId)?.fields.find(field => field.variable === targetVariable);
-      const source = sourceFields(questionId).find(field => field.variable === sourceVariable);
-      if (target && source) configuration.mappings.push({id: crypto.randomUUID(), crfId, targetFieldId: target.id, sourceQuestionId: questionId, sourceFieldId: source.id});
-    };
-    add('dm', 'SEX', 'Q_003', 'DM_SEX');
-    add('dm', 'ETHNIC', 'Q_003', 'ETHNIC');
-    add('vs', 'TEMP', 'Q_001', 'TEMP');
-    add('vs', 'SYSBP', 'Q_001', 'SYSBP');
-    return configuration;
+    return {crfIds: ['dm', 'vs'], mappings: [
+      {id: crypto.randomUUID(), crfId: 'dm', sourceQuestionId: 'Q_003'},
+      {id: crypto.randomUUID(), crfId: 'vs', sourceQuestionId: 'Q_001'}
+    ]};
   }
 
   function validateConfiguration(configuration) {
@@ -91,18 +85,14 @@
     const crfIds = [...new Set(configuration.crfIds)];
     if (crfIds.some(id => !forms.some(form => form.id === id))) throw Error('Invalid CRF');
     const questionIds = new Set(projectQuestions().map(question => question.id));
-    const mappingIds = new Set();
-    const targetKeys = new Set();
+    const pairs = new Set();
     const normalizedMappings = [];
     configuration.mappings.forEach(mapping => {
-      const target = forms.find(form => form.id === mapping.crfId)?.fields.find(field => field.id === mapping.targetFieldId);
-      const source = sourceFields(mapping.sourceQuestionId).find(field => field.id === mapping.sourceFieldId);
-      if (!mapping.id || mappingIds.has(mapping.id) || !crfIds.includes(mapping.crfId) || !target || !questionIds.has(mapping.sourceQuestionId) || !source) throw Error('Invalid field mapping');
-      mappingIds.add(mapping.id);
-      const targetKey = `${mapping.crfId}:${mapping.targetFieldId}`;
-      if (targetKeys.has(targetKey)) return;
-      targetKeys.add(targetKey);
-      normalizedMappings.push(clone(mapping));
+      if (!crfIds.includes(mapping.crfId) || !questionIds.has(mapping.sourceQuestionId)) throw Error('Invalid form mapping');
+      const pair = `${mapping.crfId}\u0000${mapping.sourceQuestionId}`;
+      if (pairs.has(pair)) return;
+      pairs.add(pair);
+      normalizedMappings.push({id: mapping.id || crypto.randomUUID(), crfId: mapping.crfId, sourceQuestionId: mapping.sourceQuestionId});
     });
     return {crfIds, mappings: normalizedMappings};
   }
@@ -140,7 +130,7 @@
     if (!draft.crfIds.includes(activeId)) activeId = draft.crfIds[0] || null;
     const added = forms.filter(form => draft.crfIds.includes(form.id));
     el('ds-crf-list').innerHTML = added.map(form => `<div class="ds-crf-item${form.id === activeId ? ' active' : ''}">
-      <button class="ds-crf-select" data-select-crf="${escape(form.id)}"><strong>${escape(form.name)}</strong><span>${mappingsFor(form.id).length} 条字段映射</span></button>
+      <button class="ds-crf-select" data-select-crf="${escape(form.id)}"><strong>${escape(form.name)}</strong><span>${mappingsFor(form.id).length} 条映射</span></button>
       <button class="ds-crf-remove" data-remove-crf="${escape(form.id)}" aria-label="移出${escape(form.name)}">移出</button>
     </div>`).join('');
     el('ds-crf-empty').hidden = added.length > 0;
@@ -151,34 +141,34 @@
   function renderMappings() {
     const form = activeForm();
     const formMappings = form ? mappingsFor(form.id) : [];
-    el('ds-add-mapping').disabled = !form || formMappings.length >= form.fields.length;
+    el('ds-add-mapping').disabled = !form;
     el('ds-mapping-subtitle').textContent = form ? form.name : '请先添加并选择 CRF';
-    const rows = [];
-    form?.fields.forEach(field => {
-      const mapping = formMappings.find(item => item.targetFieldId === field.id);
-      if (!mapping) return;
-      const question = projectQuestions().find(item => item.id === mapping.sourceQuestionId);
-      const source = sourceFields(mapping.sourceQuestionId).find(item => item.id === mapping.sourceFieldId);
-      rows.push(`<tr><td>${escape(field.name)}</td><td>${escape(field.variable)}</td><td>${escape(form.name)}</td><td>${escape(question?.name || mapping.sourceQuestionId)}</td><td>${escape(source?.name || '—')}</td><td>${escape(source?.variable || '—')}</td><td><div class="ds-row-actions"><button data-edit-mapping="${escape(mapping.id)}">编辑</button><button class="danger" data-delete-mapping="${escape(mapping.id)}">删除</button></div></td></tr>`);
+    const groups = new Map();
+    formMappings.forEach(mapping => {
+      if (!groups.has(mapping.sourceQuestionId)) groups.set(mapping.sourceQuestionId, []);
+      groups.get(mapping.sourceQuestionId).push(mapping);
+    });
+    const rows = [...groups].map(([questionId]) => {
+      const question = projectQuestions().find(item => item.id === questionId);
+      return `<tr><td>${escape(question?.name || questionId)}</td><td><div class="ds-row-actions"><button class="danger" data-delete-source="${escape(questionId)}">删除</button></div></td></tr>`;
     });
     el('ds-mapping-body').innerHTML = rows.join('');
     el('ds-mapping-empty').hidden = rows.length > 0;
-    el('ds-mapping-empty-title').textContent = form ? '暂无字段映射' : draft.crfIds.length ? '请选择 CRF' : '暂无需要映射的 CRF';
-    el('ds-mapping-empty-description').textContent = form ? '点击右上角「新增映射」开始配置' : draft.crfIds.length ? '从左侧选择后查看字段映射对应' : '点击左侧「添加 CRF」开始配置';
-    el('ds-mapping-total').textContent = `共 ${rows.length} 条映射`;
+    el('ds-mapping-empty-title').textContent = form ? '暂无关联表单' : draft.crfIds.length ? '请选择 CRF' : '暂无需要映射的 CRF';
+    el('ds-mapping-empty-description').textContent = form ? '点击右上角「新增映射」开始配置' : draft.crfIds.length ? '从左侧选择后查看对应映射表单' : '点击左侧「添加 CRF」开始配置';
+    el('ds-mapping-total').textContent = `共 ${rows.length} 个映射表单`;
   }
 
   function render() { renderScope(); renderMappings(); }
 
   function availablePickerForms() {
     const term = el('ds-crf-picker-search').value.trim().toLocaleLowerCase();
-    const visit = el('ds-crf-picker-visit').value;
-    return forms.filter(form => !draft.crfIds.includes(form.id) && form.name.toLocaleLowerCase().includes(term) && (!visit || form.visits.includes(visit)));
+    return forms.filter(form => !draft.crfIds.includes(form.id) && form.name.toLocaleLowerCase().includes(term));
   }
 
   function renderCrfPicker() {
     const available = availablePickerForms();
-    el('ds-crf-picker-body').innerHTML = available.length ? available.map(form => `<tr class="${selectedCrfs.has(form.id) ? 'checked' : ''}"><td><input type="checkbox" id="ds-pick-crf-${escape(form.id)}" value="${escape(form.id)}" ${selectedCrfs.has(form.id) ? 'checked' : ''} /></td><td><label for="ds-pick-crf-${escape(form.id)}">${escape(form.name)}</label></td><td>${escape(form.visits.join('、'))}</td></tr>`).join('') : '<tr><td colspan="3" class="ds-picker-empty">暂无可添加的 CRF</td></tr>';
+    el('ds-crf-picker-body').innerHTML = available.length ? available.map(form => `<tr class="${selectedCrfs.has(form.id) ? 'checked' : ''}"><td><input type="checkbox" id="ds-pick-crf-${escape(form.id)}" value="${escape(form.id)}" ${selectedCrfs.has(form.id) ? 'checked' : ''} /></td><td><label for="ds-pick-crf-${escape(form.id)}">${escape(form.name)}</label></td></tr>`).join('') : pickerEmpty(el('ds-crf-picker-search').value.trim() ? '暂无搜索结果' : '暂无可添加的 CRF');
     const selected = available.filter(form => selectedCrfs.has(form.id)).length;
     el('ds-crf-check-all').disabled = !available.length;
     el('ds-crf-check-all').checked = available.length > 0 && selected === available.length;
@@ -186,36 +176,37 @@
     el('ds-add-crf-confirm').disabled = selectedCrfs.size === 0;
   }
 
-  function updateMappingForm() {
-    el('ds-mapping-error').hidden = true;
-    const target = activeForm()?.fields.find(field => field.id === el('ds-target-field').value);
-    const source = sourceFields(el('ds-source-form').value).find(field => field.id === el('ds-source-field').value);
-    el('ds-target-variable').value = target?.variable || '';
-    el('ds-target-form').value = activeForm()?.name || '';
-    el('ds-source-variable').value = source?.variable || '';
+  function availableSourceForms() {
+    const term = el('ds-source-picker-search').value.trim().toLocaleLowerCase();
+    const used = new Set(mappingsFor(activeId).map(mapping => mapping.sourceQuestionId));
+    return projectQuestions().filter(question =>
+      !used.has(question.id) &&
+      question.name.toLocaleLowerCase().includes(term)
+    );
   }
-  function renderSourceFields(selectedId = '') {
-    const fields = sourceFields(el('ds-source-form').value);
-    el('ds-source-field').innerHTML = fields.length ? '<option value="">请选择数据来源字段</option>' + fields.map(field => `<option value="${escape(field.id)}">${escape(field.name)}</option>`).join('') : '<option value="">当前表单暂无可用字段</option>';
-    el('ds-source-field').disabled = !fields.length;
-    el('ds-source-field').value = fields.some(field => field.id === selectedId) ? selectedId : '';
-    updateMappingForm();
+
+  function renderSourcePicker() {
+    const available = availableSourceForms();
+    el('ds-source-picker-body').innerHTML = available.length ? available.map(question =>
+      `<tr class="${selectedSources.has(question.id) ? 'checked' : ''}"><td><input type="checkbox" id="ds-pick-source-${escape(question.id)}" value="${escape(question.id)}" ${selectedSources.has(question.id) ? 'checked' : ''} /></td><td><label for="ds-pick-source-${escape(question.id)}">${escape(question.name)}</label></td></tr>`
+    ).join('') : pickerEmpty(el('ds-source-picker-search').value.trim() ? '暂无搜索结果' : '暂无可关联的数据来源表单');
+    const selected = available.filter(question => selectedSources.has(question.id)).length;
+    el('ds-source-check-all').disabled = !available.length;
+    el('ds-source-check-all').checked = available.length > 0 && selected === available.length;
+    el('ds-source-check-all').indeterminate = selected > 0 && selected < available.length;
+    el('ds-mapping-confirm').disabled = selectedSources.size === 0;
   }
-  function openMappingDialog(mapping = null, targetFieldId = '') {
+
+  function openMappingDialog() {
     const form = activeForm();
     if (!form) return;
-    editingMappingId = mapping?.id || null;
-    el('ds-mapping-dialog-title').textContent = mapping ? '编辑映射' : '新增映射';
-    el('ds-mapping-error').hidden = true;
-    const usedTargetIds = new Set(mappingsFor(form.id).filter(item => item.id !== editingMappingId).map(item => item.targetFieldId));
-    const availableFields = form.fields.filter(field => !usedTargetIds.has(field.id));
-    el('ds-target-field').innerHTML = '<option value="">请选择 CRF 字段</option>' + availableFields.map(field => `<option value="${escape(field.id)}">${escape(field.name)}</option>`).join('');
-    el('ds-target-field').value = mapping?.targetFieldId || targetFieldId || '';
-    el('ds-source-form').innerHTML = '<option value="">请选择数据来源表单</option>' + projectQuestions().map(question => `<option value="${escape(question.id)}">${escape(question.name)}</option>`).join('');
-    el('ds-source-form').value = mapping?.sourceQuestionId || '';
-    renderSourceFields(mapping?.sourceFieldId || '');
-    updateMappingForm();
+    selectedSources.clear();
+    el('ds-mapping-dialog-title').textContent = '新增映射';
+    el('ds-target-form').textContent = form.name;
+    el('ds-source-picker-search').value = '';
+    renderSourcePicker();
     el('ds-mapping-dialog').showModal();
+    el('ds-source-picker-search').focus();
   }
   function openDeleteDialog(title, message, action) {
     el('ds-delete-title').textContent = title;
@@ -260,11 +251,9 @@
   el('ds-add-crf').addEventListener('click', () => {
     selectedCrfs.clear();
     el('ds-crf-picker-search').value = '';
-    el('ds-crf-picker-visit').innerHTML = '<option value="">全部访视</option>' + Object.keys(visitCrfData).map(visit => `<option value="${escape(visit)}">${escape(visit)}</option>`).join('');
     renderCrfPicker(); el('ds-add-crf-dialog').showModal(); el('ds-crf-picker-search').focus();
   });
   el('ds-crf-picker-search').addEventListener('input', renderCrfPicker);
-  el('ds-crf-picker-visit').addEventListener('change', renderCrfPicker);
   el('ds-crf-picker-body').addEventListener('change', event => {
     const input = event.target.closest('input[type=checkbox]');
     if (!input) return;
@@ -284,30 +273,36 @@
   });
 
   el('ds-add-mapping').addEventListener('click', () => openMappingDialog());
-  el('ds-target-field').addEventListener('change', updateMappingForm);
-  el('ds-source-form').addEventListener('change', () => renderSourceFields());
-  el('ds-source-field').addEventListener('change', updateMappingForm);
+  el('ds-source-picker-search').addEventListener('input', renderSourcePicker);
+  el('ds-source-picker-body').addEventListener('change', event => {
+    const input = event.target.closest('input[type=checkbox]');
+    if (!input) return;
+    input.checked ? selectedSources.add(input.value) : selectedSources.delete(input.value);
+    renderSourcePicker();
+  });
+  el('ds-source-check-all').addEventListener('change', event => {
+    availableSourceForms().forEach(question => event.target.checked ? selectedSources.add(question.id) : selectedSources.delete(question.id));
+    renderSourcePicker();
+  });
   el('ds-mapping-confirm').addEventListener('click', () => {
-    const targetFieldId = el('ds-target-field').value, sourceQuestionId = el('ds-source-form').value, sourceFieldId = el('ds-source-field').value;
-    let error = !targetFieldId ? '请选择 CRF 字段' : !sourceQuestionId ? '请选择数据来源表单' : !sourceFieldId ? '请选择数据来源字段' : '';
-    if (!error && draft.mappings.some(mapping => mapping.id !== editingMappingId && mapping.crfId === activeId && mapping.targetFieldId === targetFieldId)) error = '该 CRF 字段已配置映射';
-    if (error) { showToast(error, 'error'); return; }
-    const item = {id: editingMappingId || crypto.randomUUID(), crfId: activeId, targetFieldId, sourceQuestionId, sourceFieldId};
-    const index = draft.mappings.findIndex(mapping => mapping.id === editingMappingId);
-    if (index >= 0) draft.mappings[index] = item; else draft.mappings.push(item);
+    if (!selectedSources.size) { showToast('请选择数据来源表单', 'error'); return; }
+    const previous = clone(draft.mappings);
+    for (const sourceQuestionId of selectedSources) {
+      if (draft.mappings.some(mapping => mapping.crfId === activeId && mapping.sourceQuestionId === sourceQuestionId)) continue;
+      draft.mappings.push({id: crypto.randomUUID(), crfId: activeId, sourceQuestionId});
+    }
     const savedSuccessfully = persistConfiguration();
+    if (!savedSuccessfully) { draft.mappings = previous; return; }
     el('ds-mapping-dialog').close(); render();
-    if (savedSuccessfully) showToast(index >= 0 ? '映射已更新' : '映射已新增');
+    showToast(`已新增 ${selectedSources.size} 个映射表单`);
   });
   el('ds-mapping-body').addEventListener('click', event => {
-    const edit = event.target.closest('[data-edit-mapping]');
-    if (edit) return openMappingDialog(draft.mappings.find(mapping => mapping.id === edit.dataset.editMapping));
-    const remove = event.target.closest('[data-delete-mapping]');
-    if (remove) openDeleteDialog('删除字段映射？', '删除后该数据来源字段将不再映射到当前 CRF 字段。', () => {
-      draft.mappings = draft.mappings.filter(mapping => mapping.id !== remove.dataset.deleteMapping);
+    const remove = event.target.closest('[data-delete-source]');
+    if (remove) openDeleteDialog('删除映射？', '删除后这张 CRF 与数据来源表单的关联将被清除。', () => {
+      draft.mappings = draft.mappings.filter(mapping => !(mapping.crfId === activeId && mapping.sourceQuestionId === remove.dataset.deleteSource));
       const savedSuccessfully = persistConfiguration();
       render();
-      if (savedSuccessfully) showToast('字段映射已删除');
+      if (savedSuccessfully) showToast('映射已删除');
     });
   });
   el('ds-delete-confirm').addEventListener('click', () => {

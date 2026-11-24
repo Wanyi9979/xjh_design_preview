@@ -1457,7 +1457,7 @@
     }
   </style>
   <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
-  <link rel="stylesheet" href="data-sources.css?v=8" />
+  <link rel="stylesheet" href="data-sources.css?v=18" />
   <link rel="stylesheet" href="visit-tasks.css?v=28" />
   <style id="soft-blue-theme">
     /* Visual theme only: retain the existing navigation, content, and behavior. */
@@ -2396,10 +2396,10 @@
                     </div>
                   </aside>
                   <section class="ds-panel ds-mapping-panel" aria-labelledby="ds-mapping-title">
-                    <div class="ds-panel-head"><div><h2 id="ds-mapping-title">字段映射对应</h2><span id="ds-mapping-subtitle">请先添加并选择 CRF</span></div><button class="btn primary" id="ds-add-mapping"><img src="assets/figma/mapping-add.svg" alt="" />新增映射</button></div>
+                    <div class="ds-panel-head"><div><h2 id="ds-mapping-title">对应映射表单</h2><span id="ds-mapping-subtitle">请先添加并选择 CRF</span></div><button class="btn primary" id="ds-add-mapping"><img src="assets/figma/mapping-add.svg" alt="" />新增映射</button></div>
                     <div class="ds-table-area">
-                      <div class="ds-mapping-scroll"><table class="ds-table ds-mapping-table sticky-action-table" aria-label="字段映射列表"><thead><tr><th>CRF字段</th><th>CRF变量</th><th>CRF表</th><th>数据来源表单名称</th><th>数据来源字段</th><th>数据来源字段变量</th><th>操作</th></tr></thead><tbody id="ds-mapping-body"></tbody></table></div>
-                      <div class="ds-empty" id="ds-mapping-empty"><svg viewBox="0 0 48 48"><rect x="11" y="7" width="26" height="34" rx="3"/><path d="M18 17h12M18 24h12M18 31h8"/></svg><strong id="ds-mapping-empty-title">请选择 CRF</strong><span id="ds-mapping-empty-description">从左侧选择后查看字段映射对应</span></div>
+                      <div class="ds-mapping-scroll"><table class="ds-table ds-mapping-table sticky-action-table" aria-label="对应映射表单列表"><thead><tr><th>数据来源表单名称</th><th>操作</th></tr></thead><tbody id="ds-mapping-body"></tbody></table></div>
+                      <div class="ds-empty" id="ds-mapping-empty"><svg viewBox="0 0 48 48"><rect x="11" y="7" width="26" height="34" rx="3"/><path d="M18 17h12M18 24h12M18 31h8"/></svg><strong id="ds-mapping-empty-title">请选择 CRF</strong><span id="ds-mapping-empty-description">从左侧选择后查看对应映射表单</span></div>
                     </div>
                     <div class="ds-panel-bottom" id="ds-mapping-total"></div>
                   </section>
@@ -4363,21 +4363,18 @@
   <dialog class="ds-dialog" id="ds-add-crf-dialog" aria-labelledby="ds-add-crf-title">
     <div class="ds-dialog-head"><h2 id="ds-add-crf-title">添加 CRF</h2><button class="modal-close" data-ds-close aria-label="关闭添加 CRF 弹框"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button></div>
     <div class="ds-dialog-body">
-      <div class="ds-tools ds-picker-filters"><div class="search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input id="ds-crf-picker-search" placeholder="搜索 CRF 名称" aria-label="搜索可添加 CRF" /></div><select id="ds-crf-picker-visit" aria-label="按访视筛选可添加 CRF"><option value="">全部访视</option></select></div>
-      <div class="ds-picker-scroll"><table class="ds-picker-table" aria-label="选择需要映射的 CRF"><thead><tr><th><input type="checkbox" id="ds-crf-check-all" aria-label="选择当前筛选结果中的全部 CRF" /></th><th>CRF 名称</th><th>使用访视</th></tr></thead><tbody id="ds-crf-picker-body"></tbody></table></div>
+      <div class="ds-tools ds-picker-filters"><div class="search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input id="ds-crf-picker-search" placeholder="搜索 CRF 名称" aria-label="搜索可添加 CRF" /></div></div>
+      <div class="ds-picker-scroll"><table class="ds-picker-table" aria-label="选择需要映射的 CRF"><thead><tr><th><input type="checkbox" id="ds-crf-check-all" aria-label="选择当前搜索结果中的全部 CRF" /></th><th>CRF 名称</th></tr></thead><tbody id="ds-crf-picker-body"></tbody></table></div>
     </div>
     <div class="ds-dialog-footer"><button class="btn" data-ds-close>取消</button><button class="btn primary" id="ds-add-crf-confirm">确定</button></div>
   </dialog>
   <dialog class="ds-dialog" id="ds-mapping-dialog" aria-labelledby="ds-mapping-dialog-title">
-    <div class="ds-dialog-head"><h2 id="ds-mapping-dialog-title">新增映射</h2><button class="modal-close" data-ds-close aria-label="关闭字段映射弹框"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button></div>
-    <div class="ds-dialog-body"><p class="ds-form-error" id="ds-mapping-error" hidden></p><div class="ds-form-grid">
-      <label class="ds-form-field full"><span>CRF表</span><input id="ds-target-form" readonly /></label>
-      <label class="ds-form-field"><span class="required">CRF字段</span><select id="ds-target-field"></select></label>
-      <label class="ds-form-field"><span>CRF变量</span><input id="ds-target-variable" readonly /></label>
-      <label class="ds-form-field full"><span class="required">数据来源表单名称</span><select id="ds-source-form"></select></label>
-      <label class="ds-form-field"><span class="required">数据来源字段</span><select id="ds-source-field"></select></label>
-      <label class="ds-form-field"><span>数据来源字段变量</span><input id="ds-source-variable" readonly /></label>
-    </div></div>
+    <div class="ds-dialog-head"><h2 id="ds-mapping-dialog-title">新增映射</h2><button class="modal-close" data-ds-close aria-label="关闭映射弹框"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button></div>
+    <div class="ds-dialog-body">
+      <p class="ds-mapping-context">CRF 表：<strong id="ds-target-form"></strong></p>
+      <div class="ds-tools ds-picker-filters"><div class="search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input id="ds-source-picker-search" placeholder="搜索数据来源表单名称" aria-label="搜索可关联的数据来源表单" /></div></div>
+      <div class="ds-picker-scroll"><table class="ds-picker-table" aria-label="选择数据来源表单"><thead><tr><th><input type="checkbox" id="ds-source-check-all" aria-label="选择当前搜索结果中的全部数据来源表单" /></th><th>数据来源表单名称</th></tr></thead><tbody id="ds-source-picker-body"></tbody></table></div>
+    </div>
     <div class="ds-dialog-footer"><button class="btn" data-ds-close>取消</button><button class="btn primary" id="ds-mapping-confirm">确定</button></div>
   </dialog>
   <dialog class="ds-dialog ds-confirm-dialog" id="ds-delete-dialog" aria-labelledby="ds-delete-title">
@@ -4392,7 +4389,7 @@
   </dialog>
 
   <script src="ai-annotations.js?v=3"></script>
-  <script src="data-sources.js?v=9"></script>
+  <script src="data-sources.js?v=18"></script>
   <script src="visit-tasks.js?v=39"></script>
   <script src="list-pagination.js?v=5"></script>
 </body>
