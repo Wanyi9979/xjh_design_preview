@@ -24,7 +24,7 @@
 .participant-overview-layout .data-form-actions button { height: 34px; border-radius: 5px; padding: 0 16px; }
 .participant-overview-layout .data-form-actions button:not(.primary) { background: white; border-color: #dfe6ee; color: #536881; }
 .participant-overview-layout .data-upload-panel { min-width: 0; min-height: 0; background: #fafbfd; text-align: left; }
-.participant-overview-layout .entry-empty { min-height: 0; justify-content: flex-start; padding: 20px 16px; gap: 12px; }
+.participant-overview-layout .entry-empty { min-height: 0; justify-content: center; padding: 20px 16px; gap: 12px; }
 .participant-overview-layout .entry-empty-actions { width: 100%; }
 .participant-overview-layout .entry-empty .entry-source-tile { width: 100%; min-height: 160px; padding: 24px 12px; border: 1px dashed #cfdbea; border-radius: 7px; background: white; gap: 8px; }
 .participant-overview-layout .entry-empty .entry-cloud { width: 36px; height: 36px; }
